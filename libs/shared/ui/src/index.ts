@@ -12,3 +12,5 @@ export * from './lib/uni-warn-incorrect/uni-warn-incorrect.component';
 
 export * from './lib/degree-cert-status/degree-cert-status.component';
 export * from './lib/check-history/check-history.component';
+
+export * from './lib/doc-reviewer/doc-reviewer.component';
