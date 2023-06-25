@@ -15,7 +15,11 @@ import {
   CompleteDialogComponent,
   ConfirmDialogComponent,
 } from '@ksp/shared/dialog';
-import { UniInfoService, UniRequestService } from '@ksp/shared/service';
+import {
+  LoaderService,
+  UniInfoService,
+  UniRequestService,
+} from '@ksp/shared/service';
 import {
   getCookie,
   thaiDate,
@@ -25,12 +29,11 @@ import {
 } from '@ksp/shared/utility';
 import _ from 'lodash';
 import moment from 'moment';
-import { lastValueFrom } from 'rxjs';
+import { Subject, lastValueFrom } from 'rxjs';
 @Component({
   templateUrl: './degree-cert-request.component.html',
   styleUrls: ['./degree-cert-request.component.scss'],
 })
-
 export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
   @ViewChild('stepper') private stepper?: MatStepper;
   id?: string;
@@ -41,7 +44,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
 
   step1Form: any = this.fb.group({
     step1: [],
-    detail: []
+    detail: [],
   });
   step2Form: any = this.fb.group({
     step2: [
@@ -49,21 +52,22 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
         plans: [],
       },
     ],
-    detail: []
+    detail: [],
   });
   step3Form: any = this.fb.group({
     step3: [],
-    detail: []
+    detail: [],
   });
   step4Form: any = this.fb.group({
     step4: [{ files: [] }],
-    detail: []
+    detail: [],
   });
   uniData: any;
   mode: any = 'view';
   submode = 'create';
   status = '';
   process = '';
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
     private router: Router,
@@ -72,7 +76,8 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
     private uniInfoService: UniInfoService,
     private uniRequestService: UniRequestService,
     private activatedRoute: ActivatedRoute,
-    private cdref: ChangeDetectorRef
+    private cdref: ChangeDetectorRef,
+    private loaderService: LoaderService
   ) {}
 
   ngAfterContentChecked(): void {
@@ -85,7 +90,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
 
   mapCheckResult(data: any) {
     const result: any = _.find(ApproveStepStatusOption, {
-      value: Number(data)
+      value: Number(data),
     });
     return result?.name;
   }
@@ -103,79 +108,144 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       );
       let modeFile = 'edit';
       const editComment = await lastValueFrom(
-        this.uniInfoService.getRequestProcessHistory({ requestid: this.id})
+        this.uniInfoService.getRequestProcessHistory({ requestid: this.id })
       );
-      const editdetail = editComment.datareturn.find((data: any) => { 
-        return data.status == uniRequestDegree.requeststatus && data.process == uniRequestDegree.requestprocess});
-      if ((uniRequestDegree.requeststatus == '1' && uniRequestDegree.requestprocess == '99') ||
-          (uniRequestDegree.requeststatus == '2' && uniRequestDegree.requestprocess == '1') ||
-          (uniRequestDegree.requeststatus == '2' && uniRequestDegree.requestprocess == '3') ||
-          (uniRequestDegree.requeststatus == '3' && uniRequestDegree.requestprocess == '4') ||
-          (uniRequestDegree.requeststatus == '3' && uniRequestDegree.requestprocess == '5')) {
-            this.mode = 'edit';
-            modeFile = 'reject';
+      const editdetail = editComment.datareturn.find((data: any) => {
+        return (
+          data.status == uniRequestDegree.requeststatus &&
+          data.process == uniRequestDegree.requestprocess
+        );
+      });
+      if (
+        (uniRequestDegree.requeststatus == '1' &&
+          uniRequestDegree.requestprocess == '99') ||
+        (uniRequestDegree.requeststatus == '2' &&
+          uniRequestDegree.requestprocess == '1') ||
+        (uniRequestDegree.requeststatus == '2' &&
+          uniRequestDegree.requestprocess == '3') ||
+        (uniRequestDegree.requeststatus == '3' &&
+          uniRequestDegree.requestprocess == '4') ||
+        (uniRequestDegree.requeststatus == '3' &&
+          uniRequestDegree.requestprocess == '5')
+      ) {
+        this.mode = 'edit';
+        modeFile = 'reject';
       }
       if (uniRequestDegree.requestprocess != '99') {
         this.submode = 'return';
       }
       this.status = uniRequestDegree.requeststatus;
       this.process = uniRequestDegree.requestprocess;
-      const checkresult = uniRequestDegree.checkresult ? parseJson(uniRequestDegree.checkresult) : {};
-      const { requestNo, step1, step2, step3, step4 } = await
-        this.uniInfoService.mappingUniverSitySelectByIdWithForm(
-          uniRequestDegree
+      const checkresult = uniRequestDegree.checkresult
+        ? parseJson(uniRequestDegree.checkresult)
+        : {};
+      const { requestNo, step1, step2, step3, step4 } =
+        await this.uniInfoService.mappingUniverSitySelectByIdWithForm(
+          uniRequestDegree,
+          'uniservice'
         );
       this.requestNo = requestNo;
-      if (uniRequestDegree.requeststatus == '3' && uniRequestDegree.requestprocess == '4') {
+      if (
+        uniRequestDegree.requeststatus == '3' &&
+        uniRequestDegree.requestprocess == '4'
+      ) {
         const parsedetail = parseJson(editdetail.detail);
         this.step1Form.setValue({
           step1: step1,
-          detail: parsedetail.verify?.result && parsedetail.verify?.result != '1' ? [
-            this.mapCheckResult(parsedetail.verify?.result),
-            'หมายเหตุ ' + (parsedetail.verify?.detail ? parsedetail.verify?.detail : ''),
-          ] : []
+          detail:
+            parsedetail.verify?.result && parsedetail.verify?.result != '1'
+              ? [
+                  this.mapCheckResult(parsedetail.verify?.result),
+                  'หมายเหตุ ' +
+                    (parsedetail.verify?.detail
+                      ? parsedetail.verify?.detail
+                      : ''),
+                ]
+              : [],
         });
       } else {
         this.step1Form.setValue({
           step1: step1,
-          detail: checkresult?.verifyStep1?.result && checkresult?.verifyStep1?.result != '1' ? [
-            this.mapCheckResult(checkresult?.verifyStep1?.result),
-            'หมายเหตุ ' + (checkresult?.verifyStep1?.detail ? checkresult?.verifyStep1?.detail : ''),
-          ] : []
+          detail:
+            checkresult?.verifyStep1?.result &&
+            checkresult?.verifyStep1?.result != '1'
+              ? [
+                  this.mapCheckResult(checkresult?.verifyStep1?.result),
+                  'หมายเหตุ ' +
+                    (checkresult?.verifyStep1?.detail
+                      ? checkresult?.verifyStep1?.detail
+                      : ''),
+                ]
+              : [],
         });
       }
-      if (uniRequestDegree.requeststatus == '2' && uniRequestDegree.requestprocess == '3') {
+      if (
+        uniRequestDegree.requeststatus == '2' &&
+        uniRequestDegree.requestprocess == '3'
+      ) {
         const parsedetail = parseJson(editdetail.detail);
         this.step2Form.setValue({
           step2: step2,
-          detail: parsedetail.verify?.result && parsedetail.verify?.result != '1' ? [
-            this.mapCheckResult(parsedetail.verify?.result),
-            'หมายเหตุ ' + (parsedetail.verify?.detail ? parsedetail.verify?.detail : ''),
-          ] : []
+          detail:
+            parsedetail.verify?.result && parsedetail.verify?.result != '1'
+              ? [
+                  this.mapCheckResult(parsedetail.verify?.result),
+                  'หมายเหตุ ' +
+                    (parsedetail.verify?.detail
+                      ? parsedetail.verify?.detail
+                      : ''),
+                ]
+              : [],
         });
       } else {
         this.step2Form.setValue({
           step2: step2,
-          detail: checkresult?.verifyStep2?.result && checkresult?.verifyStep2?.result != '1' ? [
-            this.mapCheckResult(checkresult?.verifyStep2?.result),
-            'หมายเหตุ ' + (checkresult?.verifyStep2?.detail ? checkresult?.verifyStep2?.detail : ''),
-          ] : []
+          detail:
+            checkresult?.verifyStep2?.result &&
+            checkresult?.verifyStep2?.result != '1'
+              ? [
+                  this.mapCheckResult(checkresult?.verifyStep2?.result),
+                  'หมายเหตุ ' +
+                    (checkresult?.verifyStep2?.detail
+                      ? checkresult?.verifyStep2?.detail
+                      : ''),
+                ]
+              : [],
         });
       }
       this.step3Form.setValue({
         step3: step3,
-        detail: checkresult?.verifyStep3?.result && checkresult?.verifyStep3?.result != '1' ? [
-          this.mapCheckResult(checkresult?.verifyStep3?.result),
-          'หมายเหตุ ' + (checkresult?.verifyStep3?.detail ? checkresult?.verifyStep3?.detail : ''),
-        ] : []
+        detail:
+          checkresult?.verifyStep3?.result &&
+          checkresult?.verifyStep3?.result != '1'
+            ? [
+                this.mapCheckResult(checkresult?.verifyStep3?.result),
+                'หมายเหตุ ' +
+                  (checkresult?.verifyStep3?.detail
+                    ? checkresult?.verifyStep3?.detail
+                    : ''),
+              ]
+            : [],
       });
       setTimeout(() => {
         this.step4Form.setValue({
-          step4: modeFile == 'edit' ? step4 : checkresult.filedetail ? checkresult.filedetail : step4,
-          detail: checkresult?.verifyStep4?.result && checkresult?.verifyStep4?.result != '1' ? [
-            this.mapCheckResult(checkresult?.verifyStep4?.result),
-            'หมายเหตุ ' + (checkresult?.verifyStep4?.detail ? checkresult?.verifyStep4?.detail : ''),
-          ] : []
+          step4:
+            modeFile == 'edit'
+              ? step4
+              : checkresult.filedetail
+              ? checkresult.filedetail
+              : step4,
+          detail:
+            checkresult?.verifyStep4?.result &&
+            checkresult?.verifyStep4?.result != '1'
+              ? [
+                  this.mapCheckResult(checkresult?.verifyStep4?.result),
+                  'หมายเหตุ ' +
+                    (checkresult?.verifyStep4?.detail
+                      ? checkresult?.verifyStep4?.detail
+                      : ''),
+                ]
+              : [],
         });
       }, 500);
     } else {
@@ -191,7 +261,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
                 : '') || '',
           provience: this.uniData?.provinceid || '',
         },
-        detail: []
+        detail: [],
       });
     }
   }
@@ -220,49 +290,56 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
             currentprocess = process;
           }
           const emailForm = this.step1Form.value;
-          this.uniRequestService.uniRequestUpdate(
-            this._getRequest(currentprocess, '1')
-          ).subscribe((res: any) => {
-            if (emailForm.step1.coordinator && emailForm.step1.coordinator.email) {
-              this.uniRequestService.kspSendEmailUni(
-                {
-                  fromname: 'ksplicense',
-                  subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                  body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                  emailaddress: emailForm.step1.coordinator.email
-                }
-              ).subscribe((resEmail: any) => {
+          this.uniRequestService
+            .uniRequestUpdate(this._getRequest(currentprocess, '1'))
+            .subscribe((res: any) => {
+              if (
+                process !== '99' &&
+                emailForm.step1.coordinator &&
+                emailForm.step1.coordinator.email
+              ) {
+                this.uniRequestService
+                  .kspSendEmailUni({
+                    fromname: 'ksplicense',
+                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+                    emailaddress: emailForm.step1.coordinator.email,
+                  })
+                  .subscribe((resEmail: any) => {
+                    if (res?.returncode == 99) return;
+                    this.showConfirmDialog(res?.requestno);
+                  });
+              } else {
                 if (res?.returncode == 99) return;
                 this.showConfirmDialog(res?.requestno);
-              })
-            } else {
-              if (res?.returncode == 99) return;
-              this.showConfirmDialog(res?.requestno);
-            }
-          });
+              }
+            });
         } else {
           const emailForm = this.step1Form.value;
-          this.uniRequestService.uniRequestInsert(
-            this._getRequest(process, '1')
-          ).subscribe((res: any) => {
-            if (emailForm.step1.coordinator && emailForm.step1.coordinator.email) {
-              this.uniRequestService.kspSendEmailUni(
-                {
-                  fromname: 'ksplicense',
-                  subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                  body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                  emailaddress: emailForm.step1.coordinator.email
-                }
-              ).subscribe((resEmail: any) => {
+          this.uniRequestService
+            .uniRequestInsert(this._getRequest(process, '1'))
+            .subscribe((res: any) => {
+              if (
+                emailForm.step1.coordinator &&
+                emailForm.step1.coordinator.email
+              ) {
+                this.uniRequestService
+                  .kspSendEmailUni({
+                    fromname: 'ksplicense',
+                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+                    emailaddress: emailForm.step1.coordinator.email,
+                  })
+                  .subscribe((resEmail: any) => {
+                    if (res?.returncode == 99) return;
+                    this.showConfirmDialog(res?.requestno);
+                  });
+              } else {
                 if (res?.returncode == 99) return;
                 this.showConfirmDialog(res?.requestno);
-              })
-            } else {
-              if (res?.returncode == 99) return;
-              this.showConfirmDialog(res?.requestno);
-            }
-          });
-        }  
+              }
+            });
+        }
       }
     });
   }
@@ -285,7 +362,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       process: process,
       status: status,
       systemtype: '3',
-      requesttype: '3',
+      requesttype: '03',
       subtype: '5',
 
       attachfiles: step4 ? JSON.stringify(step4?.files) : null,
@@ -328,9 +405,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       courseteacher: step2?.teacher?.teachers
         ? JSON.stringify(step2?.teacher?.teachers)
         : null,
-      courseinstructor: step2?.nitet
-        ? JSON.stringify(step2?.nitet)
-        : null,
+      courseinstructor: step2?.nitet ? JSON.stringify(step2?.nitet) : null,
       courseadvisor: step2?.advisor?.advisors
         ? JSON.stringify(step2?.advisor?.advisors)
         : null,
@@ -376,16 +451,18 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       data: {
         header: 'ยืนยันข้อมูลสำเร็จ',
         content: `วันที่ : ${this.date}
-        เลขที่แบบคำขอ : ${requestno ? formatRequestNo(requestno || '') : formatRequestNo(this.requestNo) || '-'}`,
+        เลขที่แบบคำขอ : ${
+          requestno
+            ? formatRequestNo(requestno || '')
+            : formatRequestNo(this.requestNo) || '-'
+        }`,
         subContent: `กรุณาตรวจสอบสถานะแบบคำขอหรือรหัสเข้าใช้งาน
         ผ่านทางอีเมลผู้ที่ลงทะเบียนภายใน 3 วันทำการ`,
       },
     });
 
-    completeDialog.componentInstance.completed.subscribe((res) => {
-      if (res) {
-        this.navigateBack();
-      }
+    completeDialog.afterClosed().subscribe(() => {
+      this.navigateBack();
     });
   }
   goBack() {

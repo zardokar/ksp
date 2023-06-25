@@ -1,4 +1,10 @@
-import { jsonStringify, parseJson, getCookie, formatDate, thaiDate } from '@ksp/shared/utility';
+import {
+  jsonStringify,
+  parseJson,
+  getCookie,
+  formatDate,
+  thaiDate,
+} from '@ksp/shared/utility';
 import {
   AfterContentChecked,
   ChangeDetectorRef,
@@ -16,17 +22,20 @@ import {
 import {
   ERequestService,
   EUniService,
+  LoaderService,
   UniInfoService,
 } from '@ksp/shared/service';
-import { map } from 'rxjs';
+import { Subject, map } from 'rxjs';
 import _ from 'lodash';
 import { Location } from '@angular/common';
 
 import { ApproveStepStatusOption } from '@ksp/shared/constant';
 import { MatStepper } from '@angular/material/stepper';
 const detailToState = (res: any) => {
-  const newRes = _.filter(res?.datareturn, ({ process, status }) =>
-    (process == '1' && status == '2') || (process == '3' && status == '1')
+  const newRes = _.filter(
+    res?.datareturn,
+    ({ process, status }) =>
+      (process == '1' && status == '2') || (process == '3' && status == '1')
   ).map((data: any) => {
     return {
       ...data,
@@ -99,6 +108,7 @@ export class CheckComponent implements OnInit, AfterContentChecked {
   disabledVerifyStep = false;
   submode = 'return';
   historyResult: Array<any> = [];
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
     public dialog: MatDialog,
@@ -109,7 +119,8 @@ export class CheckComponent implements OnInit, AfterContentChecked {
     private eUniService: EUniService,
     private eRequestService: ERequestService,
     private cdref: ChangeDetectorRef,
-    private location: Location
+    private location: Location,
+    private loaderService: LoaderService
   ) {}
   ngAfterContentChecked(): void {
     this.cdref.detectChanges();
@@ -119,43 +130,54 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res) => {
-        console.log(res.res)
+        console.log(res.res);
         this.verifyResult = res.newres;
         this.historyResult = res.res.filter((data: any) => {
-          return (data.process == '1' && data.status == '2') || (data.process == '3' && data.status == '1');
+          return (
+            (data.process == '1' && data.status == '2') ||
+            (data.process == '3' && data.status == '1')
+          );
         });
         const step1history = [] as any;
         const step2history = [] as any;
         const step3history = [] as any;
         const step4history = [] as any;
         this.historyResult.forEach((data: any) => {
-          const findResult1 = this.choices.find(choice=>{return choice.value == data.detail.verifyStep1.result });
-          const findResult2 = this.choices.find(choice=>{return choice.value == data.detail.verifyStep2.result });
-          const findResult3 = this.choices.find(choice=>{return choice.value == data.detail.verifyStep3.result });
-          const findResult4 = this.choices.find(choice=>{return choice.value == data.detail.verifyStep4.result });
+          const findResult1 = this.choices.find((choice) => {
+            return choice.value == data.detail.verifyStep1.result;
+          });
+          const findResult2 = this.choices.find((choice) => {
+            return choice.value == data.detail.verifyStep2.result;
+          });
+          const findResult3 = this.choices.find((choice) => {
+            return choice.value == data.detail.verifyStep3.result;
+          });
+          const findResult4 = this.choices.find((choice) => {
+            return choice.value == data.detail.verifyStep4.result;
+          });
           step1history.push({
             resultname: findResult1 ? findResult1?.name : '',
             comment: data.detail.verifyStep1.detail || '',
             createdate: thaiDate(new Date(data.createdate)),
-            fullnameth: data.fullnameth
+            fullnameth: data.fullnameth,
           });
           step2history.push({
             resultname: findResult2 ? findResult2?.name : '',
             comment: data.detail.verifyStep2.detail || '',
             createdate: thaiDate(new Date(data.createdate)),
-            fullnameth: data.fullnameth
+            fullnameth: data.fullnameth,
           });
           step3history.push({
             resultname: findResult3 ? findResult3?.name : '',
             comment: data.detail.verifyStep3.detail || '',
             createdate: thaiDate(new Date(data.createdate)),
-            fullnameth: data.fullnameth
+            fullnameth: data.fullnameth,
           });
           step4history.push({
             resultname: findResult4 ? findResult4?.name : '',
             comment: data.detail.verifyStep4.detail || '',
             createdate: thaiDate(new Date(data.createdate)),
-            fullnameth: data.fullnameth
+            fullnameth: data.fullnameth,
           });
         });
         this.form.patchValue({
@@ -163,7 +185,7 @@ export class CheckComponent implements OnInit, AfterContentChecked {
           historyStep2: step2history,
           historyStep3: step3history,
           historyStep4: step4history,
-        })
+        });
         const lastPlan = _.last(
           res?.res.filter((data) => {
             return data.process == 3;
@@ -184,11 +206,14 @@ export class CheckComponent implements OnInit, AfterContentChecked {
         .pipe(
           map((res) => {
             this.daftRequest = res;
-            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(res);
+            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(
+              res,
+              'uni-eservice'
+            );
           })
         )
         .subscribe((res) => {
-          console.log(res)
+          console.log(res);
           if (res?.returncode !== 98) {
             this.requestNumber = res?.requestNo;
             this.form.patchValue({
@@ -222,9 +247,9 @@ export class CheckComponent implements OnInit, AfterContentChecked {
     const step4: any = this.form.value.step4;
 
     const dateapprove = new Date(step1?.degreeTypeForm?.courseApproveDate);
-    dateapprove.setHours(dateapprove.getHours() + 7)
+    dateapprove.setHours(dateapprove.getHours() + 7);
     const dateaccept = new Date(step1?.degreeTypeForm?.courseAcceptDate);
-    dateaccept.setHours(dateaccept.getHours() + 7)
+    dateaccept.setHours(dateaccept.getHours() + 7);
     const reqBody: any = {
       uniid: this.daftRequest.uniid,
       ref1: '3',
@@ -254,14 +279,10 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       shortdegreenameen: step1?.degreeTypeForm?.degreeNameEnShort || null,
       courseapprovetime: step1?.degreeTypeForm?.courseApproveTime || null,
       courseapprovedate: step1?.degreeTypeForm?.courseApproveDate
-        ? formatDate(
-            dateapprove.toISOString()
-          )
+        ? formatDate(dateapprove.toISOString())
         : null,
       courseacceptdate: step1?.degreeTypeForm?.courseAcceptDate
-        ? formatDate(
-            dateaccept.toISOString()
-          )
+        ? formatDate(dateaccept.toISOString())
         : null,
       coursedetailtype: step1?.courseDetailType || null,
       coursedetailinfo: step1?.courseDetail
@@ -296,7 +317,7 @@ export class CheckComponent implements OnInit, AfterContentChecked {
         : null,
       tokenkey: getCookie('userToken') || null,
       coursestructure: step2?.coursestructure,
-      courseplan: step2?.courseplan
+      courseplan: step2?.courseplan,
     };
 
     reqBody['id'] = this.daftRequest.id;
@@ -315,7 +336,7 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       'verifyStep4',
     ]);
 
-    console.log(detail)
+    console.log(detail);
     let process: any;
     let status: any;
     if (verify == 1) {
@@ -327,7 +348,6 @@ export class CheckComponent implements OnInit, AfterContentChecked {
     }
 
     try {
-      
       const payload: any = {
         systemtype: '3',
         requestid: this.daftRequest?.requestid,
@@ -338,7 +358,10 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       payload.process = process;
       payload.requeststatus = status;
       payload.requestprocess = process;
-      payload.detail = jsonStringify({...detail, filedetail: _.get(this.form, 'value.step4', '')});
+      payload.detail = jsonStringify({
+        ...detail,
+        filedetail: _.get(this.form, 'value.step4', ''),
+      });
       this.eRequestService
         .kspUpdateRequestUniRequestDegree(payload)
         .subscribe(() => {
@@ -356,11 +379,9 @@ export class CheckComponent implements OnInit, AfterContentChecked {
     payload.status = reqStatus;
     payload.requestprocess = reqProcess;
     payload.requeststatus = reqStatus;
-    this.eUniService
-      .uniRequestDegreeCertUpdate(payload)
-      .subscribe(() => {
-        this.onConfirmed();
-      });
+    this.eUniService.uniRequestDegreeCertUpdate(payload).subscribe(() => {
+      this.onConfirmed();
+    });
   }
 
   save() {
@@ -371,14 +392,20 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       'verifyStep4',
     ]);
     const verify = _.get(this.form, 'value.step5.verify', '');
-    console.log(detail)
-    if (!detail.verifyStep1 || !detail.verifyStep2 || !detail.verifyStep3 || !detail.verifyStep4 || !verify) {
+    console.log(detail);
+    if (
+      !detail.verifyStep1 ||
+      !detail.verifyStep2 ||
+      !detail.verifyStep3 ||
+      !detail.verifyStep4 ||
+      !verify
+    ) {
       this.dialog.open(CompleteDialogComponent, {
         width: '350px',
         data: {
           header: `กรุณาเลือกผลการตรวจสอบให้ครบถ้วน `,
           btnLabel: 'ตกลง',
-          isDanger: true
+          isDanger: true,
         },
       });
       return;
@@ -407,13 +434,13 @@ export class CheckComponent implements OnInit, AfterContentChecked {
         subContent: `ระบบส่งแบบคำขอเพื่อพิจารณาประเมินหลักสูตร
         เรียบร้อย`,
 
-        showPrintButton: true,
+        showPrintButton: false,
       },
     });
 
     completeDialog.componentInstance.completed.subscribe((res) => {
       if (res) {
-        this.router.navigate(['/', 'degree-cert', 'list', 1,0]);
+        this.router.navigate(['/', 'degree-cert', 'list', 1, 0]);
       }
     });
   }

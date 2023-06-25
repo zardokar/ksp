@@ -1,20 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CompleteDialogComponent, ConfirmDialogComponent } from '@ksp/shared/dialog';
+import {
+  CompleteDialogComponent,
+  ConfirmDialogComponent,
+} from '@ksp/shared/dialog';
 import { Location } from '@angular/common';
 import _ from 'lodash';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ERequestService } from '@ksp/shared/service';
+import { ERequestService, LoaderService } from '@ksp/shared/service';
 import { jsonStringify, parseJson } from '@ksp/shared/utility';
-import { map } from 'rxjs';
+import { Subject, map } from 'rxjs';
 const detailToState = (res: any) => {
   const newRes =
-    _.filter(res?.datareturn, ({ process, status, userid }) => process === '3' && status === '1' && userid ).map(
-      (data: any) => {
-        return parseJson(data?.detail);
-      }
-    ) || [];
+    _.filter(
+      res?.datareturn,
+      ({ process, status, userid }) =>
+        process === '3' && status === '1' && userid
+    ).map((data: any) => {
+      return parseJson(data?.detail);
+    }) || [];
   const considerCourses = _.reduce(
     newRes,
     (prev: any, curr) => {
@@ -77,13 +82,16 @@ export class VerifyComponent implements OnInit {
   requestId: any;
   process: any;
   processType!: number;
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private location: Location,
     private fb: FormBuilder,
-    private eRequestService: ERequestService
+    private eRequestService: ERequestService,
+    private loaderService: LoaderService
   ) {}
   form = this.fb.group({
     verifyForm: [{}],
@@ -176,11 +184,11 @@ export class VerifyComponent implements OnInit {
               payload.process = this.process;
             }
             this.eRequestService
-            .kspUpdateRequestUniRequestDegree(payload)
-            .subscribe(() => {
-              if (index === _.size(this.dataSource) - 1)
-                this.onConfirmed(index, 'บันทึกข้อมูลสำเร็จ');
-            });
+              .kspUpdateRequestUniRequestDegree(payload)
+              .subscribe(() => {
+                if (index === _.size(this.dataSource) - 1)
+                  this.onConfirmed(index, 'บันทึกข้อมูลสำเร็จ');
+              });
             // this.eRequestService
             //   .kspUniRequestProcessSelectByRequestId(payload.requestid)
             //   .pipe(map(detailToState))

@@ -15,6 +15,7 @@ import { TopNavComponent } from '@ksp/shared/menu';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UniContainerPageComponent } from '@ksp/uni-service/pages';
 import { UniDegreeCertListComponent } from './list/uni-degree-cert-list.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const routes: Routes = [
   {
@@ -53,7 +54,8 @@ const routes: Routes = [
     MatIconModule,
     TopNavComponent,
     ReactiveFormsModule,
-    UniFormBadgeComponent
+    UniFormBadgeComponent,
+    MatProgressSpinnerModule
   ],
   declarations: [DegreeCertRequestComponent],
 })

@@ -10,8 +10,10 @@ import { debounceTime } from 'rxjs';
   styleUrls: ['./course-consider.component.css'],
   providers: providerFactory(CourseConsiderComponent),
 })
-
-export class CourseConsiderComponent extends KspFormBaseComponent implements OnInit {
+export class CourseConsiderComponent
+  extends KspFormBaseComponent
+  implements OnInit
+{
   totalCredit = 0;
   totalStudent = 0;
   totalStudentResult = 0;
@@ -21,6 +23,7 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
   newPlanSums: number[] = [0, 0, 0];
   contactForm?: FormGroup;
   @Input() degreeType = '';
+  calendaryearList: Array<any> = [];
 
   override form = this.fb.group({
     subject1GroupName: [''],
@@ -42,6 +45,13 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
     );
   }
   ngOnInit(): void {
+    const currYear = new Date().getFullYear() + 10;
+    for (let index = 0; index <= 20; index++) {
+      this.calendaryearList.push({
+        value: (currYear - index + 543).toString(),
+        label: (currYear - index + 543).toString(),
+      });
+    }
     if (this.degreeType == 'a') {
       this.addData();
     } else {
@@ -60,11 +70,11 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
         if (res.subjects) {
           this.totalCredit = this.sum(res.subjects, 'credit');
         }
-  
+
         if (res.plans) {
           this.totalStudent = this.sum(res.plans, 'student');
         }
-  
+
         if (res.plansResult) {
           this.totalStudentResult = this.sum(res.plansResult, 'student');
         }
@@ -81,9 +91,18 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
           this.planSums[3] =
             this.planSums[0] + this.planSums[1] + this.planSums[2];
           const results = this.form.controls.plansResult.getRawValue() as any;
-          this.newPlanSums[0] = results.reduce((p: any, c: any) => p + Number(c['student1']), 0);
-          this.newPlanSums[1] = results.reduce((p: any, c: any) => p + Number(c['student2']), 0);
-          this.newPlanSums[2] = results.reduce((p: any, c: any) => p + Number(c['student3']), 0);
+          this.newPlanSums[0] = results.reduce(
+            (p: any, c: any) => p + Number(c['student1']),
+            0
+          );
+          this.newPlanSums[1] = results.reduce(
+            (p: any, c: any) => p + Number(c['student2']),
+            0
+          );
+          this.newPlanSums[2] = results.reduce(
+            (p: any, c: any) => p + Number(c['student3']),
+            0
+          );
           res.plans.forEach((i, index) => {
             const { label, year, ...newData } = i as any;
             let sum = 0;
@@ -182,14 +201,14 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
     return this.fb.group({
       label: 'แผนฯ ปีที่ ' + year,
       student: [''],
-      year: [''],
+      year: [undefined],
       planname: [''],
       student1: [''],
       student2: [''],
       student3: [''],
       planname1: [''],
       planname2: [''],
-      planname3: ['']
+      planname3: [''],
     });
   }
 
@@ -197,7 +216,7 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
     return this.fb.group({
       label: 'แผนฯ ปีที่ ' + year,
       student: [''],
-      year: [''],
+      year: [undefined],
       consider: [false],
       planname: [''],
       student1: [''],
@@ -205,7 +224,7 @@ export class CourseConsiderComponent extends KspFormBaseComponent implements OnI
       student3: [''],
       planname1: [''],
       planname2: [''],
-      planname3: ['']
+      planname3: [''],
     });
   }
 

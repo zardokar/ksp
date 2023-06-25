@@ -11,6 +11,7 @@ import {
 import {
   ERequestService,
   EUniService,
+  LoaderService,
   UniInfoService,
 } from '@ksp/shared/service';
 import {
@@ -21,22 +22,29 @@ import {
   thaiDate,
 } from '@ksp/shared/utility';
 import _ from 'lodash';
-import { map } from 'rxjs';
+import { Subject, map } from 'rxjs';
 import { Location } from '@angular/common';
 import moment from 'moment';
 import { FileGroup } from '@ksp/shared/interface';
 import { EUniApproveProcess } from '@ksp/shared/constant';
 
 const detailToState = (res: any) => {
-  const newRes = _.orderBy(res?.datareturn
-    .filter(({ process, detail }: any) => ['1', '3', '4', '5'].includes(process) && detail)
-    .map((data: any) => {
-      return { ...data, detail: parseJson(data?.detail)};
-    }), ['id'], ['asc']);
+  const newRes = _.orderBy(
+    res?.datareturn
+      .filter(
+        ({ process, detail }: any) =>
+          ['1', '3', '4', '5'].includes(process) && detail
+      )
+      .map((data: any) => {
+        return { ...data, detail: parseJson(data?.detail) };
+      }),
+    ['id'],
+    ['asc']
+  );
   const verifyResult = newRes.map((data: any) => ({
     isBasicValid: checkCondition(data),
     name: mapProcess(data),
-    ...data
+    ...data,
   }));
   const considerCourses = _.reduce(
     newRes,
@@ -49,7 +57,10 @@ const detailToState = (res: any) => {
       }
 
       if (curr?.detail.considerCert) {
-        prev.considerCert = _.concat(prev.considerCert, curr?.detail.considerCert);
+        prev.considerCert = _.concat(
+          prev.considerCert,
+          curr?.detail.considerCert
+        );
       }
       return prev;
     },
@@ -58,7 +69,7 @@ const detailToState = (res: any) => {
   return {
     ...considerCourses,
     verifyResult: verifyResult,
-    response: res.datareturn
+    response: res.datareturn,
   };
 };
 const checkCondition = (data: any) => {
@@ -69,9 +80,9 @@ const checkCondition = (data: any) => {
       return false;
     }
   } else {
-    return _.get(data.detail, 'verify.result') === '1'
+    return _.get(data.detail, 'verify.result') === '1';
   }
-}
+};
 const mapProcess = (data: any) => {
   let status: any = _.find(EUniApproveProcess, {
     requestType: 3,
@@ -81,7 +92,7 @@ const mapProcess = (data: any) => {
     id: _.toNumber(data.status),
   });
   return status.sname;
-}
+};
 @Component({
   selector: 'e-service-consider',
   templateUrl: './consider.component.html',
@@ -135,6 +146,8 @@ export class ConsiderComponent implements OnInit {
   ];
   historyList: Array<any> = [];
   result: any = { '1': 'ผ่านการพิจารณา', '2': 'ไม่ผ่านการพิจารณา' };
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
+  requestKey: any = '';
 
   constructor(
     public dialog: MatDialog,
@@ -144,7 +157,8 @@ export class ConsiderComponent implements OnInit {
     private uniInfoService: UniInfoService,
     private fb: FormBuilder,
     private eRequestService: ERequestService,
-    private location: Location
+    private location: Location,
+    private loaderService: LoaderService
   ) {}
 
   getHistory() {
@@ -158,24 +172,34 @@ export class ConsiderComponent implements OnInit {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res: any) => {
-        this.historyList = res.response.filter((data:any)=>{
-          return (data.process == '4' || (data.process == '3' && data.status == '2')) && data.userid
-        }).map((data: any)=>{
-          data.detail = parseJson(data.detail);
-          data.createdate = thaiDate(new Date(data.createdate));
-          let findstatus: any;
-          if (data.process == '3' && data.status == '2') {
-            findstatus = 3;
-          } else {
-            findstatus = data.status;
-          }
-          const findResult = this.choices.find(choice=>{return choice.value == findstatus });
-          data.resultname = findResult ? findResult?.name : '';
-          data.comment = data.detail.verify.detail || '';
-          return data;
-        });
-        this.verifyResult = res?.verifyResult.filter((data: any) => { 
-          return (data.process == '3' && data.status == '2') || data.process == '4'
+        this.historyList = res.response
+          .filter((data: any) => {
+            return (
+              (data.process == '4' ||
+                (data.process == '3' && data.status == '2')) &&
+              data.userid
+            );
+          })
+          .map((data: any) => {
+            data.detail = parseJson(data.detail);
+            data.createdate = thaiDate(new Date(data.createdate));
+            let findstatus: any;
+            if (data.process == '3' && data.status == '2') {
+              findstatus = 3;
+            } else {
+              findstatus = data.status;
+            }
+            const findResult = this.choices.find((choice) => {
+              return choice.value == findstatus;
+            });
+            data.resultname = findResult ? findResult?.name : '';
+            data.comment = data.detail.verify.detail || '';
+            return data;
+          });
+        this.verifyResult = res?.verifyResult.filter((data: any) => {
+          return (
+            (data.process == '3' && data.status == '2') || data.process == '4'
+          );
         });
         this.considerCourses = [
           ...(res?.considerCourses || []),
@@ -188,11 +212,11 @@ export class ConsiderComponent implements OnInit {
 
         let lastPlan = {} as any;
         if (this.daftRequest.requestprocess == '4') {
-          lastPlan = res?.verifyResult.find((data: any)=>{
+          lastPlan = res?.verifyResult.find((data: any) => {
             return data.process == '4';
           }) as any;
         } else {
-          lastPlan = res?.verifyResult.find((data: any)=>{
+          lastPlan = res?.verifyResult.find((data: any) => {
             return data.process == '3' && data.status == '2';
           }) as any;
         }
@@ -201,9 +225,15 @@ export class ConsiderComponent implements OnInit {
             plans: lastPlan?.detail?.plan.plans || [],
             plansResult: lastPlan?.detail?.plan.plansResult,
             subjects: lastPlan?.detail?.plan.subjects,
-            subject1GroupName: lastPlan?.detail?.plan.subject1GroupName ? lastPlan?.detail?.plan.subject1GroupName : '',
-            subject2GroupName: lastPlan?.detail?.plan.subject2GroupName ? lastPlan?.detail?.plan.subject2GroupName : '',
-            subject3GroupName: lastPlan?.detail?.plan.subject3GroupName ? lastPlan?.detail?.plan.subject3GroupName : '',
+            subject1GroupName: lastPlan?.detail?.plan.subject1GroupName
+              ? lastPlan?.detail?.plan.subject1GroupName
+              : '',
+            subject2GroupName: lastPlan?.detail?.plan.subject2GroupName
+              ? lastPlan?.detail?.plan.subject2GroupName
+              : '',
+            subject3GroupName: lastPlan?.detail?.plan.subject3GroupName
+              ? lastPlan?.detail?.plan.subject3GroupName
+              : '',
           });
         }
         this.form.controls.verify.patchValue(lastPlan?.detail?.verify);
@@ -217,14 +247,22 @@ export class ConsiderComponent implements OnInit {
         .pipe(
           map((res) => {
             this.daftRequest = res;
-            if (res.degreelevel == '1' || res.degreelevel == '2' || res.degreelevel == '3'|| res.degreelevel == '4') {
+            if (
+              res.degreelevel == '1' ||
+              res.degreelevel == '2' ||
+              res.degreelevel == '3' ||
+              res.degreelevel == '4'
+            ) {
               this.degreeType = 'a';
             } else {
               this.degreeType = 'b';
             }
             this.allowEdit =
               res?.requestprocess === '3' && res?.requeststatus === '1';
-            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(res);
+            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(
+              res,
+              'uni-eservice'
+            );
           })
         )
         .subscribe((res) => {
@@ -232,18 +270,20 @@ export class ConsiderComponent implements OnInit {
             this.stepData = res;
             this.requestNumber = res?.requestNo;
             if (this.daftRequest.requestprocess == '3') {
-              if (this.daftRequest.degreelevel == '1' || 
+              if (
+                this.daftRequest.degreelevel == '1' ||
                 this.daftRequest.degreelevel == '2' ||
                 this.daftRequest.degreelevel == '3' ||
-                this.daftRequest.degreelevel == '4') {
-                  this.form.controls.plan.patchValue({
-                    plansResult: [],
-                    plans: res?.step2?.plan1.plans || [],
-                    subjects: res?.step2?.plan1.subjects,
-                    subject1GroupName: res?.step2?.plan1.subject1GroupName,
-                    subject2GroupName: res?.step2?.plan1.subject2GroupName,
-                    subject3GroupName: res?.step2?.plan1.subject3GroupName,
-                  });
+                this.daftRequest.degreelevel == '4'
+              ) {
+                this.form.controls.plan.patchValue({
+                  plansResult: [],
+                  plans: res?.step2?.plan1.plans || [],
+                  subjects: res?.step2?.plan1.subjects,
+                  subject1GroupName: res?.step2?.plan1.subject1GroupName,
+                  subject2GroupName: res?.step2?.plan1.subject2GroupName,
+                  subject3GroupName: res?.step2?.plan1.subject3GroupName,
+                });
               } else {
                 this.form.controls.plan.patchValue({
                   plansResult: [],
@@ -256,7 +296,7 @@ export class ConsiderComponent implements OnInit {
               }
             }
             this.form.patchValue({
-              step1: res.step1
+              step1: res.step1,
             });
           }
           this.getHistory();
@@ -265,6 +305,7 @@ export class ConsiderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.requestKey = this.route.snapshot.params['key'];
     this.getDegreeCert();
   }
 
@@ -277,11 +318,25 @@ export class ConsiderComponent implements OnInit {
   }
 
   save() {
+    if (
+      _.get(this.form, 'value.verify.result', '') === '' ||
+      _.get(this.form, 'value.verify.result', '') === null
+    ) {
+      this.dialog.open(CompleteDialogComponent, {
+        width: '350px',
+        data: {
+          header: `กรุณาเลือกผลการตรวจสอบให้ครบถ้วน `,
+          btnLabel: 'ตกลง',
+          isDanger: true,
+        },
+      });
+      return;
+    }
     const detail = jsonStringify({
       ...this.form.value,
       considerCourses: this.newConsiderCourses,
       considerCert: this.newConsiderCert,
-      oldPlan: this.stepData.step2
+      oldPlan: this.stepData.step2,
     });
     let reqProcess = '';
     let reqStatus = '';
@@ -325,8 +380,8 @@ export class ConsiderComponent implements OnInit {
     let reqProcess = '';
     let reqStatus = '';
     if (_.get(this.form, 'value.verify.result', '') == '3') {
-      reqStatus = '2'
-      reqProcess = '3'
+      reqStatus = '2';
+      reqProcess = '3';
     } else {
       reqStatus = _.get(this.form, 'value.verify.result', '');
       reqProcess = '4';
@@ -336,11 +391,9 @@ export class ConsiderComponent implements OnInit {
     payload.status = reqStatus;
     payload.requestprocess = reqProcess;
     payload.requeststatus = reqStatus;
-    this.eUniService
-      .uniRequestDegreeCertUpdate(payload)
-      .subscribe(() => {
-        this.onConfirmed();
-      });
+    this.eUniService.uniRequestDegreeCertUpdate(payload).subscribe(() => {
+      this.onConfirmed();
+    });
   }
 
   toVerifyPage(type: number) {
@@ -376,7 +429,7 @@ export class ConsiderComponent implements OnInit {
         checkresult: [],
         systemType: 'ksp',
         showLicense: false,
-        mode: 'view'
+        mode: 'view',
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -405,9 +458,9 @@ export class ConsiderComponent implements OnInit {
     const step4: any = this.stepData.step4;
 
     const dateapprove = new Date(step1?.degreeTypeForm?.courseApproveDate);
-    dateapprove.setHours(dateapprove.getHours() + 7)
+    dateapprove.setHours(dateapprove.getHours() + 7);
     const dateaccept = new Date(step1?.degreeTypeForm?.courseAcceptDate);
-    dateaccept.setHours(dateaccept.getHours() + 7)
+    dateaccept.setHours(dateaccept.getHours() + 7);
     const reqBody: any = {
       uniid: this.daftRequest.uniid,
       ref1: '3',
@@ -437,14 +490,10 @@ export class ConsiderComponent implements OnInit {
       shortdegreenameen: step1?.degreeTypeForm?.degreeNameEnShort || null,
       courseapprovetime: step1?.degreeTypeForm?.courseApproveTime || null,
       courseapprovedate: step1?.degreeTypeForm?.courseApproveDate
-        ? formatDate(
-            dateapprove.toISOString()
-          )
+        ? formatDate(dateapprove.toISOString())
         : null,
       courseacceptdate: step1?.degreeTypeForm?.courseAcceptDate
-        ? formatDate(
-            dateaccept.toISOString()
-          )
+        ? formatDate(dateaccept.toISOString())
         : null,
       coursedetailtype: step1?.courseDetailType || null,
       coursedetailinfo: step1?.courseDetail
@@ -465,9 +514,7 @@ export class ConsiderComponent implements OnInit {
       courseteacher: step2?.teacher?.teachers
         ? JSON.stringify(step2?.teacher?.teachers)
         : null,
-      courseinstructor: step2?.nitet?.nitets
-        ? JSON.stringify(step2?.nitet?.nitets)
-        : null,
+      courseinstructor: step2?.nitet ? JSON.stringify(step2?.nitet) : null,
       courseadvisor: step2?.advisor?.advisors
         ? JSON.stringify(step2?.advisor?.advisors)
         : null,
@@ -479,37 +526,42 @@ export class ConsiderComponent implements OnInit {
         : null,
       tokenkey: getCookie('userToken') || null,
     };
+    console.log(step2?.nitet);
     const newPlans = this.form.controls.plan.getRawValue() as any;
     if (['1', '2', '3', '4'].includes(this.daftRequest.degreelevel)) {
-      reqBody['coursestructure'] = JSON.stringify(newPlans?.plans.map((data: any, index: any) => {
-        if (newPlans.plansResult[index]?.consider) {
-          data.year = newPlans.plansResult[index].year;
-          data.student = newPlans.plansResult[index].student;
-          data.planname = newPlans.plansResult[index].planname;
-        }
-        return data;
-      }));
+      reqBody['coursestructure'] = JSON.stringify(
+        newPlans?.plans.map((data: any, index: any) => {
+          if (newPlans.plansResult[index]?.consider) {
+            data.year = newPlans.plansResult[index].year;
+            data.student = newPlans.plansResult[index].student;
+            data.planname = newPlans.plansResult[index].planname;
+          }
+          return data;
+        })
+      );
       reqBody['courseplan'] = JSON.stringify(newPlans?.subjects);
     } else {
-      reqBody['coursestructure'] = JSON.stringify(newPlans?.plans.map((data: any, index: any) => {
-        if (newPlans.plansResult[index]?.consider) {
-          data.year = newPlans.plansResult[index].year;
-          data.student1 = newPlans.plansResult[index].student1;
-          data.student2 = newPlans.plansResult[index].student2;
-          data.student3 = newPlans.plansResult[index].student3;
-          data.planname1 = newPlans.plansResult[index].planname1;
-          data.planname2 = newPlans.plansResult[index].planname2;
-          data.planname3 = newPlans.plansResult[index].planname3;
-        }
-        return data;
-      }));
+      reqBody['coursestructure'] = JSON.stringify(
+        newPlans?.plans.map((data: any, index: any) => {
+          if (newPlans.plansResult[index]?.consider) {
+            data.year = newPlans.plansResult[index].year;
+            data.student1 = newPlans.plansResult[index].student1;
+            data.student2 = newPlans.plansResult[index].student2;
+            data.student3 = newPlans.plansResult[index].student3;
+            data.planname1 = newPlans.plansResult[index].planname1;
+            data.planname2 = newPlans.plansResult[index].planname2;
+            data.planname3 = newPlans.plansResult[index].planname3;
+          }
+          return data;
+        })
+      );
       reqBody['courseplan'] = JSON.stringify({
-        subjects: newPlans?.subjects, 
+        subjects: newPlans?.subjects,
         subjectgroupname: {
           subject1GroupName: newPlans?.subject1GroupName,
           subject2GroupName: newPlans?.subject2GroupName,
-          subject3GroupName: newPlans?.subject3GroupName
-        }
+          subject3GroupName: newPlans?.subject3GroupName,
+        },
       });
     }
 

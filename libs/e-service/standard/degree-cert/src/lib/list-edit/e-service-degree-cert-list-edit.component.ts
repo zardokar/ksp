@@ -5,7 +5,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { requestEditStatus } from '@ksp/shared/constant';
 import { ListData, KspPaginationComponent } from '@ksp/shared/interface';
-import { UniInfoService, AddressService, LoaderService, EUniService } from '@ksp/shared/service';
+import {
+  UniInfoService,
+  AddressService,
+  LoaderService,
+  EUniService,
+} from '@ksp/shared/service';
 import { formatRequestNo, getCookie } from '@ksp/shared/utility';
 import {
   EditDegreeCertSearchComponent,
@@ -28,9 +33,7 @@ const mapOption = () =>
   templateUrl: './e-service-degree-cert-list-edit.component.html',
   styleUrls: ['./e-service-degree-cert-list-edit.component.scss'],
 })
-export class EServiceDegreeCertListEditComponent
-  extends KspPaginationComponent
-{
+export class EServiceDegreeCertListEditComponent extends KspPaginationComponent {
   form = this.fb.group({
     search: [{}],
   });
@@ -118,7 +121,8 @@ export class EServiceDegreeCertListEditComponent
             label: name + (campusname ? `, ${campusname}` : ''),
           }));
         })
-      ).subscribe((res) => {
+      )
+      .subscribe((res) => {
         this.universities = res;
       });
     this.uniInfoService
@@ -158,7 +162,7 @@ export class EServiceDegreeCertListEditComponent
     } = this.form.controls.search.value as any;
     let requestno = '';
     if (licenseNumber) {
-      requestno = licenseNumber.replaceAll('-', ''); 
+      requestno = licenseNumber.replaceAll('-', '');
     }
     return {
       unicode: institutionNumber || null,
@@ -175,42 +179,46 @@ export class EServiceDegreeCertListEditComponent
   }
 
   override search() {
-    this.eUniService.editUniDegreeSearch(this.getRequest()).subscribe(async (res) => {
-      const newData: any = [];
-      this.pageEvent.length = res.countrow;
-      for (const row of res?.datareturn || []) {
-        const degreeCode = this._findOptions(
-          this.degreeLevelOptions,
-          row?.degreelevel
-        );
-        const approveDate = row?.courseapprovedate
-          ? new Date(row?.courseapprovedate)
-          : '-';
-        const submitDate = row?.requestdate
-          ? new Date(row?.requestdate)
-          : '-';
-        const { major, branch } = await this.uniInfoService.getMajorAndBranch(
-          row
-        );
-        const findStatus = this.statusList.find((data: any) => { return data.value == row.status });
-        newData.push({
-          key: row?.id,
-          requestId: formatRequestNo(row?.requestno) || '-',
-          submitDate,
-          approveCode: row?.degreeapprovecode || '-',
-          degreeCode,
-          major,
-          branch,
-          university: row?.uniname || '-',
-          degreeName: row?.fulldegreenameth || '-',
-          approveDate: approveDate,
-          statusname: findStatus?.elabel,
-          status: row?.status,
-          process: row?.process
-        });
-      }
-      this.dataSource.data = newData;
-    });
+    this.eUniService
+      .editUniDegreeSearch(this.getRequest())
+      .subscribe(async (res) => {
+        const newData: any = [];
+        this.pageEvent.length = res.countrow;
+        for (const row of res?.datareturn || []) {
+          const degreeCode = this._findOptions(
+            this.degreeLevelOptions,
+            row?.degreelevel
+          );
+          const approveDate = row?.courseapprovedate
+            ? new Date(row?.courseapprovedate)
+            : '-';
+          const submitDate = row?.requestdate
+            ? new Date(row?.requestdate)
+            : '-';
+          const { major, branch } = await this.uniInfoService.getMajorAndBranch(
+            row
+          );
+          const findStatus = this.statusList.find((data: any) => {
+            return data.value == row.status;
+          });
+          newData.push({
+            key: row?.id,
+            requestId: formatRequestNo(row?.requestno) || '-',
+            submitDate,
+            approveCode: row?.degreeapprovecode || '-',
+            degreeCode,
+            major,
+            branch,
+            university: row?.uniname || '-',
+            degreeName: row?.fulldegreenameth || '-',
+            approveDate: approveDate,
+            statusname: findStatus?.elabel,
+            status: row?.status,
+            process: row?.process,
+          });
+        }
+        this.dataSource.data = newData;
+      });
   }
   private _findOptions(dataSource: any, key: any) {
     return _.find(dataSource, { value: key })?.label || '-';
@@ -231,7 +239,7 @@ const displayedColumns: string[] = [
   'degreeName',
   'major',
   'branch',
-  'verifyStatus'
+  'verifyStatus',
 ];
 
 export interface DegreeCertInfo {

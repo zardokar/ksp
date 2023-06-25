@@ -25,7 +25,7 @@
           </div>
         </div>
       </fieldset>
-      <fieldset [disabled]="form.controls.verify.value === '1'">
+      <fieldset *ngIf="form.controls.verify.value === '2'">
         <div class="row mx-2 align-items-center">
           <div class="col">
             <div class="form-label">วันที่ต้องการแบบคำขอส่งกลับ</div>

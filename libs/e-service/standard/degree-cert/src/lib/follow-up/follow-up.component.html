@@ -1,3 +1,7 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
 <!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ksp-top-nav>
   <span header> การติดตามเชิงประจักษ์ </span>

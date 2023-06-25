@@ -1,16 +1,20 @@
 import { KspFormBaseComponent } from '@ksp/shared/interface';
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileMultiUploadComponent, FileUploadComponent } from '@ksp/shared/form/file-upload';
+import {
+  FileMultiUploadComponent,
+  FileUploadComponent,
+} from '@ksp/shared/form/file-upload';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { providerFactory } from '@ksp/shared/utility';
 import { v4 as uuidv4 } from 'uuid';
 import { SharedFormOthersModule } from '@ksp/shared/form/others';
-import { UniInfoService } from '@ksp/shared/service';
-import { map } from 'rxjs';
+import { LoaderService, UniInfoService } from '@ksp/shared/service';
+import { Subject, map } from 'rxjs';
 import { PdfViewerComponent } from '@ksp/shared/dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'e-service-form-meeting-record',
@@ -21,7 +25,8 @@ import { MatDialog } from '@angular/material/dialog';
     ReactiveFormsModule,
     MatDatepickerModule,
     SharedFormOthersModule,
-    FileMultiUploadComponent
+    FileMultiUploadComponent,
+    MatProgressSpinnerModule,
   ],
   template: ` <p>form-meeting-record works!</p> `,
   templateUrl: './form-meeting-record.component.html',
@@ -39,10 +44,16 @@ export class FormMeetingRecordComponent extends KspFormBaseComponent {
   });
   uniqueNo = '';
   boardOption: any = [];
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
   @Input() showBoxHeader = 'บันทึกมติที่ประชุมคณะอนุกรรมการ';
-  @Input() displayHeader =  true;
+  @Input() displayHeader = true;
 
-  constructor(private fb: FormBuilder, private uniInfo: UniInfoService, public dialog: MatDialog) {
+  constructor(
+    private fb: FormBuilder,
+    private uniInfo: UniInfoService,
+    public dialog: MatDialog,
+    private loaderService: LoaderService
+  ) {
     super();
     this.uniqueNo = uuidv4();
     this.subscriptions.push(
@@ -79,7 +90,7 @@ export class FormMeetingRecordComponent extends KspFormBaseComponent {
         files: [e?.file],
         checkresult: [],
         systemType: 'ksp',
-        mode: 'view'
+        mode: 'view',
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
