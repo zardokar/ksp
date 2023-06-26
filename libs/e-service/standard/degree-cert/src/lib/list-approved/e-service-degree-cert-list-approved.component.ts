@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { EUniService, LoaderService, UniInfoService } from '@ksp/shared/service';
+import {
+  EUniService,
+  LoaderService,
+  UniInfoService,
+} from '@ksp/shared/service';
 import { KspPaginationComponent, ListData } from '@ksp/shared/interface';
 import { map, Subject } from 'rxjs';
 import _ from 'lodash';
@@ -27,7 +31,10 @@ const mapOption = () =>
   templateUrl: './e-service-degree-cert-list-approved.component.html',
   styleUrls: ['./e-service-degree-cert-list-approved.component.scss'],
 })
-export class EServiceDegreeCertApprovedListComponent extends KspPaginationComponent implements OnInit {
+export class EServiceDegreeCertApprovedListComponent
+  extends KspPaginationComponent
+  implements OnInit
+{
   showActionButtons = false;
   data: DegreeCertInfo[] = [data];
   dataSource = new MatTableDataSource<DegreeCertInfo>();
@@ -50,9 +57,9 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
     private uniInfoService: UniInfoService,
     public dialog: MatDialog,
     private loaderService: LoaderService
-    ) {
-      super();
-    }
+  ) {
+    super();
+  }
 
   private _findOptions(dataSource: any, key: any) {
     return _.find(dataSource, { value: key })?.label || '-';
@@ -75,24 +82,24 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
 
   getall() {
     this.uniInfoService
-    .getUniuniversity()
-    .pipe(
-      map((res) => {
-        return res?.datareturn?.map(({ id, name, campusname }: any) => ({
-          value: id,
-          label: name + (campusname ? `, ${campusname}` : ''),
-        }));
-      })
-    )
-    .subscribe((data) => {
-      this.uniUniversityOption = data;
-    });
+      .getUniuniversity()
+      .pipe(
+        map((res) => {
+          return res?.datareturn?.map(({ id, name, campusname }: any) => ({
+            value: id,
+            label: name + (campusname ? `, ${campusname}` : ''),
+          }));
+        })
+      )
+      .subscribe((data) => {
+        this.uniUniversityOption = data;
+      });
     this.uniInfoService
-    .uniDegreeLevel()
-    .pipe(mapOption())
-    .subscribe((res) => {
-      this.degreeLevelOptions = res;
-    });
+      .uniDegreeLevel()
+      .pipe(mapOption())
+      .subscribe((res) => {
+        this.degreeLevelOptions = res;
+      });
   }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
@@ -121,7 +128,7 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
       degreeapprovecode,
       degreelevel,
       admissionstatus,
-      graduatestatus
+      graduatestatus,
     } = this.form.controls.search.value as any;
     return {
       requestno: requestno ? requestno.replaceAll('-', '') : null,
@@ -139,7 +146,8 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
       coursemajor: null,
       coursefieldofstudy: null,
       coursesubjects: null,
-      ...this.tableRecord,
+      offset: this.tableRecord.offset,
+      row: 15,
     };
   }
 
@@ -147,33 +155,47 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
     for (let index = 0; index < 10; index++) {
       this.data = [...this.data, data];
     }
-    this.requestService.searchAdmissionRequest(this.getRequest()).subscribe((res: any) => {
-      if (res.returncode != '98') {
-        this.pageEvent.length = res.countnum;
-        this.dataSource.data = res.datareturn.map((item: any, index: any) => {
-          item.order = index+1;
-          item.requestnounirequestadmission = formatRequestNo(item?.requestnounirequestadmission);
-          if (item.requesttype == '05') {
-            item.admissionstatus = this.mapStatusProcess(item.status, item.process);
-            item.graduatestatus = '';
-          } else {
-            item.graduatestatus = this.mapStatusProcess(item.status, item.process);
-            item.admissionstatus = '';
-          }
-          item.requestdate = thaiDate(new Date(item?.requestdateunirequestadmission));
-          item.updatedate = item?.updatedate ? thaiDate(new Date(item?.updatedate)) : '';
-          const degreeLevel = this._findOptions(
-            this.degreeLevelOptions,
-            item?.degreelevel
-          );
-          console.log(degreeLevel)
-          item.degreelevelname = degreeLevel;
-          return item
-        });
-      } else {
-        this.dataSource.data = [];
-      }
-    });
+    this.requestService
+      .searchAdmissionRequest(this.getRequest())
+      .subscribe((res: any) => {
+        if (res.returncode != '98') {
+          this.pageEvent.length = res.countnum;
+          this.dataSource.data = res.datareturn.map((item: any, index: any) => {
+            item.order = index + 1;
+            item.requestnounirequestadmission = formatRequestNo(
+              item?.requestnounirequestadmission
+            );
+            if (item.requesttype == '05') {
+              item.admissionstatus = this.mapStatusProcess(
+                item.status,
+                item.process
+              );
+              item.graduatestatus = '';
+            } else {
+              item.graduatestatus = this.mapStatusProcess(
+                item.status,
+                item.process
+              );
+              item.admissionstatus = '';
+            }
+            item.requestdate = thaiDate(
+              new Date(item?.requestdateunirequestadmission)
+            );
+            item.updatedate = item?.updatedate
+              ? thaiDate(new Date(item?.updatedate))
+              : '';
+            const degreeLevel = this._findOptions(
+              this.degreeLevelOptions,
+              item?.degreelevel
+            );
+            console.log(degreeLevel);
+            item.degreelevelname = degreeLevel;
+            return item;
+          });
+        } else {
+          this.dataSource.data = [];
+        }
+      });
   }
 
   mapStatusProcess(status: string, process: string) {
@@ -195,22 +217,26 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
     this.dataSource.data = [];
   }
 
-  viewhistory(item: any){
+  viewhistory(item: any) {
     const payload = {
       id: item.unirequestadmissionid,
       offset: 0,
-      row: 100
+      row: 100,
     };
-    this.requestService.requestAdmissionHistory(payload).subscribe((response => {
-      if (response.datareturn) {
-        response.datareturn = response.datareturn.map((data:any)=>{
-          data.requestdate = data.processupdatedate;
-          data.updateby = data.firstnameth;
-          return data
-        }).sort((data1:any,data2:any) => data1.id - data2.id);
-      }
-      this.opendialogHistory(response.datareturn);
-    }));
+    this.requestService
+      .requestAdmissionHistory(payload)
+      .subscribe((response) => {
+        if (response.datareturn) {
+          response.datareturn = response.datareturn
+            .map((data: any) => {
+              data.requestdate = data.processupdatedate;
+              data.updateby = data.firstnameth;
+              return data;
+            })
+            .sort((data1: any, data2: any) => data1.id - data2.id);
+        }
+        this.opendialogHistory(response.datareturn);
+      });
   }
 
   opendialogHistory(data: any) {
@@ -218,8 +244,8 @@ export class EServiceDegreeCertApprovedListComponent extends KspPaginationCompon
       width: '600px',
       data: {
         data: data,
-        system: 'eservice'
-      }
+        system: 'eservice',
+      },
     });
   }
 
@@ -253,7 +279,7 @@ const displayedColumns: string[] = [
   'updatedate',
   'requestdate',
   'history',
-  'print'
+  'print',
 ];
 export interface DegreeCertInfo {
   degreeId: string;

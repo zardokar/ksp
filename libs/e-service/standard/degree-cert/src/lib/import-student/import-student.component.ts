@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UniserviceImportType } from '@ksp/shared/interface';
-import {
-  CompleteDialogComponent,
-} from '@ksp/shared/dialog';
+import { CompleteDialogComponent } from '@ksp/shared/dialog';
 import {
   OriginalDegreeDialogComponent,
   StudentListSubjectComponent,
@@ -69,7 +67,7 @@ export class ImportStudentComponent implements OnInit {
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   requestid = '';
   requeststatus = '1';
-  studentStatusList = studentStatusList
+  studentStatusList = studentStatusList;
 
   constructor(
     public dialog: MatDialog,
@@ -115,7 +113,9 @@ export class ImportStudentComponent implements OnInit {
           parseuser.forEach((user: any, index: any) => {
             user.index = index;
             user.subjects = JSON.parse(user.subjects);
-            user.teachingpracticeschool = JSON.parse(user.teachingpracticeschool);
+            user.teachingpracticeschool = JSON.parse(
+              user.teachingpracticeschool
+            );
             user.originaldegree = JSON.parse(user.originaldegree);
             this.user.push(this.edituser(user));
           });
@@ -233,9 +233,7 @@ export class ImportStudentComponent implements OnInit {
               subject2: data.subjects.subject2,
             },
           ]
-        : [
-            { subject1: '', subject2: '' }
-          ],
+        : [{ subject1: '', subject2: '' }],
       teachingpracticeschool: [data.teachingpracticeschool],
     });
   }
@@ -262,7 +260,7 @@ export class ImportStudentComponent implements OnInit {
       width: '600px',
       data: {
         ...originalDegreeInfo,
-        disableAll: true
+        disableAll: true,
       },
     });
     dialogRef.afterClosed().subscribe((res) => {
@@ -283,7 +281,8 @@ export class ImportStudentComponent implements OnInit {
         right: '0px',
       },
       data: {
-        teachingpracticeschool: this.user.at(index).value.teachingpracticeschool,
+        teachingpracticeschool:
+          this.user.at(index).value.teachingpracticeschool,
         disableAll: true,
       },
     });
@@ -343,7 +342,7 @@ export class ImportStudentComponent implements OnInit {
       total: this.user.value.length,
       requestdate: this.requestDate,
       payload: { ...this.payload },
-      allstudent: this.user.getRawValue()
+      allstudent: this.user.getRawValue(),
     };
 
     localForage.setItem('studentform', datainfo).then(() => {
@@ -377,8 +376,12 @@ export class ImportStudentComponent implements OnInit {
     setTimeout(() => {
       const doc = document.getElementById('address-info');
       if (doc != null) {
-        doc.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-      }   
+        doc.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest',
+        });
+      }
     }, 0);
   }
 }

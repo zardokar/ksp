@@ -2,7 +2,10 @@ import { map } from 'rxjs';
 import { KspFormBaseComponent } from '@ksp/shared/interface';
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileMultiUploadComponent, FileUploadComponent } from '@ksp/shared/form/file-upload';
+import {
+  FileMultiUploadComponent,
+  FileUploadComponent,
+} from '@ksp/shared/form/file-upload';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { providerFactory } from '@ksp/shared/utility';
@@ -21,7 +24,7 @@ import { MatDialog } from '@angular/material/dialog';
     ReactiveFormsModule,
     MatDatepickerModule,
     SharedFormOthersModule,
-    FileMultiUploadComponent
+    FileMultiUploadComponent,
   ],
   template: ` <p>form-meeting-record works!</p> `,
   templateUrl: './form-approve-meeting-record.component.html',
@@ -40,7 +43,12 @@ export class FormApproveMeetingRecordComponent extends KspFormBaseComponent {
   });
   uniqueNo = '';
   boardOption: any = [];
-  constructor(private fb: FormBuilder, private uniInfo: UniInfoService, public dialog: MatDialog) {
+  calendaryearList: Array<any> = [];
+  constructor(
+    private fb: FormBuilder,
+    private uniInfo: UniInfoService,
+    public dialog: MatDialog
+  ) {
     super();
     this.uniqueNo = uuidv4();
     this.subscriptions.push(
@@ -62,6 +70,13 @@ export class FormApproveMeetingRecordComponent extends KspFormBaseComponent {
       .subscribe((res) => {
         this.boardOption = res;
       });
+    const currYear = new Date().getFullYear() + 10;
+    for (let index = 0; index <= 20; index++) {
+      this.calendaryearList.push({
+        value: (currYear - index + 543).toString(),
+        label: (currYear - index + 543).toString(),
+      });
+    }
   }
   onUploadComplete(evt: any) {
     this.form.controls.file.setValue(evt);

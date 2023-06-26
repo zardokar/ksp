@@ -13,7 +13,7 @@ function toDate(sDate: any) {
 })
 export class UniInfoService {
   constructor(private http: HttpClient) {}
-  mappingUniverSitySelectByIdWithForm(res: any): any {
+  mappingUniverSitySelectByIdWithForm(res: any, system: string): any {
     const formData: any = {};
     formData.checkresult = parseJson(res.checkresult);
     formData.requestNo = res?.requestno ?? '';
@@ -54,7 +54,9 @@ export class UniInfoService {
         ? parseJson(res?.coordinatorinfo)
         : null,
     };
+    // console.log(parseJson(res.courseinstructor))
     const parseCourseInstructor = res.courseinstructor ? parseJson(res.courseinstructor) : {};
+    console.log(parseCourseInstructor)
     const parseCourseAdvisor = res.courseadvisor ? parseJson(res.courseadvisor) : [];
     const parseCourseTeacher = res.courseteacher ? parseJson(res.courseteacher) : [];
     formData.step2 = {
@@ -69,7 +71,9 @@ export class UniInfoService {
         advisors: parseCourseAdvisor,
       },
     };
+    // console.log(parseJson(res.coursestructure), parseJson(res.courseplan), res?.degreelevel)
     if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
+      console.log('here')
       formData.step2.plan1 = {
         plans: res.coursestructure ? parseJson(res.coursestructure) : [],
         subjects: res.courseplan ? parseJson(res.courseplan) : [],

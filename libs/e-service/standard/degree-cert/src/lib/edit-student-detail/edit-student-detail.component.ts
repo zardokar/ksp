@@ -14,11 +14,25 @@ import {
   UniInfoService,
   UniRequestService,
 } from '@ksp/shared/service';
-import { getCookie, idCardPattern, mapMultiFileInfo, nameEnPattern, nameThPattern, parseJson, phonePattern, thaiDate, validatorMessages } from '@ksp/shared/utility';
+import {
+  getCookie,
+  idCardPattern,
+  mapMultiFileInfo,
+  nameEnPattern,
+  nameThPattern,
+  parseJson,
+  phonePattern,
+  thaiDate,
+  validatorMessages,
+} from '@ksp/shared/utility';
 import { EMPTY, Observable, switchMap } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
-import { OriginalDegreeDialogComponent, StudentListSubjectComponent, TrainingAddressComponent } from '@ksp/uni-service/dialog';
+import {
+  OriginalDegreeDialogComponent,
+  StudentListSubjectComponent,
+  TrainingAddressComponent,
+} from '@ksp/uni-service/dialog';
 import { FormAddressTableComponent } from '@ksp/shared/form/others';
 
 @Component({
@@ -42,7 +56,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
         reason: null,
         result: null,
       },
-    ]
+    ],
   });
   uniqueTimestamp: any = '';
   isNotFound = false;
@@ -109,8 +123,12 @@ export class EserviceEditStudentDetailComponent implements OnInit {
   ngOnInit() {
     this.uniqueTimestamp = uuidv4();
     this.studentDetail.disable();
-    this.generalInfoService.getPrefix().subscribe((res: any) => { this.prefixList = res; });
-    this.generalInfoService.getNationality().subscribe((res: any) => { this.nationalityList = res; });
+    this.generalInfoService.getPrefix().subscribe((res: any) => {
+      this.prefixList = res;
+    });
+    this.generalInfoService.getNationality().subscribe((res: any) => {
+      this.nationalityList = res;
+    });
     this.route.paramMap.subscribe((res) => {
       this.requestid = res.get('id') || '';
     });
@@ -121,7 +139,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
 
   getRequestById() {
     this.requestService
-      .getRequestEditAdmissionById({id: this.requestid})
+      .getRequestEditAdmissionById({ id: this.requestid })
       .subscribe((response: any) => {
         if (response) {
           console.log(response);
@@ -130,14 +148,16 @@ export class EserviceEditStudentDetailComponent implements OnInit {
           this.requestid = response.id;
           this.systemtype = response.systemtype;
           const requestdata = parseJson(response.admissionlist);
-          console.log(requestdata)
+          console.log(requestdata);
           this.uploadFileList = JSON.parse(requestdata.files);
           const dataEdit = requestdata.admissionlist[0];
           console.log(dataEdit);
           dataEdit.originaldegree = JSON.parse(dataEdit.originaldegree);
           // dataEdit. = JSON.parse(dataEdit.originaldegree);
           dataEdit.subjects = JSON.parse(dataEdit.subjects);
-          dataEdit.teachingpracticeschool = JSON.parse(dataEdit.teachingpracticeschool);
+          dataEdit.teachingpracticeschool = JSON.parse(
+            dataEdit.teachingpracticeschool
+          );
           this.user.push(this.edituser(dataEdit));
         } else {
           this.data = false;
@@ -174,7 +194,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
         switchMap((res) => {
           if (res) {
             const verifyform = this.formData.controls.verify.value as any;
-            console.log(verifyform)
+            console.log(verifyform);
             const payloadKspUpdate = {
               requestid: this.requestid,
               process: '2',
@@ -184,22 +204,22 @@ export class EserviceEditStudentDetailComponent implements OnInit {
               userid: getCookie('userId'),
             };
             this.requestService
-            .requestProcessInsert(payloadKspUpdate)
-            .subscribe((response: any) => {
-              console.log(verifyform)
-              if (verifyform.result == "2") {
-                this.updateAdmission();
-              } else {
-                this.onCompleted(this.requestNo);
-                return;
-              }
-            });
+              .requestProcessInsert(payloadKspUpdate)
+              .subscribe((response: any) => {
+                console.log(verifyform);
+                if (verifyform.result == '2') {
+                  this.updateAdmission();
+                } else {
+                  this.onCompleted(this.requestNo);
+                  return;
+                }
+              });
           }
           return EMPTY;
         })
       )
       .subscribe((res) => {
-        console.log(res)
+        console.log(res);
         if (res) {
           this.onCompleted(this.requestNo);
         }
@@ -209,12 +229,18 @@ export class EserviceEditStudentDetailComponent implements OnInit {
   updateAdmission() {
     const payloadUpdateData = this.user.value[0] as any;
     payloadUpdateData.addressinfo = JSON.stringify(payloadUpdateData.address);
-    payloadUpdateData.originaldegree = JSON.stringify(payloadUpdateData.originaldegree);
-    payloadUpdateData.teachingpracticeschool = JSON.stringify(payloadUpdateData.teachingpracticeschool);
+    payloadUpdateData.originaldegree = JSON.stringify(
+      payloadUpdateData.originaldegree
+    );
+    payloadUpdateData.teachingpracticeschool = JSON.stringify(
+      payloadUpdateData.teachingpracticeschool
+    );
     payloadUpdateData.subjects = JSON.stringify(payloadUpdateData.subjects);
-    this.requestService.updateAdmission(payloadUpdateData).subscribe((res: any) => {
-      this.onCompleted(this.requestNo);
-    });
+    this.requestService
+      .updateAdmission(payloadUpdateData)
+      .subscribe((res: any) => {
+        this.onCompleted(this.requestNo);
+      });
   }
 
   onCompleted(requestno: string) {
@@ -242,81 +268,65 @@ export class EserviceEditStudentDetailComponent implements OnInit {
       no: [1],
       admissiondate: [moment(data.admissiondate).format('YYYY-MM-DD')],
       idcardno: [
-        data.idcardno, [Validators.required, Validators.pattern(idCardPattern)]
+        data.idcardno,
+        [Validators.required, Validators.pattern(idCardPattern)],
       ],
       passportno: [data.passportno],
-      nationality: [
-        data.nationality, Validators.required
-      ],
-      studentno: [
-        data.studentno, Validators.required
-      ],
-      studentstatus: [
-        data.studentstatus, Validators.required
-      ],
-      originaldegree: [
-        data.originaldegree,
-        Validators.required
-      ],
-      email: [
-        data.email,
-        Validators.required
-      ],
-      prefixth: [
-        data.prefixth,
-        Validators.required
-      ],
+      nationality: [data.nationality, Validators.required],
+      studentno: [data.studentno, Validators.required],
+      studentstatus: [data.studentstatus, Validators.required],
+      originaldegree: [data.originaldegree, Validators.required],
+      email: [data.email, Validators.required],
+      prefixth: [data.prefixth, Validators.required],
       firstnameth: [
-        data.firstnameth, [Validators.required, Validators.pattern(nameThPattern)]
+        data.firstnameth,
+        [Validators.required, Validators.pattern(nameThPattern)],
       ],
       lastnameth: [
-        data.lastnameth, [Validators.required, Validators.pattern(nameThPattern)]
+        data.lastnameth,
+        [Validators.required, Validators.pattern(nameThPattern)],
       ],
-      prefixen: [
-        data.prefixen, Validators.required
-      ],
+      prefixen: [data.prefixen, Validators.required],
       firstnameen: [
-        data.firstnameen, [Validators.required, Validators.pattern(nameEnPattern)]
+        data.firstnameen,
+        [Validators.required, Validators.pattern(nameEnPattern)],
       ],
-      middlenameen: [
-        data.middlenameen, [Validators.pattern(nameEnPattern)]
-      ],
+      middlenameen: [data.middlenameen, [Validators.pattern(nameEnPattern)]],
       lastnameen: [
-        data.lastnameen, [Validators.required, Validators.pattern(nameEnPattern)]
+        data.lastnameen,
+        [Validators.required, Validators.pattern(nameEnPattern)],
       ],
       phone: [
-        data.phone, [Validators.required, Validators.pattern(phonePattern)]
+        data.phone,
+        [Validators.required, Validators.pattern(phonePattern)],
       ],
-      birthdate: [
-        data.birthdate, Validators.required
-      ],
-      address: userAddress ? this.fb.group({
-        addressInfo: [
-          {
-            location: userAddress?.location || null,
-            housenumber: userAddress?.housenumber || null,
-            villagenumber: userAddress?.villagenumber || null,
-            lane: userAddress?.lane || null,
-            road: userAddress?.road || null,
-            zipcode: userAddress?.zipcode || null,
-            provinceid: userAddress?.provinceid || null,
-            districtid: userAddress?.districtid || null,
-            subdistrictid: userAddress?.subdistrictid || null,
-            remark: userAddress?.remark || null,
-          },
-        ],
-      }) : this.fb.group({ addressInfo: [] }),
-      approveno: [
-        data.approveno,
-        Validators.required
-      ],
+      birthdate: [data.birthdate, Validators.required],
+      address: userAddress
+        ? this.fb.group({
+            addressInfo: [
+              {
+                location: userAddress?.location || null,
+                housenumber: userAddress?.housenumber || null,
+                villagenumber: userAddress?.villagenumber || null,
+                lane: userAddress?.lane || null,
+                road: userAddress?.road || null,
+                zipcode: userAddress?.zipcode || null,
+                provinceid: userAddress?.provinceid || null,
+                districtid: userAddress?.districtid || null,
+                subdistrictid: userAddress?.subdistrictid || null,
+                remark: userAddress?.remark || null,
+              },
+            ],
+          })
+        : this.fb.group({ addressInfo: [] }),
+      approveno: [data.approveno, Validators.required],
       graduationdate: [
         moment(data.graduationdate).format('YYYY-MM-DD'),
-        Validators.required
+        Validators.required,
       ],
       approvedate: [
         moment(data.approvedate).format('YYYY-MM-DD'),
-        Validators.required
+        Validators.required,
       ],
       subjects: data.subjects
         ? [
@@ -326,10 +336,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
             },
             Validators.required,
           ]
-        : [
-            { subject1: '', subject2: '' },
-            Validators.required
-          ],
+        : [{ subject1: '', subject2: '' }, Validators.required],
       teachingpracticeschool: [data.teachingpracticeschool],
     });
   }
@@ -348,7 +355,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
       },
       data: {
         teachingpracticeschool:
-          this.user.at(index).value.teachingpracticeschool ?? null ,
+          this.user.at(index).value.teachingpracticeschool ?? null,
         disableAll: disable ?? false,
       },
     });
@@ -365,8 +372,12 @@ export class EserviceEditStudentDetailComponent implements OnInit {
     setTimeout(() => {
       const doc = document.getElementById('address-info');
       if (doc != null) {
-        doc.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-      }   
+        doc.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest',
+        });
+      }
     }, 0);
   }
 
@@ -385,13 +396,13 @@ export class EserviceEditStudentDetailComponent implements OnInit {
       },
     });
   }
-  
+
   insertSubject(subjectInfo: any, index: any, disable: boolean) {
     const dialogRef = this.dialog.open(StudentListSubjectComponent, {
       width: '600px',
       data: {
         ...subjectInfo,
-        disableAll: disable ?? false
+        disableAll: disable ?? false,
       },
     });
     dialogRef.afterClosed().subscribe((res) => {
@@ -408,7 +419,7 @@ export class EserviceEditStudentDetailComponent implements OnInit {
       width: '600px',
       data: {
         ...originalDegreeInfo,
-        disableAll: disable ?? false
+        disableAll: disable ?? false,
       },
     });
     dialogRef.afterClosed().subscribe((res) => {

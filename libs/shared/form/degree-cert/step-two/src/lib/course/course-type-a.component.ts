@@ -37,12 +37,12 @@ export class CourseTypeAComponent
   ngOnInit(): void {
     this.addData();
     this.calculateSum();
-    const currYear = new Date().getFullYear()+5;
-    for (let index = 0; index < 15; index++) {
+    const currYear = new Date().getFullYear() + 10;
+    for (let index = 0; index <= 20; index++) {
       this.calendaryearList.push({
-        value: ((currYear - index) + 543).toString(),
-        label: ((currYear - index) + 543).toString()
-      })
+        value: (currYear - index + 543).toString(),
+        label: (currYear - index + 543).toString(),
+      });
     }
   }
 
@@ -99,7 +99,7 @@ export class CourseTypeAComponent
       label: 'แผนฯ ปีที่ ' + year,
       student: [''],
       year: [null],
-      planname: ['']
+      planname: [''],
     });
   }
 

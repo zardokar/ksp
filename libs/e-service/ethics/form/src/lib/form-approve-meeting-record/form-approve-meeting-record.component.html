@@ -3,12 +3,18 @@
     <div class="row mb-2">
       <div class="col-2">
         <label class="form-label">ปีการศึกษาที่รับรอง (พ.ศ.)</label>
-        <input
+        <select class="form-select" formControlName="year">
+          <option value="null" selected disabled hidden>
+            กรุณาเลือกปีการศึกษา
+          </option>
+          <option *ngFor="let year of calendaryearList" [value]="year.value">{{ year.label }}</option>
+        </select>
+        <!-- <input
           class="form-control"
           type="text"
           placeholder="กรุณากรอก"
           formControlName="year"
-        />
+        /> -->
       </div>
     </div>
     <div class="row mb-2">
@@ -22,7 +28,7 @@
         />
       </div>
       <div class="col-4">
-        <label class="form-label">ช่วงวันที่</label>
+        <label class="form-label">วันที่</label>
         <div class="d-flex align-items-center">
           <input
             matInput

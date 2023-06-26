@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between">
   <div class="d-flex flex-row">
-    <div class="form-label text-secondary">
+    <div class="form-label text-secondary" *ngIf="showRequestDate">
       {{ requestLabel1 }} :
       <span class="text-orange">{{
         (requestDate | thaiDate) || (today | thaiDate)

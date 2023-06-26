@@ -55,8 +55,8 @@ export class EserviceEditDegreeDetailComponent {
     step4: [],
   });
   verifyForm: any = this.fb.group({
-    verify: []
-  })
+    verify: [],
+  });
   date = thaiDate(new Date());
   choices = [
     { name: 'อนุมัติ', value: 3 },
@@ -72,7 +72,7 @@ export class EserviceEditDegreeDetailComponent {
     private activatedRoute: ActivatedRoute,
     private uniRequestService: EUniService,
     private loaderService: LoaderService,
-    private eRequestService: ERequestService,
+    private eRequestService: ERequestService
   ) {
     this.initForm();
   }
@@ -80,7 +80,7 @@ export class EserviceEditDegreeDetailComponent {
     this.id = this.activatedRoute.snapshot.params['id'];
     let uniRequestDegree;
     // if (!this.id) return this.back();
-    console.log(this.id)
+    console.log(this.id);
     if (this.id) {
       uniRequestDegree = await lastValueFrom(
         this.uniRequestService.uniRequestDegreeCertSelectById(this.id)
@@ -95,7 +95,7 @@ export class EserviceEditDegreeDetailComponent {
 
   save(saveType: any) {
     const detail: any = _.pick(this.verifyForm.value, ['verify']);
-    console.log(detail)
+    console.log(detail);
     if (!this.requestId || !this.id) return;
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -116,7 +116,7 @@ export class EserviceEditDegreeDetailComponent {
       .subscribe((res) => {
         if (res) {
           const detail: any = _.pick(this.verifyForm.value, ['verify']);
-          console.log(detail)
+          console.log(detail);
           const payload: any = {
             systemtype: '3',
             requestid: this.draftRequest?.requestid,
@@ -126,13 +126,13 @@ export class EserviceEditDegreeDetailComponent {
           payload.status = detail?.verify?.result;
           payload.detail = jsonStringify({
             ...detail,
-            approvedate: moment().format("YYYY-MM-DD[T]HH:mm:ss"),
+            approvedate: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
           });
           this.eRequestService
-          .kspUpdateRequestUniRequestDegree(payload)
-          .subscribe(() => {
-            this.showConfirmDialog();
-          });
+            .kspUpdateRequestUniRequestDegree(payload)
+            .subscribe(() => {
+              this.showConfirmDialog();
+            });
         }
       });
   }
@@ -204,29 +204,62 @@ export class EserviceEditDegreeDetailComponent {
         section6: formchange?.step1?.section6 ?? false,
       },
     });
+    const parseCourseInstructor = res.courseinstructor
+      ? parseJson(res.courseinstructor)
+      : {};
+    const parseCourseAdvisor = res.courseadvisor
+      ? parseJson(res.courseadvisor)
+      : [];
     this.step2Form.setValue({
       step2: {
-        plan1: {
-          plans: res.coursestructure ? parseJson(res.coursestructure) : [],
-          subjects: res.courseplan ? parseJson(res.courseplan) : [],
-        },
         teacher: {
-          teachers: res.courseteacher ? parseJson(res.courseteacher) : [],
+          teachers: parseJson(res?.courseteacher),
         },
-
         nitet: {
-          nitets: res.courseinstructor ? parseJson(res.courseinstructor) : [],
+          nitets: parseCourseInstructor.nitets,
+          nittetAmount: parseCourseInstructor.nittetAmount,
         },
         advisor: {
-          advisors: res.courseadvisor ? parseJson(res.courseadvisor) : [],
+          advisors: parseCourseAdvisor,
         },
         section1: formchange?.step2?.section1 ?? false,
         section2: formchange?.step2?.section2 ?? false,
         section3: formchange?.step2?.section3 ?? false,
         section4: formchange?.step2?.section4 ?? false,
         section5: formchange?.step2?.section5 ?? false,
+        plan1: {},
+        plan2: {},
       },
     });
+    if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
+      this.step2Form.setValue({
+        step2: {
+          plan1: {
+            plans: res.coursestructure ? parseJson(res.coursestructure) : [],
+            subjects: res.courseplan ? parseJson(res.courseplan) : [],
+          },
+        },
+      });
+    } else {
+      const subjectsdata = parseJson(res.courseplan);
+      this.step2Form.setValue({
+        step2: {
+          plan2: {
+            plans: res.coursestructure ? parseJson(res.coursestructure) : [],
+            subjects: res.courseplan ? subjectsdata.subjects : [],
+            subject1GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject1GroupName
+              : '',
+            subject2GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject2GroupName
+              : '',
+            subject3GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject3GroupName
+              : '',
+          },
+        },
+      });
+    }
 
     this.step3Form.setValue({
       step3: {
@@ -253,110 +286,7 @@ export class EserviceEditDegreeDetailComponent {
       step4: this.step4Form?.value?.step4,
     };
   }
-  private _getRequestAllowEdit({ step1, step2, step3 }: any): any {
-    const returnData: any = {};
-    returnData['step1Section1'] = {
-      courseacademicyear: step1?.degreeTypeForm?.courseYear || null,
-      courseacceptdate: step1?.degreeTypeForm?.courseAcceptDate
-        ? formatDate(
-            new Date(step1?.degreeTypeForm?.courseAcceptDate).toISOString()
-          )
-        : null,
-      courseapprovedate: step1?.degreeTypeForm?.courseApproveDate
-        ? formatDate(
-            new Date(step1?.degreeTypeForm?.courseApproveDate).toISOString()
-          )
-        : null,
-      courseapprovetime: step1?.degreeTypeForm?.courseApproveTime || null,
-      coursename: step1?.degreeTypeForm?.courseName || null,
-      coursetype: step1?.degreeTypeForm?.courseType || null,
-      degreelevel: step1?.degreeTypeForm?.degreeType || null,
-      fulldegreenameth: step1?.degreeTypeForm?.degreeNameThFull || null,
-      shortdegreenameth: step1?.degreeTypeForm?.degreeNameThShort || null,
-      fulldegreenameen: step1?.degreeTypeForm?.degreeNameEnFull || null,
-      shortdegreenameen: step1?.degreeTypeForm?.degreeNameEnShort || null,
-      coursestatus: step1?.degreeTypeForm?.courseStatus || null,
-    };
-    returnData['step1Section2'] = {
-      coursedetailtype: step1?.courseDetailType || null,
-      coursedetailinfo: step1?.courseDetail
-        ? JSON.stringify(step1?.courseDetail)
-        : null,
-    };
-    returnData['step1Section3'] = {
-      teachinglocation: step1?.locations
-        ? JSON.stringify(step1?.locations)
-        : null,
-    };
-    returnData['step1Section4'] = {
-      responsibleunit: step1?.institutions
-        ? JSON.stringify(step1?.institutions)
-        : null,
-    };
 
-    returnData['step1Section5'] = {
-      evaluatelocation: step1?.locations2
-        ? JSON.stringify(step1?.locations2)
-        : null,
-    };
-    returnData['step1Section6'] = {
-      coordinatorinfo: step1?.coordinator
-        ? JSON.stringify(step1?.coordinator)
-        : null,
-    };
-
-    returnData['step2Section1'] = {
-      ...(() => {
-        const reqBody: any = {};
-        if (['a', 'b', 'c'].includes(this.step1DegreeType)) {
-          reqBody['coursestructure'] = step2?.plan1?.plans
-            ? JSON.stringify(step2?.plan1?.plans)
-            : null;
-
-          reqBody['courseplan'] = step2?.plan1?.subjects
-            ? JSON.stringify(step2?.plan1?.subjects)
-            : null;
-        } else {
-          reqBody['coursestructure'] = step2?.plan2?.plans
-            ? JSON.stringify(step2?.plan2?.plans)
-            : null;
-          reqBody['courseplan'] = step2?.plan2?.subjects
-            ? JSON.stringify(step2?.plan2?.subjects)
-            : null;
-        }
-        return reqBody;
-      })(),
-    };
-
-    returnData['step2Section2'] = {
-      courseteacher: step2?.teacher?.teachers
-        ? JSON.stringify(step2?.teacher?.teachers)
-        : null,
-    };
-
-    returnData['step2Section3'] = {
-      courseinstructor: step2?.nitet?.nitets
-        ? JSON.stringify(step2?.nitet?.nitets)
-        : null,
-    };
-
-    returnData['step2Section4'] = {
-      courseadvisor: step2?.advisor?.advisors
-        ? JSON.stringify(step2?.advisor?.advisors)
-        : null,
-    };
-    returnData['step3Section1'] = {
-      processtrainning: step3?.training?.rows
-        ? JSON.stringify(step3?.training?.rows)
-        : null,
-    };
-    returnData['step3Section2'] = {
-      processteaching: step3?.teaching?.rows
-        ? JSON.stringify(step3?.teaching?.rows)
-        : null,
-    };
-    return returnData;
-  }
   private _getRequest(): any {
     const step1: any = this.step1Form.controls.step1.value;
     const step2: any = this.step2Form.controls.step2.value;
@@ -369,7 +299,7 @@ export class EserviceEditDegreeDetailComponent {
       coursemajor: this.draftRequest?.coursemajor || null,
       requestno: this.draftRequest?.requestno || null,
       requestid: this.draftRequest?.requestid || null,
-      requestdate: moment().format("YYYY-MM-DD[T]HH:mm:ss"),
+      requestdate: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
       uniid: this.draftRequest?.uniid || null,
       attachfiles: step4 ? JSON.stringify(step4?.files) : null,
       uniname: step1?.institutionsName || null,
@@ -443,15 +373,15 @@ export class EserviceEditDegreeDetailComponent {
         : null;
       reqBody['courseplan'] = step2?.plan2?.subjects
         ? JSON.stringify({
-          subjects: step2?.plan2?.subjects, 
-          subjectgroupname: {
-            subject1GroupName: step2?.plan2?.subject1GroupName,
-            subject2GroupName: step2?.plan2?.subject2GroupName,
-            subject3GroupName: step2?.plan2?.subject3GroupName
-          }
-        })
-        // JSON.stringify(step2?.plan2?.subjects)
-        : null;
+            subjects: step2?.plan2?.subjects,
+            subjectgroupname: {
+              subject1GroupName: step2?.plan2?.subject1GroupName,
+              subject2GroupName: step2?.plan2?.subject2GroupName,
+              subject3GroupName: step2?.plan2?.subject3GroupName,
+            },
+          })
+        : // JSON.stringify(step2?.plan2?.subjects)
+          null;
     }
     return reqBody;
   }

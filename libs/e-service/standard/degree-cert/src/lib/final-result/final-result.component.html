@@ -1,3 +1,7 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
 <ksp-top-nav><span header>ยื่นแบบคำขอ</span></ksp-top-nav>
 <fieldset [disabled]="!allowEdit">
   <form [formGroup]="form">
@@ -6,6 +10,7 @@
       <div class="bg-white py-3 px-3">
         <ksp-request-header-info
           [requestNumber]="requestNumber"
+          [showRequestDate]="false"
         ></ksp-request-header-info>
         <hr />
         <div class="detail__container">
