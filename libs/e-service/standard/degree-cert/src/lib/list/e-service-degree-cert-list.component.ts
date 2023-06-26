@@ -196,7 +196,8 @@ export class EServiceDegreeCertListComponent
       degreelevel: submitDegreeLevel || '',
       status: approveStatus || '',
       process: this.processTypeSearch || '',
-      ...this.tableRecord,
+      offset: this.tableRecord.offset,
+      row: 15,
       degreeapprovecode: degreeapprovecode,
     };
   }

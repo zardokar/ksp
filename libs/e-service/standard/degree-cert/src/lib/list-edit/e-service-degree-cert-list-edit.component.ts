@@ -174,7 +174,8 @@ export class EServiceDegreeCertListEditComponent extends KspPaginationComponent 
       degreelevel: submitDegreeLevel || null,
       requeststatus: approveStatus || null,
       requestprocess: verifyStatus || null,
-      ...this.tableRecord,
+      offset: this.tableRecord.offset,
+      row: 15,
     };
   }
 

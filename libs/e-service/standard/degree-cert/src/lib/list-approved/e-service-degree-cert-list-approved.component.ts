@@ -146,7 +146,8 @@ export class EServiceDegreeCertApprovedListComponent
       coursemajor: null,
       coursefieldofstudy: null,
       coursesubjects: null,
-      ...this.tableRecord,
+      offset: this.tableRecord.offset,
+      row: 15,
     };
   }
 
