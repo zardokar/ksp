@@ -15,15 +15,22 @@
                             <h2 id="file_current_title" >{{filetitle}}</h2>
 
                             <div id="div_thumbnails_con">
-                                <div *ngFor="let item of data.files" class="file-block" style="position:relative">
-                                    <img src="assets/images/SVG/icn_pdf.svg" style="max-height:60%;width:100%;aspect-ratio:auto 1/1;margin-top:.6em">
-                                    <div style="display:inline;width:fit-content;height:fit-content;margin-left:.5em">{{item.filename}}</div>
-                                    <div style="position:absolute; width:inherit; height:inherit; border-radius:4px"
-                                         (click)="selectThumbnail(item.fileid)"
-                                         >
-                                    </div>
+                                <div *ngFor="let item of data.files"
+                                     class="file-block" 
+                                     style="position:relative" 
+                                     (click)="selectThumbnail(item.fileid)">
+
+                                    <img 
+                                        [src]="THUMBLIST[item.fileid]" 
+                                        style="max-height:60%;width:100%;aspect-ratio:auto 1/1;margin-top:.6em" 
+                                        />
+
+                                    <div style="display:inline;width:fit-content;height:fit-content;margin-left:.5em">{{writeFilename(item.filename)}}</div>
+
+                                    <div [class]="CLASSSTYLELIST[item.fileid]" style="position:absolute; width:inherit; height:inherit; border-radius:4px"></div>
                                 </div>
                             </div>
+
 
                         </div>
                         

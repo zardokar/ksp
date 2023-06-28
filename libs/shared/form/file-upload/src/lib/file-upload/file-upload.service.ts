@@ -83,4 +83,11 @@ export class FileService {
       payload
     );
   }
+
+  getKspXFile(payload: any) {
+    return this.http.post(
+      `${environment.shortApiUrl}/kspx/getfile.php`,
+      payload
+    );
+  }
 }

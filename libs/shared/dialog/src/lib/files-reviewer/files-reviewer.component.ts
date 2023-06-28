@@ -20,13 +20,28 @@ import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule } from '@angul
 export class FilesReviewerComponent {
 
     // -----------------------------------------------
-    systemtype          = ''
-    filetitle           = 'กรุณารอ Download เอกสาร'
-    selectfileid        = ''
-    ifilecomment        = ''
-    iradresult          = 0
-    isAccept            = true
+    systemtype                                  = ''
+    filetitle                                   = 'กรุณารอ Download เอกสาร'
+    selectfileid                                = ''
+    ifilecomment                                = ''
+    iradresult                                  = 1
+    isAccept                                    = true
 
+    SYSTYPE    :{ [key: string]: string }       = {
+                                                              'uni': 'uni',
+                                                              'sch': 'sch',
+                                                    'e-service-uni': 'uni',
+                                                    'e-service-sch': 'sch'
+                                               }
+    ICONS_PATH :{ [key: string]: string }       = {
+                                                    'pdf' : 'assets/images/SVG/icn_pdf.svg',
+                                                    'jpg' : 'assets/images/SVG/icn_png.svg',
+                                                    'png' : 'assets/images/SVG/icn_png.svg',
+                                                    'null' : 'assets/images/ic_file_bdr.svg',
+                                                'undefined' : 'assets/images/ic_file_bdr.svg'
+                                            }
+    THUMBLIST : { [key: string]: string }       = {}
+    CLASSSTYLELIST : { [key: string]: string }  = {}
     // -----------------------------------------------
     result              : any = []
     files               : KspFile[]
@@ -34,8 +49,6 @@ export class FilesReviewerComponent {
     viewerSafe          : SafeResourceUrl | undefined
     // -----------------------------------------------
     @Output() confirmed = new EventEmitter<boolean>();
-
-    // -----------------------------------------------
     
     // -----------------------------------------------
     constructor( 
@@ -46,49 +59,63 @@ export class FilesReviewerComponent {
                   @Inject(MAT_DIALOG_DATA) public data: { selectfile: number, files: KspFile[], systemtype: string, checkresult: [] } ,
                 )
     {
-        this.form       = fb.group({
+        this.form       = this.fb.group({
             radfilereview: ['1']
         })
 
         this.files      = data.files
         this.systemtype = data.systemtype
 
-        console.log( data )
         if(data.checkresult && data.checkresult.length > 0){
             this.result = data.checkresult
         } 
 
+        this.initThumbnails( data.files )
         this.selectThumbnail( data.files[ data.selectfile || 0 ].fileid )
+    }
+    // -----------------------------------------------
+    initThumbnails(files : any[] )
+    {
+        files.map( fileobj => { 
+            this.loadThumbnail( fileobj ) 
+        })
     }
 
     // -----------------------------------------------
     selectThumbnail(fileid: any) {
-
-        console.log( this.form.get("radfilereview") )
-
-        const file = this.files.find( file => file.fileid === fileid)
-        const file_checked = this.result.find( (res : any) => res.fileid === fileid )
+        const file                      = this.files.find( file => file.fileid === fileid )
+        const file_checked              = this.result.find( (res : any) => res.fileid === fileid )
 
         if( file_checked === undefined){
-            this.ifilecomment   = ''
+            this.ifilecomment           = ''
         }else{
-            this.ifilecomment   = file_checked.comment
-            this.iradresult     = file_checked.select_result
+            this.ifilecomment           = file_checked.comment
+            this.iradresult             = file_checked.select_result
 
             if(this.iradresult === 1)
-                this.isAccept = true
+                this.isAccept           = true
             else
-                this.isAccept = false
+                this.isAccept           = false
         }
 
-        this.filetitle = file?.filename || ''
+        this.CLASSSTYLELIST[fileid]     = 'file-block-overlay active'
+
+        this.filetitle                  = file?.filename || ''
         this.loadFile( fileid as number )
     }
 
     // -----------------------------------------------
+    loadThumbnail( fileitem : any )
+    {
+        try{
+            const spfilename                    = fileitem?.filename.split('.')
+            const ext                           = spfilename[ spfilename.length-1 ]
+            this.THUMBLIST[fileitem?.fileid]    = this.ICONS_PATH[ext]
+        }catch(excp){ /* Out of Index*/ }
+    }
+    // -----------------------------------------------
     confirmFile()
     {
-        
         const file_checked = this.result.find( (res : any) => res.fileid === this.selectfileid )
 
         if( file_checked === undefined){
@@ -102,6 +129,13 @@ export class FilesReviewerComponent {
             file_checked.comment            = this.ifilecomment
         }
 
+        if(this.iradresult === 1)
+        {
+            this.CLASSSTYLELIST[this.selectfileid]     = 'file-block-overlay accepted'
+        }else{
+            this.CLASSSTYLELIST[this.selectfileid]     = 'file-block-overlay reqmore'
+        }
+
         console.log( this.result )
     }
 
@@ -109,24 +143,11 @@ export class FilesReviewerComponent {
     loadFile( fileid : number)
     {
         this.selectfileid           = `${fileid}`
-
-        if(this.systemtype === 'sch'){
-            this.fileService.eDownloadSchoolFile({ id: fileid }).subscribe((res: any) => {
-                const src           = atob(res?.filedata ?? '');
-                this.viewerSafe     = this.sanitizer.bypassSecurityTrustResourceUrl(src) 
-              });
-        }else if(this.systemtype === 'uni'){
-            this.fileService.eDownloadEUniFile({ id: fileid }).subscribe((res: any) => {
-                const src           = atob(res?.filedata ?? '');
-                this.viewerSafe     = this.sanitizer.bypassSecurityTrustResourceUrl(src) 
-              });
-        }else{
-            this.fileService.eDownloadKspFile({ id: fileid }).subscribe((res: any) => {
-                const src           = atob(res?.filedata ?? '');
-                this.viewerSafe     = this.sanitizer.bypassSecurityTrustResourceUrl(src) 
-              });
-        }
-
+        this.fileService.getKspXFile({ "fileid": fileid, "service": this.SYSTYPE[this.systemtype] }).subscribe((res: any) => {
+            const respdata      = res?.data as any[]
+            const targetdata    = respdata.find( (fileobj)  => fileobj?.fileid === fileid )
+             this.viewerSafe    = this.sanitizer.bypassSecurityTrustResourceUrl(targetdata.filedata) 
+          });
     }
 
     // -----------------------------------------------
@@ -144,11 +165,24 @@ export class FilesReviewerComponent {
         else
             this.isAccept = false
     }
+    // -----------------------------------------------
+    writeFilename(filename: string)
+    {
+        return filename.length <= 10 ? filename : `${filename.slice(0,10)}...`
+    }
 
     // -----------------------------------------------
     close()
     {
         this.dialogRef.close(this.result)
         this.confirmed.emit(true);
+    }
+    // -----------------------------------------------
+    base64toBlob(filedata: any,mime='application/pdf')
+    {
+        const dataURI        = atob(filedata)
+        const bytechar       = dataURI.replace(/^data[^,]+,/,'')
+        const cleanbyte      = Uint8Array.from(bytechar, v => v.charCodeAt(0))
+        return new Blob([cleanbyte],{type: mime})
     }
 }
