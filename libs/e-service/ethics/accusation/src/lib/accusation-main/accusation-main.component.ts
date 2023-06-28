@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -45,7 +45,10 @@ export class AccusationMainComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
+        console.log("This ethicsId : " , this.ethicsId);
+        console.log("This accusation" , this.accusation);
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
+          console.log("This res : " ,res);
           this.accusation.accusationFiles.forEach(
             (element: any, index: any) => {
               if (res.accusationfile) {
@@ -71,7 +74,25 @@ export class AccusationMainComponent implements OnInit {
     const ethics = new Ethics();
     const allowKey = Object.keys(ethics);
     const data = this.form.controls.accusation.value as any;
-
+    const idno = document.getElementById("person-idno") as HTMLInputElement;
+    const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
+    const nameen = document.getElementById("person-nameen") as HTMLInputElement;
+    const gender = document.getElementById("person-gender") as HTMLButtonElement;
+    const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
+    const phone = document.getElementById("person-phone") as HTMLButtonElement;
+    const email = document.getElementById("person-email") as HTMLButtonElement;
+    // console.log("data in form :: " , idno.innerText);
+    const objPerson = {
+       identitynumber : idno.innerText,
+       nameth : nameth.innerText,
+       nameen : nameen.innerText,
+       email : email.innerText,
+       phonenumber : phone.innerText,
+       birthdate : birthdate.innerText,
+       genderid : gender.innerText
+    }
+    
+    // console.log("data form accusation :: " , objPerson);
     if (data?.accuserinfo) {
       data.accuserinfo = JSON.stringify(data?.accuserinfo);
     }
@@ -86,7 +107,9 @@ export class AccusationMainComponent implements OnInit {
         console.log('save = ', res);
       });
     } else {
+      selectData['licenseinfo']  =  JSON.stringify( objPerson );
       this.service.createEthics(selectData).subscribe((res) => {
+        console.log("Response insert ::",res);
         const id = res.id;
         if (id) {
           this.router.navigate(['/accusation', 'detail', id]);
