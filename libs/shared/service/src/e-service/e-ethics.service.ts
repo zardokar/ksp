@@ -11,8 +11,9 @@ export class EthicsService {
   constructor(private http: HttpClient) {}
 
   createEthics(payload: any): Observable<any> {
+    console.log("create payload :: ",payload);
     return this.http.post(
-      `${environment.apiUrl}/e-service/es-ethicsinsert`,
+      `${environment.shortApiUrl}/kspx/ethic/es_ethicsinsert.php`,
       payload
     );
   }
