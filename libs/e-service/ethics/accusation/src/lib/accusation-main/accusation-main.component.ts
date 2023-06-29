@@ -60,6 +60,28 @@ export class AccusationMainComponent implements OnInit {
               }
             }
           );
+          if(res?.accuserinfo){
+            const json = jsonParse(res?.accuserinfo);
+            console.log(json);
+            res.accuserinfo = json;
+          }
+          if(res?.licenseinfo){
+            const json: any = jsonParse(res?.licenseinfo);
+            const idno = document.getElementById("person-idno") as HTMLInputElement;
+            const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
+            const nameen = document.getElementById("person-nameen") as HTMLInputElement;
+            const gender = document.getElementById("person-gender") as HTMLButtonElement;
+            const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
+            const phone = document.getElementById("person-phone") as HTMLButtonElement;
+            const email = document.getElementById("person-email") as HTMLButtonElement;
+            idno.innerText    = json.identitynumber !== undefined ? json.identitynumber : "--"
+            nameth.innerText  = json.nameth !== undefined ? json.nameth : "--"
+            nameen.innerText  = json.nameen !== undefined ? json.nameen : "--"
+            gender.innerText  = json.genderid !== undefined ? json.genderid : "--"
+            birthdate.innerText  = json?.birthdate !== undefined ? json.birthdate : "--"
+            phone.innerText  = json.phonenumber !== undefined ? json.phonenumber : "--"
+            email.innerText  = json.email !== undefined ? json.email : "--"
+          }
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
