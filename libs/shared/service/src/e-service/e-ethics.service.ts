@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@ksp/shared/environment';
 import { Ethics, EthicsKey , KspAccusationRequest } from '@ksp/shared/interface';
+import { jsonParse } from '@ksp/shared/utility';
 import { map, Observable, shareReplay } from 'rxjs';
 
 @Injectable({
@@ -95,9 +96,11 @@ export class EthicsService {
         payload
       )
       .pipe(map((data: any) => { 
+        // console.log("This EthicsById Payload : " , data.datareturn);
         const ethicsArray = data.datareturn as Ethics[]
         return this.formatMyInfo( ethicsArray.find((rowdata)=>{
             const rawdata = rowdata
+            // console.log("checkdata ::" , rawdata);
             return rawdata.id == payload.id 
         }) as Ethics )
       }));
@@ -120,6 +123,7 @@ export class EthicsService {
       'resulttoaccuseddate',
     ];
     const jsonColumn = [
+      'licenseinfo',
       'accuserinfo',
       'accusationfile',
       'accusationconsideration',
@@ -137,12 +141,12 @@ export class EthicsService {
       }
       if (jsonColumn.includes(key)) {
         if (info[ethicsKey]) {
-          info[ethicsKey] = null;
+          info[ethicsKey] = jsonParse(info[ethicsKey] as any);
           // info[ethicsKey] = atob(info[ethicsKey] as string);
         }
       }
     }
-    console.log('Info Here :',info);
+    // console.log('Info Here :',info);
     return info;
   }
 }

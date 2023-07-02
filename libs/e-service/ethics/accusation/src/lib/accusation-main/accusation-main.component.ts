@@ -10,8 +10,10 @@ import {
   replaceEmptyWithNull,
 } from '@ksp/shared/utility';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import _, { isArray } from 'lodash';
 import { AccusationRecordComponent } from '../accusation-record/accusation-record.component';
+import moment from 'moment';
+
 @UntilDestroy()
 @Component({
   selector: 'e-service-accusation-main',
@@ -49,10 +51,12 @@ export class AccusationMainComponent implements OnInit {
         console.log("This accusation" , this.accusation);
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
           console.log("This res : " ,res);
+          
+          // console.log(res.createdate as string );
           this.accusation.accusationFiles.forEach(
             (element: any, index: any) => {
               if (res.accusationfile) {
-                const json: any = jsonParse(res?.accusationfile);
+                const json: any = res?.accusationfile;
                 if (json) {
                   element.fileid = json[index]?.fileid;
                   element.filename = json[index]?.filename;
@@ -60,13 +64,15 @@ export class AccusationMainComponent implements OnInit {
               }
             }
           );
-          if(res?.accuserinfo){
-            const json = jsonParse(res?.accuserinfo);
-            console.log(json);
-            res.accuserinfo = json;
+
+          if( isArray( res?.accuserinfo )){
+            for(let accuser of res?.accuserinfo){
+              this.accusation.addRow()
+            }
           }
+
           if(res?.licenseinfo){
-            const json: any = jsonParse(res?.licenseinfo);
+            const json: any = res?.licenseinfo;
             const idno = document.getElementById("person-idno") as HTMLInputElement;
             const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
             const nameen = document.getElementById("person-nameen") as HTMLInputElement;
@@ -86,6 +92,10 @@ export class AccusationMainComponent implements OnInit {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
           }
+          res.accusationincidentdate = moment(res?.accusationincidentdate).toISOString()
+          res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
+          res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
+          
           this.form.controls.accusation.patchValue(res);
         });
       }

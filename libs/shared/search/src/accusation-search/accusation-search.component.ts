@@ -18,8 +18,8 @@ import {
   KspFormBaseComponent,
 } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
-import { providerFactory, thaiDate } from '@ksp/shared/utility';
-import localForage from 'localforage';
+import { jsonParse, providerFactory, thaiDate } from '@ksp/shared/utility';
+// import localForage from 'localforage';
 
 @Component({
   selector: 'ksp-ethics-accusation-search',
@@ -57,6 +57,7 @@ export class AccusationSearchComponent
     accuserPersonId: [],
     accuserFirstname: [],
     accuserLastname: [],
+
   });
   @Input() showAddButton = false;
   @Output() submited = new EventEmitter<boolean>();
@@ -84,7 +85,7 @@ export class AccusationSearchComponent
       ethicsno: '',
       accusationblackno: '',
       resultredno: '',
-      firstname: '',
+      firstnameth: '',
       lastnameth: '',
       idcardno: '',
       firstnameinfo: '',
@@ -96,8 +97,15 @@ export class AccusationSearchComponent
     };
     this.service.searchEthicssearch(payload).subscribe((res: any) => {
       res.forEach((item: any) => {
-        item.createdate = thaiDate(new Date(`${item.createdate}`));
-        item.updatedate = thaiDate(new Date(`${item.updatedate}`));
+        const json: any = jsonParse(item?.licenseinfo)
+        if(json?.nameth !== undefined){
+          const splitname = json?.nameth.split(' ')
+          item.firstnameth      = splitname[0]
+          item.lastnameth       = splitname[1]
+        }
+        item.idcardno         = json?.identitynumber
+        item.createdate       = thaiDate(new Date(`${item.createdate}`));
+        item.updatedate       = thaiDate(new Date(`${item.updatedate}`));
       });
       this.dataSource.data = res;
     });
@@ -106,6 +114,7 @@ export class AccusationSearchComponent
     this.router.navigate(['accusation', 'detail']);
   }
   onClickRow(row: any) {
+    // console.log(row);
     this.submited.emit(row.id);
   }
   clear() {
