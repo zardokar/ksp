@@ -64,7 +64,9 @@ export class AccusationMainComponent implements OnInit {
               }
             }
           );
-
+          if( typeof res?.accuserinfo == "string"){
+            res.accuserinfo = jsonParse(res.accuserinfo)
+          }  
           if( isArray( res?.accuserinfo )){
             for(let accuser of res?.accuserinfo){
               this.accusation.addRow()
@@ -80,6 +82,7 @@ export class AccusationMainComponent implements OnInit {
             const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
             const phone = document.getElementById("person-phone") as HTMLButtonElement;
             const email = document.getElementById("person-email") as HTMLButtonElement;
+            const image = document.getElementById("person-img") as HTMLButtonElement;
             idno.innerText    = json.identitynumber !== undefined ? json.identitynumber : "--"
             nameth.innerText  = json.nameth !== undefined ? json.nameth : "--"
             nameen.innerText  = json.nameen !== undefined ? json.nameen : "--"
@@ -87,6 +90,7 @@ export class AccusationMainComponent implements OnInit {
             birthdate.innerText  = json?.birthdate !== undefined ? json.birthdate : "--"
             phone.innerText  = json.phonenumber !== undefined ? json.phonenumber : "--"
             email.innerText  = json.email !== undefined ? json.email : "--"
+            image.setAttribute("src" , json.profileimage) 
           }
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
@@ -113,6 +117,7 @@ export class AccusationMainComponent implements OnInit {
     const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
     const phone = document.getElementById("person-phone") as HTMLButtonElement;
     const email = document.getElementById("person-email") as HTMLButtonElement;
+    const image = document.getElementById("person-img") as HTMLButtonElement;
     // console.log("data in form :: " , idno.innerText);
     const objPerson = {
        identitynumber : idno.innerText,
@@ -121,10 +126,11 @@ export class AccusationMainComponent implements OnInit {
        email : email.innerText,
        phonenumber : phone.innerText,
        birthdate : birthdate.innerText,
-       genderid : gender.innerText
+       genderid : gender.innerText,
+       profileimage : image.getAttribute("src")
     }
     
-    // console.log("data form accusation :: " , objPerson);
+    console.log("data form accusation :: " , objPerson);
     if (data?.accuserinfo) {
       data.accuserinfo = JSON.stringify(data?.accuserinfo);
     }
