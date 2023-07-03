@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,8 +10,10 @@ import {
   replaceEmptyWithNull,
 } from '@ksp/shared/utility';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import _ from 'lodash';
+import _, { isArray } from 'lodash';
 import { AccusationRecordComponent } from '../accusation-record/accusation-record.component';
+import moment from 'moment';
+
 @UntilDestroy()
 @Component({
   selector: 'e-service-accusation-main',
@@ -45,11 +47,16 @@ export class AccusationMainComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
+        console.log("This ethicsId : " , this.ethicsId);
+        console.log("This accusation" , this.accusation);
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
+          console.log("This res : " ,res);
+          
+          // console.log(res.createdate as string );
           this.accusation.accusationFiles.forEach(
             (element: any, index: any) => {
               if (res.accusationfile) {
-                const json: any = jsonParse(res?.accusationfile);
+                const json: any = res?.accusationfile;
                 if (json) {
                   element.fileid = json[index]?.fileid;
                   element.filename = json[index]?.filename;
@@ -57,10 +64,42 @@ export class AccusationMainComponent implements OnInit {
               }
             }
           );
+          if( typeof res?.accuserinfo == "string"){
+            res.accuserinfo = jsonParse(res.accuserinfo)
+          }  
+          if( isArray( res?.accuserinfo )){
+            for(let accuser of res?.accuserinfo){
+              this.accusation.addRow()
+            }
+          }
+
+          if(res?.licenseinfo){
+            const json: any = res?.licenseinfo;
+            const idno = document.getElementById("person-idno") as HTMLInputElement;
+            const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
+            const nameen = document.getElementById("person-nameen") as HTMLInputElement;
+            const gender = document.getElementById("person-gender") as HTMLButtonElement;
+            const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
+            const phone = document.getElementById("person-phone") as HTMLButtonElement;
+            const email = document.getElementById("person-email") as HTMLButtonElement;
+            const image = document.getElementById("person-img") as HTMLButtonElement;
+            idno.innerText    = json.identitynumber !== undefined ? json.identitynumber : "--"
+            nameth.innerText  = json.nameth !== undefined ? json.nameth : "--"
+            nameen.innerText  = json.nameen !== undefined ? json.nameen : "--"
+            gender.innerText  = json.genderid !== undefined ? json.genderid : "--"
+            birthdate.innerText  = json?.birthdate !== undefined ? json.birthdate : "--"
+            phone.innerText  = json.phonenumber !== undefined ? json.phonenumber : "--"
+            email.innerText  = json.email !== undefined ? json.email : "--"
+            image.setAttribute("src" , json.profileimage) 
+          }
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
           }
+          res.accusationincidentdate = moment(res?.accusationincidentdate).toISOString()
+          res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
+          res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
+          
           this.form.controls.accusation.patchValue(res);
         });
       }
@@ -71,7 +110,27 @@ export class AccusationMainComponent implements OnInit {
     const ethics = new Ethics();
     const allowKey = Object.keys(ethics);
     const data = this.form.controls.accusation.value as any;
-
+    const idno = document.getElementById("person-idno") as HTMLInputElement;
+    const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
+    const nameen = document.getElementById("person-nameen") as HTMLInputElement;
+    const gender = document.getElementById("person-gender") as HTMLButtonElement;
+    const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
+    const phone = document.getElementById("person-phone") as HTMLButtonElement;
+    const email = document.getElementById("person-email") as HTMLButtonElement;
+    const image = document.getElementById("person-img") as HTMLButtonElement;
+    // console.log("data in form :: " , idno.innerText);
+    const objPerson = {
+       identitynumber : idno.innerText,
+       nameth : nameth.innerText,
+       nameen : nameen.innerText,
+       email : email.innerText,
+       phonenumber : phone.innerText,
+       birthdate : birthdate.innerText,
+       genderid : gender.innerText,
+       profileimage : image.getAttribute("src")
+    }
+    
+    console.log("data form accusation :: " , objPerson);
     if (data?.accuserinfo) {
       data.accuserinfo = JSON.stringify(data?.accuserinfo);
     }
@@ -86,7 +145,9 @@ export class AccusationMainComponent implements OnInit {
         console.log('save = ', res);
       });
     } else {
+      selectData['licenseinfo']  =  JSON.stringify( objPerson );
       this.service.createEthics(selectData).subscribe((res) => {
+        console.log("Response insert ::",res);
         const id = res.id;
         if (id) {
           this.router.navigate(['/accusation', 'detail', id]);
