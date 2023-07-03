@@ -215,7 +215,7 @@ export class EditDegreeListComponent
           branch,
           university: row?.uniname || '-',
           degreeName: row?.fulldegreenameth || '-',
-          approveDate: approveDate ? thaiDate(approveDate) : '',
+          approveDate: approveDate ? thaiDate(new Date(approveDate)) : '',
           status: row?.status,
           process: row?.process,
           statusname: findStatus?.ulabel,
