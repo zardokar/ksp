@@ -8,19 +8,6 @@
 </div>
 
 <form [formGroup]="form">
-  <div class="row align-items-end mb-3">
-    <div class="col-3">
-      <label class="form-label"><br /></label>
-      <button
-        (click)="addAdvisor()"
-        type="button"
-        class="btn btn-primary w-auto"
-        style="height: 36px"
-      >
-        เพิ่มที่ปรึกษาวิทยานิพนธ์และการค้นคว้าอิสระ
-      </button>
-    </div>
-  </div>
   <ng-container formArrayName="advisors">
     <ng-container *ngFor="let advisorForm of advisors.controls; let i = index">
       <ng-container [formGroupName]="i">
@@ -105,7 +92,7 @@
   </ng-container>
 </form>
 
-<ng-container *hideInViewMode>
+<ng-container *ngIf="mode !== 'view'">
   <ksp-add-row-button
     *ngIf="advisors.length < 5"
     (addRowClick)="addAdvisor()"

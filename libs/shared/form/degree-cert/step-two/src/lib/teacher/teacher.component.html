@@ -1,20 +1,6 @@
 <div class="box-header">อาจารย์ประจำหลักสูตร / ผู้รับผิดชอบหลักสูตร</div>
 
 <form [formGroup]="form">
-  
-  <div class="row align-items-end mb-3">
-    <div class="col-3">
-      <label class="form-label"><br /></label>
-      <button
-        (click)="addTeacher()"
-        type="button"
-        class="btn btn-primary w-auto"
-        style="height: 36px"
-      >
-        เพิ่มอาจารย์ประจำหลักสูตร / ผู้รับผิดชอบหลักสูตร
-      </button>
-    </div>
-  </div>
   <ng-container formArrayName="teachers">
     <ng-container *ngFor="let teacherForm of teachers.controls; let i = index">
       <ng-container [formGroupName]="i">
@@ -89,8 +75,8 @@
   </ng-container>
 </form>
 
-<ng-container *ngIf="teachers.length < 5">
-  <ksp-add-row-button *hideInViewMode (addRowClick)="addTeacher()" class="blue"
+<ng-container  *ngIf="mode !== 'view'">
+  <ksp-add-row-button  *ngIf="teachers.length < 5" (addRowClick)="addTeacher()" class="blue"
     >เพิ่มอาจารย์ประจำหลักสูตร/ ผู้รับผิดชอบหลักสูตร</ksp-add-row-button
   >
 </ng-container>
