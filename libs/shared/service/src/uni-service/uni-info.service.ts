@@ -55,17 +55,23 @@ export class UniInfoService {
         : null,
     };
     // console.log(parseJson(res.courseinstructor))
-    const parseCourseInstructor = res.courseinstructor ? parseJson(res.courseinstructor) : {};
-    console.log(parseCourseInstructor)
-    const parseCourseAdvisor = res.courseadvisor ? parseJson(res.courseadvisor) : [];
-    const parseCourseTeacher = res.courseteacher ? parseJson(res.courseteacher) : [];
+    const parseCourseInstructor = res.courseinstructor
+      ? parseJson(res.courseinstructor)
+      : {};
+    console.log(parseCourseInstructor);
+    const parseCourseAdvisor = res.courseadvisor
+      ? parseJson(res.courseadvisor)
+      : [];
+    const parseCourseTeacher = res.courseteacher
+      ? parseJson(res.courseteacher)
+      : [];
     formData.step2 = {
       teacher: {
         teachers: parseCourseTeacher,
       },
       nitet: {
         nitets: parseCourseInstructor.nitets,
-        nittetAmount: parseCourseInstructor.nittetAmount
+        nittetAmount: parseCourseInstructor.nittetAmount,
       },
       advisor: {
         advisors: parseCourseAdvisor,
@@ -73,7 +79,7 @@ export class UniInfoService {
     };
     // console.log(parseJson(res.coursestructure), parseJson(res.courseplan), res?.degreelevel)
     if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
-      console.log('here')
+      console.log('here');
       formData.step2.plan1 = {
         plans: res.coursestructure ? parseJson(res.coursestructure) : [],
         subjects: res.courseplan ? parseJson(res.courseplan) : [],
@@ -83,9 +89,15 @@ export class UniInfoService {
       formData.step2.plan2 = {
         plans: res.coursestructure ? parseJson(res.coursestructure) : [],
         subjects: res.courseplan ? subjectsdata.subjects : [],
-        subject1GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject1GroupName : '',
-        subject2GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject2GroupName : '',
-        subject3GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject3GroupName : '',
+        subject1GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject1GroupName
+          : '',
+        subject2GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject2GroupName
+          : '',
+        subject3GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject3GroupName
+          : '',
       };
     }
     formData.step3 = {
@@ -96,7 +108,7 @@ export class UniInfoService {
         rows: res.processteaching ? parseJson(res.processteaching) : [],
       },
     };
-    console.log(parseJson(res?.attachfiles))
+    console.log(parseJson(res?.attachfiles));
     if (res?.attachfiles)
       formData.step4 = {
         files: parseJson(res?.attachfiles),
@@ -282,14 +294,14 @@ export class UniInfoService {
   searchSelfStudent(params: any): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': 'Basic ' + btoa('ksppublicapi:KspPublicApi@2023')
-      })
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa('ksppublicapi:KspPublicApi@2023'),
+      }),
     };
     return this.http.get(
-      `${environment.zdklabs}/public/user?=identity_no=${params?.identity_no}`,
+      `${environment.zdklabs}/public/user?identity_no=${params?.identity_no}`,
       httpOptions
-    )
+    );
   }
 
   uniAdmissionSearch(params: any): Observable<any> {

@@ -352,7 +352,7 @@
               >
                 วุฒิการศึกษาเดิม
               </th>
-              <th class="p-2 text-nowrap"></th>
+              <th class="p-2 text-nowrap">ลบรายการ</th>
             </tr>
           </ng-template>
           <ng-template
@@ -841,14 +841,14 @@
                 >
                   วุฒิการศึกษาเดิม
                 </div>
-                <!-- <input
-                  class="form-control"
-                  style="width: 175px"
-                  pInputText
-                  type="text"
-                  formControlName="originaldegree"
-                  [readonly]="control.value.locked"
-                /> -->
+              </td>
+              <td class="p-2 text-nowrap" *ngIf="pageType === 'admissionList'">
+                <i
+                  *ngIf="ri"
+                  role="button"
+                  (click)="deleteUser(ri)"
+                  class="bi bi-trash text-danger fs-5"
+                ></i>
               </td>
             </tr>
           </ng-template>

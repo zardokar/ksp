@@ -58,6 +58,7 @@ export class UniLoginComponent {
         this.loginFail = true;
         return;
       }
+      setCookie('userData', JSON.stringify(res) || '', 1);
       setCookie('userToken', res?.usertoken || '', 1);
       setCookie('systemName', 'uni-service' || '', 1);
       setCookie('firstNameTh', res?.firstnameth || '', 1);
@@ -65,7 +66,7 @@ export class UniLoginComponent {
       setCookie('uniId', res?.uniid || '', 1);
       setCookie('uniType', res?.unitype || '', 1);
       setCookie('userId', res?.id, 1);
-      setCookie('permission', res?.permissionright, 1)
+      setCookie('permission', res?.permissionright, 1);
 
       this.router.navigate(['/home']);
     } catch (error: any) {
@@ -88,7 +89,7 @@ export class UniLoginComponent {
   forgetPassword() {
     const dialogRef = this.dialog.open(ForgotPasswordSearchPersonComponent, {
       width: '350px',
-      data: { lang_thai: true }
+      data: { lang_thai: true },
     });
     dialogRef.componentInstance.confirmed.subscribe(async (res: any) => {
       this.submitForgotPassword(res);
@@ -102,16 +103,16 @@ export class UniLoginComponent {
     if (forgotPassword?.returncode === '98') {
       this.showErrorDialog(formData);
     } else {
-      localForage.setItem('uniSetNewPassword', formData).then(()=>{
+      localForage.setItem('uniSetNewPassword', formData).then(() => {
         this.forgotPasswordStepTwo(formData, forgotPassword);
-      })
+      });
     }
   }
 
   forgotPasswordStepTwo(formData: any, result: any) {
     const dialogRef = this.dialog.open(ForgotPasswordSetNewPasswordComponent, {
       width: '350px',
-      data: { lang_thai: true, idcardno: result.username }
+      data: { lang_thai: true, idcardno: result.username },
     });
     dialogRef.componentInstance.confirmed.subscribe(async (res: any) => {
       this.handleSubmitPassword(formData, res);
@@ -127,10 +128,9 @@ export class UniLoginComponent {
         btnLabel: 'ยืนยัน',
       },
     });
-    confirmDialog.componentInstance.confirmed
-      .subscribe((res) => {
-        this.submitChangePassword(formData, result);
-      });
+    confirmDialog.componentInstance.confirmed.subscribe((res) => {
+      this.submitChangePassword(formData, result);
+    });
   }
 
   async submitChangePassword(formData: any, res: any) {

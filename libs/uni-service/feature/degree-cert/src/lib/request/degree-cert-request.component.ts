@@ -110,12 +110,14 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       const editComment = await lastValueFrom(
         this.uniInfoService.getRequestProcessHistory({ requestid: this.id })
       );
-      const editdetail = editComment.datareturn ? editComment.datareturn.find((data: any) => {
-        return (
-          data.status == uniRequestDegree.requeststatus &&
-          data.process == uniRequestDegree.requestprocess
-        );
-      }) : {};
+      const editdetail = editComment.datareturn
+        ? editComment.datareturn.find((data: any) => {
+            return (
+              data.status == uniRequestDegree.requeststatus &&
+              data.process == uniRequestDegree.requestprocess
+            );
+          })
+        : {};
       if (
         (uniRequestDegree.requeststatus == '1' &&
           uniRequestDegree.requestprocess == '99') ||
@@ -249,6 +251,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
         });
       }, 500);
     } else {
+      const userLoginData = JSON.parse(getCookie('userData'));
       this.mode = 'edit';
       this.step1Form.setValue({
         step1: {
@@ -260,6 +263,16 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
                 ? `, ${this.uniData?.campusname}`
                 : '') || '',
           provience: this.uniData?.provinceid || '',
+          coordinator: {
+            prefixTh: userLoginData?.prefixth || '',
+            nameTh: userLoginData?.firstnameth || '',
+            lastNameTh: userLoginData?.lastnameth || '',
+            post: userLoginData?.position || '',
+            contactPhone: userLoginData?.phone || '',
+            workplacePhone: userLoginData?.workphone || '',
+            fax: userLoginData?.fax || '',
+            email: userLoginData?.email || '',
+          },
         },
         detail: [],
       });
@@ -307,11 +320,11 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
                   })
                   .subscribe((resEmail: any) => {
                     if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno);
+                    this.showConfirmDialog(res?.requestno, process);
                   });
               } else {
                 if (res?.returncode == 99) return;
-                this.showConfirmDialog(res?.requestno);
+                this.showConfirmDialog(res?.requestno, process);
               }
             });
         } else {
@@ -320,6 +333,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
             .uniRequestInsert(this._getRequest(process, '1'))
             .subscribe((res: any) => {
               if (
+                process !== '99' &&
                 emailForm.step1.coordinator &&
                 emailForm.step1.coordinator.email
               ) {
@@ -332,11 +346,11 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
                   })
                   .subscribe((resEmail: any) => {
                     if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno);
+                    this.showConfirmDialog(res?.requestno, process);
                   });
               } else {
                 if (res?.returncode == 99) return;
-                this.showConfirmDialog(res?.requestno);
+                this.showConfirmDialog(res?.requestno, process);
               }
             });
         }
@@ -445,20 +459,25 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
     }
     return reqBody;
   }
-  showConfirmDialog(requestno?: string) {
+  showConfirmDialog(requestno?: string, process?: string) {
     const completeDialog = this.dialog.open(CompleteDialogComponent, {
       width: '375px',
-      data: {
-        header: 'ยืนยันข้อมูลสำเร็จ',
-        content: `วันที่ : ${this.date}
+      data:
+        process !== '99'
+          ? {
+              header: 'ยืนยันข้อมูลสำเร็จ',
+              content: `วันที่ : ${this.date}
         เลขที่แบบคำขอ : ${
           requestno
             ? formatRequestNo(requestno || '')
             : formatRequestNo(this.requestNo) || '-'
         }`,
-        subContent: `กรุณาตรวจสอบสถานะแบบคำขอหรือรหัสเข้าใช้งาน
+              subContent: `กรุณาตรวจสอบสถานะแบบคำขอหรือรหัสเข้าใช้งาน
         ผ่านทางอีเมลผู้ที่ลงทะเบียนภายใน 3 วันทำการ`,
-      },
+            }
+          : {
+              header: 'บันทึกข้อมูลสำเร็จ',
+            },
     });
 
     completeDialog.afterClosed().subscribe(() => {

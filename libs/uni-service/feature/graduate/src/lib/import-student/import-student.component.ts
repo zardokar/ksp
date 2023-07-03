@@ -778,10 +778,9 @@ export class ImportStudentComponent implements OnInit {
         identity_no: params
       };
       this.uniInfoService.searchSelfStudent(payload).subscribe((response) => {
-        if (response.datareturn) {
-          response.datareturn.forEach((data: any) => {
-            data.addressinfo = JSON.parse(data.addressinfo);
-          });
+        console.log(response)
+        if (response) {
+          response.addressinfo = response.addressinfo ? JSON.parse(response.addressinfo) : {};
           this.user.at(index).patchValue({
             firstnameth: response.first_name_th || null,
             lastnameth: response.last_name_th || null,
@@ -911,5 +910,9 @@ export class ImportStudentComponent implements OnInit {
         EngPrefixes: this.EngPrefixes
       },
     });
+  }
+
+  deleteUser(index: any) {
+    this.user.removeAt(index);
   }
 }
