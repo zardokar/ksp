@@ -45,7 +45,10 @@ export class FormMultiAttachmentComponent {
       data: {
         title: group.name,
         files: group.files,
-        systemtype: this.systemType
+        systemtype: this.systemType,
+        checkresult: group?.checkresult ?? [],
+        mode: this.viewFileMode,
+        showLicense: this.showLicense
       }
     })
 

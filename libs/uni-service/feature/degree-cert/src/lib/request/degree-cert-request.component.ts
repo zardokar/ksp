@@ -110,12 +110,12 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
       const editComment = await lastValueFrom(
         this.uniInfoService.getRequestProcessHistory({ requestid: this.id })
       );
-      const editdetail = editComment.datareturn.find((data: any) => {
+      const editdetail = editComment.datareturn ? editComment.datareturn.find((data: any) => {
         return (
           data.status == uniRequestDegree.requeststatus &&
           data.process == uniRequestDegree.requestprocess
         );
-      });
+      }) : {};
       if (
         (uniRequestDegree.requeststatus == '1' &&
           uniRequestDegree.requestprocess == '99') ||
