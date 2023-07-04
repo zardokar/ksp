@@ -107,20 +107,30 @@ export class InquiryMainComponent implements OnInit {
   ngOnInit(): void {
     this.checkRequestId();
   }
+  // ------------------------------------------------------------------------
   checkRequestId() {
-    this.route.paramMap.subscribe((params) => {
+
+    this.route.paramMap.subscribe( (params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
-        this.service
-          .getEthicsByID({ id: this.ethicsId })
-          .subscribe((res: any) => {
+        
+        this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
+
+            // ----------------------------------------------- Fill Accused Info
+            if(res?.licenseinfo){
+              this.accusation.setAccusedInfo(res?.licenseinfo)
+            }
+
+            // ----------------------------------------------- Fill Files Upload
             this.accusation.accusationFiles.forEach((element, index) => {
-              if (res.accusationfile) {
-                const json: any = jsonParse(res?.accusationfile);
-                element.fileid = json[index]?.fileid;
-                element.filename = json[index]?.filename;
+              if (res.accusationfile && res.accusationfile.length > 0) {
+                  const dataobj: any = res.accusationfile;
+                    element.fileid = dataobj[index]?.fileid;
+                  element.filename = dataobj[index]?.filename;
               }
             });
+
+            // ----------------------------------------------- Fill 
             if (res?.accuserinfo) {
               const json = jsonParse(res?.accuserinfo);
 

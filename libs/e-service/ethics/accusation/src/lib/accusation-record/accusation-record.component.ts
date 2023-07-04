@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { AccusationSearchComponent } from '@ksp/e-service/dialog/accusation-search';
+import { PersonInfoComponent } from '@ksp/e-service/ui/accusation-info';
 import { EServiceUiAccusationInfoModule } from '@ksp/e-service/ui/accusation-info';
 import { SharedFormOthersModule } from '@ksp/shared/form/others';
 import { BottomNavComponent, StepperNavComponent } from '@ksp/shared/menu';
@@ -84,6 +85,10 @@ export class AccusationRecordComponent
     accusationconsideration: [],
     id : []
   });
+
+  @ViewChild(PersonInfoComponent)
+  personinfo!: PersonInfoComponent;
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -102,6 +107,7 @@ export class AccusationRecordComponent
   get members() {
     return this.form.controls.accuserinfo as FormArray;
   }
+
   addRow(data: EhicsMember = defaultEhicsMember) {
     const rewardForm = this.fb.group({
       idcardno: [data.idcardno],
@@ -143,9 +149,9 @@ export class AccusationRecordComponent
     });
   }
 
-  /* dialog.componentInstance.confirmed.subscribe((res) => {
-      if (res) {
-        this.onCompleted();
-      }
-    }); */
+  // ------------------------------------------------------
+  setAccusedInfo(accused_data: any)
+  {
+    this.personinfo.assignPersonInfo( accused_data )
+  }
 }
