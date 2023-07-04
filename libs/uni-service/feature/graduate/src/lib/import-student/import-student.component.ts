@@ -12,12 +12,11 @@ import {
   TrainingAddressComponent,
   ViewHistoryAdmissionComponent
 } from '@ksp/uni-service/dialog';
-import { SelectItem } from 'primeng/api';
-import { User } from './user';
 import { UserService } from './user.service';
 import { FormAddressTableComponent } from '@ksp/shared/form/others';
 import {
   GeneralInfoService,
+  LoaderService,
   UniInfoService,
   UniRequestService,
 } from '@ksp/shared/service';
@@ -25,20 +24,16 @@ import localForage from 'localforage';
 import {
   FormArray,
   FormBuilder,
-  FormControl,
-  FormGroup,
   Validators,
 } from '@angular/forms';
-import { EMPTY, switchMap } from 'rxjs';
+import { EMPTY, Subject, switchMap } from 'rxjs';
 import * as XLSX from 'xlsx';
 import {
   getCookie,
   idCardPattern,
   nameEnPattern,
   nameThPattern,
-  parseJson,
   phonePattern,
-  thaiDate,
   validatorMessages,
 } from '@ksp/shared/utility';
 import moment from 'moment';
@@ -83,6 +78,7 @@ export class ImportStudentComponent implements OnInit {
   studentStatusList = studentStatusList;
   submitted = false;
   validatorMessages = validatorMessages;
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
     public dialog: MatDialog,
@@ -92,7 +88,8 @@ export class ImportStudentComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     private fb: FormBuilder,
     private requestService: UniRequestService,
-    private uniInfoService: UniInfoService
+    private uniInfoService: UniInfoService,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit() {
