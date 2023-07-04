@@ -86,8 +86,9 @@ export class AccusationDecisionComponent implements OnInit {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
+          console.log("in RES ::: ", res);
           const { accusationconsideration, ...payload } = res;
-          const json = JSON.parse(accusationconsideration as string);
+          const json = accusationconsideration as any;
           this.form.patchValue({ ...payload, accusationconsideration: json });
         });
       }
