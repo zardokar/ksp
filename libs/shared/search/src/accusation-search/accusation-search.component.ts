@@ -81,8 +81,9 @@ export class AccusationSearchComponent
     this.dataSource.paginator = this.paginator;
   }
   onClickSearch() {
+
     const payload = {
-      ethicsno: '',
+      // ethicsno: '',
       accusationblackno: '',
       resultredno: '',
       firstnameth: '',
@@ -95,6 +96,7 @@ export class AccusationSearchComponent
       offset: '0',
       row: '10',
     };
+
     this.service.searchEthicssearch(payload).subscribe((res: any) => {
       res.forEach((item: any) => {
         const json: any = jsonParse(item?.licenseinfo)
