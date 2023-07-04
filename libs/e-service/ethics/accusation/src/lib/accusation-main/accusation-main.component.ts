@@ -138,14 +138,17 @@ export class AccusationMainComponent implements OnInit {
       mapFileInfo(this.accusation.accusationFiles)
     );
     const selectData = _.pick(data, allowKey);
+    selectData['licenseinfo']  =  JSON.stringify( objPerson );
     if (this.ethicsId) {
       selectData['id'] = this.ethicsId;
-      const payload = replaceEmptyWithNull(selectData);
-      this.service.updateEthicsAccusation(payload).subscribe((res) => {
+      // const payload = replaceEmptyWithNull(selectData);
+      console.log("Log payload update" , selectData);
+      this.service.updateEthicsAccusation(selectData).subscribe((res) => {
         console.log('save = ', res);
       });
     } else {
-      selectData['licenseinfo']  =  JSON.stringify( objPerson );
+      
+      console.log("Log payload insert" , selectData);
       this.service.createEthics(selectData).subscribe((res) => {
         console.log("Response insert ::",res);
         const id = res.id;

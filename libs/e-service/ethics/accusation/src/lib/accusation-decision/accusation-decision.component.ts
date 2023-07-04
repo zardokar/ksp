@@ -10,6 +10,11 @@ import { Ethics } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
 import { thaiDate } from '@ksp/shared/utility';
 import _ from 'lodash';
+import {
+  jsonParse,
+  mapFileInfo,
+  replaceEmptyWithNull,
+} from '@ksp/shared/utility';
 @Component({
   selector: 'e-service-accusation-decision',
   templateUrl: './accusation-decision.component.html',
@@ -93,10 +98,18 @@ export class AccusationDecisionComponent implements OnInit {
     const allowKey = Object.keys(ethics);
     const data = this.form.value as any;
     data.accusationconsideration = JSON.stringify(data.accusationconsideration);
+    data.accuserinfo              = JSON.stringify(data?.accuserinfo);
+    data.accusationfile           = JSON.stringify(
+      mapFileInfo(data.accusationfile)
+    );
     const selectData = _.pick(data, allowKey);
+    console.log(data);
+
     if (this.ethicsId) {
       selectData['id'] = this.ethicsId;
+      console.log(selectData);
       this.service.updateEthicsAccusation(selectData).subscribe((res) => {
+        console.log(res);
         this.onCompleted();
       });
     }

@@ -21,7 +21,7 @@ export class EthicsService {
   updateEthicsAccusation(payload: any): Observable<any> {
     return this.http
       .post(
-        `${environment.apiUrl}/e-service/es-ethicsupdate-accusation`,
+        `${environment.shortApiUrl}/kspx/ethic/es_ethicsupdate.php`,
         payload
       )
       .pipe(
