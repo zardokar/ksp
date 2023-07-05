@@ -235,6 +235,36 @@ function from(value: any, format='W3CMS' ,offset:any =0)
     return getDateTime(value, offset, format)
 }
 // ------------------------------------------------------
+function convertDateStrtoDTStr(valuestr: string, form="", yearfactor='ad')
+{
+    let ystr = ''
+    let mstr = ''
+    let dstr = ''
+    const yfact= YEAR_FACTOR[yearfactor] || 0
+    const now  = new Date()
+
+    const targetsplit   = valuestr.split('')
+
+    form                = form.toUpperCase()
+    const splitdata     = form.split('')
+
+    splitdata.map( (char: string,count:number ) => {  
+        if( char === 'Y')   ystr += targetsplit[count]
+        if( char === 'M')   mstr += targetsplit[count]
+        if( char === 'D')   dstr += targetsplit[count]
+    })
+
+    if( now.getFullYear() > parseInt(ystr) )    
+        ystr = `${ (now.getFullYear()-parseInt(ystr)) + parseInt(ystr)  }`
+
+    const date: any = new Date(`${ parseInt(ystr) - yfact }-${mstr}-${dstr}`)
+
+    if(isNaN(date) || typeof date == 'undefined')
+        return ""
+    else
+        return `${date.getFullYear()}-${(pad(date.getMonth()+1))}-${pad(date.getDate())}T00:00:00.000Z`
+}
+// ------------------------------------------------------
 function convertDateForm(data: any, lang='en', yearfactor='ad',format='DDMMYYYY', symbol='/')
 {       
         lang     = lang.toLowerCase()
@@ -288,5 +318,6 @@ export const zdtform = {
     convertDateForm,
     getDatefromInput,
     getDateTimefromInput,
-    getDateFormattoInput
+    getDateFormattoInput,
+    convertDateStrtoDTStr
 }
