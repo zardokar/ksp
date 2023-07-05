@@ -250,6 +250,9 @@ function convertDateForm(data: any, lang='en', yearfactor='ad',format='DDMMYYYY'
     try{
         if(format === 'DDMMYYYY')   
             result = `${ pad(date.getDate()) }${symbol}${ pad(date.getMonth()+1) }${symbol}${ pad(date.getFullYear() + yfact) }`
+        else if(format === 'DMYYYY'){
+            result = `${ date.getDate() }${symbol}${ date.getMonth()+1 }${symbol}${ pad(date.getFullYear() + yfact) }`
+        }
         else if(format === 'D MMMM YYYY'){
             symbol = ' '
             result = `${ date.getDate() }${symbol}${ MONTHS[lang][ date.getMonth() ]  }${symbol}${ pad(date.getFullYear() + yfact) }`
