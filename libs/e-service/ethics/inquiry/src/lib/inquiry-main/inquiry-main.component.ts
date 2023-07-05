@@ -13,6 +13,7 @@ import {
   jsonParse,
   jsonStringify,
   replaceEmptyWithNull,
+  zdtform
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
 import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
@@ -62,19 +63,24 @@ export class InquiryMainComponent implements OnInit {
             const payload = this.form.value.inquiry as any;
             if (payload) {
               payload.id = this.ethicsId;
-              payload.inquiryresult = jsonStringify(payload.inquiryresult);
-              payload.inquirysubcommittee = jsonStringify(
-                payload.inquirysubcommittee
-              );
+              payload.inquiryresult = JSON.stringify(payload.inquiryresult);
+              payload.inquirysubcommittee = JSON.stringify( payload.inquirysubcommittee );
             }
             const payload2 = this.form.value.inquiryresult as any;
+
             if (payload2) {
               payload2.id = this.ethicsId;
             }
 
+            this.collectFormData(payload) 
+            console.log( `payload`, replaceEmptyWithNull(payload))
+            console.log( `payload2`, payload2)
+            
+
             return zip(
-              this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
-              this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
+              // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
+              // this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
+             this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
             );
           }
           return EMPTY;
@@ -85,6 +91,25 @@ export class InquiryMainComponent implements OnInit {
           this.onCompleted();
         }
       });
+  }
+
+  collectFormData(payload : any)
+  {
+    const investigation               = { ...(this.form.controls.investigation.value as any) }
+    // payload.investigationfile         = investigation.investigationfile
+    payload.investigationdate         = zdtform.from(investigation.investigationdate, 'UTC_MS',0 )
+    payload.investigationorderdate    = zdtform.from(investigation.investigationorderdate, 'UTC_MS',0 )
+    payload.investigationorderno      = investigation.investigationorderno
+    payload.investigationreport       = investigation.investigationreport
+    payload.investigationreportdate   = zdtform.from(investigation.investigationreportdate, 'UTC_MS',1 )
+    payload.investigationresult       = JSON.stringify(investigation.investigationresult)
+    payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
+
+    payload.accusationfile            = JSON.stringify(payload.accusationfile)
+    payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
+    payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
+
+    return payload
   }
 
   onCompleted() {
@@ -107,55 +132,64 @@ export class InquiryMainComponent implements OnInit {
   ngOnInit(): void {
     this.checkRequestId();
   }
+  // ------------------------------------------------------------------------
   checkRequestId() {
-    this.route.paramMap.subscribe((params) => {
+
+    this.route.paramMap.subscribe( (params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
-        this.service
-          .getEthicsByID({ id: this.ethicsId })
-          .subscribe((res: any) => {
+        
+        this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
+
+            // ----------------------------------------------- Fill Accused Info
+            if(res?.licenseinfo){
+              this.accusation.setAccusedInfo(res?.licenseinfo)
+            }
+            // ----------------------------------------------- Fill Files Upload
             this.accusation.accusationFiles.forEach((element, index) => {
-              if (res.accusationfile) {
-                const json: any = jsonParse(res?.accusationfile);
-                element.fileid = json[index]?.fileid;
-                element.filename = json[index]?.filename;
+              if (res.accusationfile && res.accusationfile.length > 0) {
+                  const dataobj: any = res.accusationfile;
+                    element.fileid = dataobj[index]?.fileid;
+                  element.filename = dataobj[index]?.filename;
               }
             });
+            // ----------------------------------------------- Fill Accusation user info
             if (res?.accuserinfo) {
-              const json = jsonParse(res?.accuserinfo);
-
-              if (json && json.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.accuserinfo !== "object" ? jsonParse(res?.accuserinfo) : res?.accuserinfo
+              if (dataobj && dataobj.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.accusation.addRow();
                 }
               }
-              res.accuserinfo = json;
+              res.accuserinfo = dataobj
             }
+            // -----------------------------------------------
             if (res?.investigationresult) {
-              const json = jsonParse(res?.investigationresult);
-              res.investigationresult = json;
+              res.investigationresult = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult;
             }
+            // -----------------------------------------------
             if (res?.investigationsubcommittee) {
-              const json = jsonParse(res?.investigationsubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.investigationsubcommittee !== "object" ? jsonParse(res?.investigationsubcommittee) : res?.investigationsubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.investigation.addRow();
                 }
               }
-              res.investigationsubcommittee = json;
+              res.investigationsubcommittee = dataobj;
             }
+            // -----------------------------------------------
             if (res?.inquiryresult) {
-              const json = jsonParse(res?.inquiryresult);
-              res.inquiryresult = json;
+              res.inquiryresult = typeof res?.inquiryresult !== "object" ? jsonParse(res?.inquiryresult) : res?.inquiryresult;
             }
+            // -----------------------------------------------
             if (res.inquirysubcommittee) {
-              const json = jsonParse(res?.inquirysubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.inquirysubcommittee !== "object" ? jsonParse(res?.inquirysubcommittee) : res?.inquirysubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.inquiry.addRow();
                 }
               }
-              res.inquirysubcommittee = json;
+              res.inquirysubcommittee = dataobj;
             }
             this.form.controls.accusation.patchValue(res);
             this.form.controls.inquiryresult.patchValue(res);

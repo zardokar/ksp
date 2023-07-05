@@ -21,7 +21,7 @@ export class EthicsService {
   updateEthicsAccusation(payload: any): Observable<any> {
     return this.http
       .post(
-        `${environment.apiUrl}/e-service/es-ethicsupdate-accusation`,
+        `${environment.shortApiUrl}/kspx/ethic/es_ethicsupdate.php`,
         payload
       )
       .pipe(
@@ -50,7 +50,7 @@ export class EthicsService {
   }
   searchSelfLicense(payload: any): Observable<any> {
     return this.http
-        .post( `${environment.shortApiUrl}/kspx/ethic/selfmyinfosearch.php`, payload)
+        .post( `${environment.shortApiUrl}/kspx/ethic/es_licenseinfosearch.php`, payload)
         .pipe(
         shareReplay(),
         map((data: any) => data.datareturn)
