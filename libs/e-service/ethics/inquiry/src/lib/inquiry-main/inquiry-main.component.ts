@@ -13,6 +13,7 @@ import {
   jsonParse,
   jsonStringify,
   replaceEmptyWithNull,
+  zdtform
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
 import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
@@ -62,19 +63,24 @@ export class InquiryMainComponent implements OnInit {
             const payload = this.form.value.inquiry as any;
             if (payload) {
               payload.id = this.ethicsId;
-              payload.inquiryresult = jsonStringify(payload.inquiryresult);
-              payload.inquirysubcommittee = jsonStringify(
-                payload.inquirysubcommittee
-              );
+              payload.inquiryresult = JSON.stringify(payload.inquiryresult);
+              payload.inquirysubcommittee = JSON.stringify( payload.inquirysubcommittee );
             }
             const payload2 = this.form.value.inquiryresult as any;
+
             if (payload2) {
               payload2.id = this.ethicsId;
             }
 
+            this.collectFormData(payload) 
+            console.log( `payload`, replaceEmptyWithNull(payload))
+            console.log( `payload2`, payload2)
+            
+
             return zip(
-              this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
-              this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
+              // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
+              // this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
+              this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
             );
           }
           return EMPTY;
@@ -85,6 +91,21 @@ export class InquiryMainComponent implements OnInit {
           this.onCompleted();
         }
       });
+  }
+
+  collectFormData(payload : any)
+  {
+    const investigation               = { ...(this.form.controls.investigation.value as any) }
+    payload.investigationdate         = zdtform.from(investigation.investigationdate, 'UTC',7 )
+    // payload.investigationfile         = investigation.investigationfile
+    payload.investigationorderdate    = zdtform.from(investigation.investigationorderdate, 'UTC',7 )
+    payload.investigationorderno      = investigation.investigationorderno
+    payload.investigationreport       = investigation.investigationreport
+    payload.investigationreportdate   = investigation.investigationreportdate
+    payload.investigationresult       = JSON.stringify(investigation.investigationresult)
+    payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
+
+    return payload
   }
 
   onCompleted() {
