@@ -80,7 +80,7 @@ export class InquiryMainComponent implements OnInit {
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
               // this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
-              this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
+             this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
             );
           }
           return EMPTY;
@@ -96,14 +96,18 @@ export class InquiryMainComponent implements OnInit {
   collectFormData(payload : any)
   {
     const investigation               = { ...(this.form.controls.investigation.value as any) }
-    payload.investigationdate         = zdtform.from(investigation.investigationdate, 'UTC',7 )
     // payload.investigationfile         = investigation.investigationfile
-    payload.investigationorderdate    = zdtform.from(investigation.investigationorderdate, 'UTC',7 )
+    payload.investigationdate         = zdtform.from(investigation.investigationdate, 'UTC_MS',0 )
+    payload.investigationorderdate    = zdtform.from(investigation.investigationorderdate, 'UTC_MS',0 )
     payload.investigationorderno      = investigation.investigationorderno
     payload.investigationreport       = investigation.investigationreport
-    payload.investigationreportdate   = investigation.investigationreportdate
+    payload.investigationreportdate   = zdtform.from(investigation.investigationreportdate, 'UTC_MS',1 )
     payload.investigationresult       = JSON.stringify(investigation.investigationresult)
     payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
+
+    payload.accusationfile            = JSON.stringify(payload.accusationfile)
+    payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
+    payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
 
     return payload
   }

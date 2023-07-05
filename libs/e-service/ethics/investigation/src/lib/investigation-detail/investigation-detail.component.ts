@@ -62,8 +62,7 @@ export class InvestigationDetailComponent implements OnInit {
               payload.investigationsubcommittee
             );
             payload.id = this.ethicsId;
-            const pl = replaceEmptyWithNull(payload);
-            return this.service.updateEthicsInvestigation(pl);
+            return this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
           }
           return EMPTY;
         })

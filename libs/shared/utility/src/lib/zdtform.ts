@@ -39,6 +39,7 @@ const FORMAT_KEY = {
                           UTC: 'UTC',
                        UTC_MS: 'UTC_MS',
                       ISO8601: 'ISO8601',
+                     ISO8601N: 'ISO8601N',
                         EPOCH: 'EPOCH',
                          UNIX: 'UNIX',
                   DATETIMEOBJ: 'DATETIMEOBJ'
@@ -67,27 +68,27 @@ function formating(strIndex : string, year : any, month: any, date: any, hour: a
 {
     const dateform     = `${year}-${pad2(month)}-${pad2(date)}`
     let   timeform     = `T${pad2(hour)}:${ pad2(min)}:${pad2(sec)}`
-    const result       = { form: ''}
+    let   result       = ''
 
     if(strIndex.toUpperCase() === FORMAT_KEY.W3CMS)
         timeform     =`T${pad2(hour)}:${ pad2(min)}:${pad2(sec)}.${pad3(milsec)}`
 
     switch(strIndex.toUpperCase()){
         case FORMAT_KEY.W3C     :
-        case FORMAT_KEY.W3CMS   : result.form = dateform +timeform+`${dif}${pad2(tzo / 60)}:${pad2(tzo % 60)}`
+        case FORMAT_KEY.W3CMS   : result = dateform +timeform+`${dif}${pad2(tzo / 60)}:${pad2(tzo % 60)}`
                             break
-        case FORMAT_KEY.UTC     : result.form = dateform +timeform+'Z' 
+        case FORMAT_KEY.UTC     : result = dateform +timeform+'Z' 
                             break
-        case FORMAT_KEY.UTC_MS  : result.form = `${dateform}${timeform}.${pad3(milsec)}Z` 
+        case FORMAT_KEY.UTC_MS  : result = `${dateform}${timeform}.${pad3(milsec)}Z` 
                             break
-        case FORMAT_KEY.ISO8601 : result.form = dateform + timeform + dif + pad2(tzo / 60) + pad2(tzo % 60)
+        case FORMAT_KEY.ISO8601 : result = dateform + timeform + dif + pad2(tzo / 60) + pad2(tzo % 60)
                             break
         case FORMAT_KEY.EPOCH   :
-        case FORMAT_KEY.UNIX    : result.form = `${Math.floor( new Date(`${dateform}${timeform}${dif}${pad2(tzo / 60)}:${pad2(tzo % 60)}`).getTime() / MULTIPLIER_TIME)}`
+        case FORMAT_KEY.UNIX    : result = `${Math.floor( new Date(`${dateform}${timeform}${dif}${pad2(tzo / 60)}:${pad2(tzo % 60)}`).getTime() / MULTIPLIER_TIME)}`
                             break
     }
     
-    return result.form
+    return result
 }
 
 // ------------------------------------------------------
