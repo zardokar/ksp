@@ -11,6 +11,7 @@ import {
   PdfViewerNoLicenseComponent,
 } from '@ksp/shared/dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { v4 as uuidv4 } from 'uuid';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +29,7 @@ export class FileUploadComponent {
   @Input() pageType!: string; // tab ที่เรียกใช้งาน
   @Input() showUploadedFileName = true;
   @Input() requestType: number | null = null; // 1,2 no token required
-  @Input() uniqueTimestamp = '';
+  @Input() uniqueTimestamp = uuidv4();
   @Input() uploadType: 'button' | 'link' = 'button';
   @Input() isImage = false; // when upload image use public API
   @Input() filename = '';
