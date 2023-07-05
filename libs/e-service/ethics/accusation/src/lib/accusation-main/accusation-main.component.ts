@@ -73,6 +73,8 @@ export class AccusationMainComponent implements OnInit {
             }
           }
           this.accusation.setAccusedInfo(res?.licenseinfo)
+          // this.accusation.setAddressInfo(res?.addressinfo ? res.addressinfo : {})
+          this.accusation.getAddressInfo(res?.licenseinfo)
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
