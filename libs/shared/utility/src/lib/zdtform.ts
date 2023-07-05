@@ -1,4 +1,31 @@
 // ------------------------------------------------------
+const MONTHS: any[any] = {
+    "en": ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    "th": ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+}
+const TH_NUM = { "0": "๐", "1": '๑', "2": "๒", "3": '๓', "4": '๔', "5": '๕', "6": '๖', "7": '๗', "8": '๘', "9": '๙' }
+const DAY_NAMES = {
+    "en": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "th": ["จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส.", "อา."]
+}
+const YEAR_FACTOR: any[any] ={
+    "ad": 0,
+    "ce": 0,
+    "be": 543
+}
+const YEAR_NAME: any[any] = {
+    th :{
+        "ad": 'ค.ศ.',
+        "ce": 'ส.ศ.',
+        "be": 'พ.ศ.'
+    },
+    en : {
+        "ad": 'A.D.',
+        "ce": 'C.E.',
+        "be": 'B.E.'
+    }
+}
+// ------------------------------------------------------
 const MULTIPLIER_TIME    = 1000
 const UNIXTIME_CONDITION = 9999000000
 const TIME_FORMAT        = `T00:00:00.000`
@@ -207,6 +234,45 @@ function from(value: any, format='W3CMS' ,offset:any =0)
     
     return getDateTime(value, offset, format)
 }
+// ------------------------------------------------------
+function convertDateForm(data: any, lang='en', yearfactor='ad',format='DDMMYYYY', symbol='/')
+{       
+        lang     = lang.toLowerCase()
+    yearfactor   = yearfactor.toLowerCase()   
+
+    const date   = typeof data === 'string' ?  new Date(data) : data
+    let result   = ''
+    const yfact  = YEAR_FACTOR[yearfactor] || 0
+
+    const yname  = YEAR_NAME[lang][yearfactor]
+        format   = format.toUpperCase()
+
+    try{
+        if(format === 'DDMMYYYY')   
+            result = `${ pad(date.getDate()) }${symbol}${ pad(date.getMonth()+1) }${symbol}${ pad(date.getFullYear() + yfact) }`
+        else if(format === 'D MMMM YYYY'){
+            symbol = ' '
+            result = `${ date.getDate() }${symbol}${ MONTHS[lang][ date.getMonth() ]  }${symbol}${ pad(date.getFullYear() + yfact) }`
+        }else if(format === 'DD MMMM YYYY'){
+            symbol = ' '
+            result = `${ pad(date.getDate()) }${symbol}${ MONTHS[lang][ date.getMonth() ]  }${symbol}${ pad(date.getFullYear() + yfact) }`
+        }else if(format === 'D MMMM YN YYYY'){
+            symbol = ' '
+            result = `${ date.getDate() }${symbol}${ MONTHS[lang][ date.getMonth() ]  }${symbol}${yname}${symbol}${ pad(date.getFullYear() + yfact) }`
+        }else if(format === 'DD MMMM YN YYYY'){
+            symbol = ' '
+            result = `${ pad(date.getDate()) }${symbol}${ MONTHS[lang][ date.getMonth() ]  }${symbol}${yname}${symbol}${ pad(date.getFullYear() + yfact) }`
+        }else if(format === 'MMMM YYYY'){
+            symbol = ' '
+            result = `${ MONTHS[lang][ date.getMonth() ] }${symbol}${ pad(date.getFullYear() + yfact) }`
+        }else
+            result = `${ pad(date.getFullYear()) }${symbol}${ pad(date.getMonth()+1) }${symbol}${ pad(date.getDate() + yfact) }`
+    }catch(excp){ 
+        // console.log( `data: ${data} | date: ${date} \n Error in convertDateForm() : `, excp )
+    }
+
+    return result
+}
 
 // ------------------------------------------------------
 export const zdtform = {
@@ -216,6 +282,7 @@ export const zdtform = {
     formating,
     getDateTime,
     onlyDate,
+    convertDateForm,
     getDatefromInput,
     getDateTimefromInput,
     getDateFormattoInput
