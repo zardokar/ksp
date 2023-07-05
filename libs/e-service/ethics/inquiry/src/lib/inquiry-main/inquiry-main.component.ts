@@ -120,7 +120,6 @@ export class InquiryMainComponent implements OnInit {
             if(res?.licenseinfo){
               this.accusation.setAccusedInfo(res?.licenseinfo)
             }
-
             // ----------------------------------------------- Fill Files Upload
             this.accusation.accusationFiles.forEach((element, index) => {
               if (res.accusationfile && res.accusationfile.length > 0) {
@@ -129,43 +128,43 @@ export class InquiryMainComponent implements OnInit {
                   element.filename = dataobj[index]?.filename;
               }
             });
-
-            // ----------------------------------------------- Fill 
+            // ----------------------------------------------- Fill Accusation user info
             if (res?.accuserinfo) {
-              const json = jsonParse(res?.accuserinfo);
-
-              if (json && json.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.accuserinfo !== "object" ? jsonParse(res?.accuserinfo) : res?.accuserinfo
+              if (dataobj && dataobj.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.accusation.addRow();
                 }
               }
-              res.accuserinfo = json;
+              res.accuserinfo = dataobj
             }
+            // -----------------------------------------------
             if (res?.investigationresult) {
-              const json = jsonParse(res?.investigationresult);
-              res.investigationresult = json;
+              res.investigationresult = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult;
             }
+            // -----------------------------------------------
             if (res?.investigationsubcommittee) {
-              const json = jsonParse(res?.investigationsubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.investigationsubcommittee !== "object" ? jsonParse(res?.investigationsubcommittee) : res?.investigationsubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.investigation.addRow();
                 }
               }
-              res.investigationsubcommittee = json;
+              res.investigationsubcommittee = dataobj;
             }
+            // -----------------------------------------------
             if (res?.inquiryresult) {
-              const json = jsonParse(res?.inquiryresult);
-              res.inquiryresult = json;
+              res.inquiryresult = typeof res?.inquiryresult !== "object" ? jsonParse(res?.inquiryresult) : res?.inquiryresult;
             }
+            // -----------------------------------------------
             if (res.inquirysubcommittee) {
-              const json = jsonParse(res?.inquirysubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.inquirysubcommittee !== "object" ? jsonParse(res?.inquirysubcommittee) : res?.inquirysubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.inquiry.addRow();
                 }
               }
-              res.inquirysubcommittee = json;
+              res.inquirysubcommittee = dataobj;
             }
             this.form.controls.accusation.patchValue(res);
             this.form.controls.inquiryresult.patchValue(res);
