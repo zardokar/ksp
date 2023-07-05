@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { AccusationSearchComponent } from '@ksp/e-service/dialog/accusation-search';
-import { PersonInfoComponent } from '@ksp/e-service/ui/accusation-info';
+import { PersonInfoComponent , AddressInfoComponent } from '@ksp/e-service/ui/accusation-info';
 import { EServiceUiAccusationInfoModule } from '@ksp/e-service/ui/accusation-info';
 import { SharedFormOthersModule } from '@ksp/shared/form/others';
 import { BottomNavComponent, StepperNavComponent } from '@ksp/shared/menu';
@@ -65,7 +65,8 @@ export class AccusationRecordComponent
   accusationFiles: any[] = structuredClone(ACCUSATION_FILES);
   uniqueTimestamp: any;
   updateStatus = false;
-  selectId: any
+  selectId: any;
+  addressId: any;
   prefixList$!: Observable<any>;
 
   override form = this.fb.group({
@@ -88,6 +89,9 @@ export class AccusationRecordComponent
 
   @ViewChild(PersonInfoComponent)
   personinfo!: PersonInfoComponent;
+  @ViewChild(AddressInfoComponent)
+  addressinfo!: AddressInfoComponent;
+
 
   constructor(
     public dialog: MatDialog,
@@ -143,8 +147,9 @@ export class AccusationRecordComponent
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
+      // console.log("after Close ::: ",result);
       this.selectId = result
+      this.addressId = result
       this.updateStatus = true
     });
   }
@@ -153,5 +158,16 @@ export class AccusationRecordComponent
   setAccusedInfo(accused_data: any)
   {
     this.personinfo.assignPersonInfo( accused_data )
+    this.addressinfo.queryAddressInfo( accused_data )
+  }
+
+  setAddressInfo(accused_data: any)
+  {
+    this.addressinfo.assignAddressInfo( accused_data )
+  }
+
+  getAddressInfo(accused_data: any)
+  {
+    this.addressinfo.queryAddressInfo( accused_data )
   }
 }

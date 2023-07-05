@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges , ViewChild } from '@angular/core';
 import { KspAccusationRequest } from '@ksp/shared/interface';
+import {  AddressInfoComponent } from '@ksp/e-service/ui/accusation-info';
 import {
   AddressService,
   EthicsService,
@@ -15,8 +16,11 @@ import { Observable } from 'rxjs';
 
 export class PersonInfoComponent implements OnInit {
   @Input() identityNo : string | undefined
+  @Input() personalInfo : any | undefined
   @Input() changeUpdate : boolean | undefined
   
+  // @ViewChild(AddressInfoComponent) addressinfo!: AddressInfoComponent;
+
   personSelected  = false;
   selectedPerson  = new KspAccusationRequest()
   dataSource: any
@@ -40,7 +44,7 @@ export class PersonInfoComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     private addressService: AddressService,
   ) {
-    console.log(this.selectedPerson);
+    // console.log(this.selectedPerson);
   }
 
 
@@ -48,20 +52,26 @@ export class PersonInfoComponent implements OnInit {
     this.prefixList$ = this.generalInfoService.getPrefix();
     this.bureaus$ = this.generalInfoService.getBureau();
     this.provinces$ = this.addressService.getProvinces();
-    if(this.changeUpdate == true){
-        this.service
-        .searchSelfLicense({ identity_no: this.identityNo  }) //, ilicenseno: form.licenseno
-        .subscribe((res) => {
-
-          const resArray  = res as []
-          const person = resArray.find( (person : any) => { 
-                        if( person.identitynumber == this.identityNo ){
-                            this.assignPersonInfo(person)  
-                        }
-                        return person.identitynumber  === this.identityNo 
-          }) 
-          console.log(person);
-        });
+    // console.log("Personal-info ::",this.personalInfo);
+    if(this.personalInfo){
+      this.assignPersonInfo( this.personalInfo )
+    }else{
+      if(this.changeUpdate == true){
+          this.service
+          .searchSelfMyInfo({ identity_no: this.identityNo  }) //, ilicenseno: form.licenseno   ,identity_no: this.identityNo
+          .subscribe((res) => {
+            // console.log("License info :::" , res);
+            const resArray  = res as []
+            const person = resArray.find( (person : any) => { 
+                          if( person.identitynumber == this.identityNo ){
+                              this.assignPersonInfo(person)  
+                              // this.addressinfo.assignAddressInfo(person);
+                          }
+                          return person.identitynumber  === this.identityNo 
+            }) 
+            // console.log(person);
+          });
+      }
     }
 
   }
@@ -73,7 +83,7 @@ export class PersonInfoComponent implements OnInit {
   assignPersonInfo(person_data: any)
   {
     const GENDER = { '1': 'ชาย' , '2': 'หญิง', '3': 'อื่นๆ'}
-    
+    // console.log(person_data);
     this.mapData.identityNo = person_data.identitynumber !== undefined ? person_data.identitynumber : "--"
     this.mapData.namefirstTH = person_data.nameth !== undefined ? person_data.nameth : "--"
     this.mapData.namelastTH = person_data.lastnameth !== undefined ? person_data.lastnameth : ""
