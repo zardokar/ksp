@@ -375,6 +375,7 @@ export class ImportStudentComponent implements OnInit {
       const parsedata = JSON.parse(data.addressinfo);
       userAddress = parsedata?.addressInfo;
     }
+    console.log(data)
     return this.fb.group({
       id: [data.id],
       checked: [data.checked ? data.checked : false],
@@ -402,8 +403,7 @@ export class ImportStudentComponent implements OnInit {
         this.pageType == 'admissionList' ? Validators.required : undefined,
       ],
       originaldegree: [
-        data.originaldegree,
-        this.pageType == 'admissionList' ? Validators.required : undefined,
+        data.originaldegree
       ],
       email: [
         data.email,
@@ -662,6 +662,25 @@ export class ImportStudentComponent implements OnInit {
     });
   }
 
+  checkdisableSave() {
+    if (this.pageType == 'admissionList') {
+      return this.formStudent.invalid || this.user.value.length == 0;
+    } else {
+      let invalidform = false;
+      let empytychecked = true;
+      this.user.controls.forEach((user) => {
+        console.log(user)
+        if (user.value.checked && user.invalid) {
+          invalidform = true;
+        }
+        if (user.value.checked) {
+          empytychecked = false;
+        }
+      });
+      return invalidform || empytychecked;
+    }
+  }
+
   save(typeSave: string) {
     this.submitted = true;
     const invalidateData = this.checkdisableSave();
@@ -863,24 +882,6 @@ export class ImportStudentComponent implements OnInit {
       'course-detail',
       this.payload.unidegreecertid,
     ]);
-  }
-
-  checkdisableSave() {
-    if (this.pageType == 'admissionList') {
-      return this.formStudent.invalid || this.user.value.length == 0;
-    } else {
-      let invalidform = false;
-      let empytychecked = true;
-      this.user.controls.forEach((user) => {
-        if (user.value.checked && user.invalid) {
-          invalidform = true;
-        }
-        if (user.value.checked) {
-          empytychecked = false;
-        }
-      });
-      return invalidform || empytychecked;
-    }
   }
 
   autoScroll() {
