@@ -39,7 +39,6 @@ const FORMAT_KEY = {
                           UTC: 'UTC',
                        UTC_MS: 'UTC_MS',
                       ISO8601: 'ISO8601',
-                     ISO8601N: 'ISO8601N',
                         EPOCH: 'EPOCH',
                          UNIX: 'UNIX',
                   DATETIMEOBJ: 'DATETIMEOBJ'
