@@ -13,6 +13,7 @@ import {
   jsonParse,
   jsonStringify,
   replaceEmptyWithNull,
+  mapMultiFileInfo,
   zdtform
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
@@ -66,10 +67,20 @@ export class InquiryMainComponent implements OnInit {
               payload.inquiryresult = JSON.stringify(payload.inquiryresult);
               payload.inquirysubcommittee = JSON.stringify( payload.inquirysubcommittee );
             }
-            const payload2 = this.form.value.inquiryresult as any;
-
+            const payload2                = this.form.value.inquiryresult as any;
             if (payload2) {
-              payload2.id = this.ethicsId;
+              payload2.id                 = this.ethicsId;
+
+              payload.resultredno         = payload2.resultredno
+              payload.resultcomitteeno    = payload2.resultcomitteeno
+              payload.resultcomitteedate  = cleanUpDate( payload2.resultcomitteedate )
+              payload.resultcomitteefile  = payload2.resultcomitteefile 
+              payload.resulttoaccuserdate = cleanUpDate( payload2.resulttoaccuserdate )
+              payload.resulttoaccuserfile = payload2.resulttoaccuserfile 
+              payload.resulttoschooldate  = cleanUpDate( payload2.resulttoschooldate )
+              payload.resulttoschoolfile  = payload2.resulttoschoolfile 
+              payload.resulttoaccuseddate = cleanUpDate( payload2.resulttoaccuseddate )
+              payload.resulttoaccusedfile = payload2.resulttoaccusedfile 
             }
 
             this.collectFormData(payload) 
@@ -80,7 +91,7 @@ export class InquiryMainComponent implements OnInit {
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
               // this.service.updateEthicsResult(replaceEmptyWithNull(payload2))
-             this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
+              this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
             );
           }
           return EMPTY;
@@ -96,12 +107,13 @@ export class InquiryMainComponent implements OnInit {
   collectFormData(payload : any)
   {
     const investigation               = { ...(this.form.controls.investigation.value as any) }
+    
     // payload.investigationfile         = investigation.investigationfile
-    payload.investigationdate         = zdtform.from(investigation.investigationdate, 'UTC_MS',0 )
-    payload.investigationorderdate    = zdtform.from(investigation.investigationorderdate, 'UTC_MS',0 )
+    payload.investigationdate         = cleanUpDate( investigation.investigationdate )
+    payload.investigationorderdate    = cleanUpDate( investigation.investigationorderdate )
     payload.investigationorderno      = investigation.investigationorderno
     payload.investigationreport       = investigation.investigationreport
-    payload.investigationreportdate   = zdtform.from(investigation.investigationreportdate, 'UTC_MS',1 )
+    payload.investigationreportdate   = cleanUpDate(investigation.investigationreportdate ) 
     payload.investigationresult       = JSON.stringify(investigation.investigationresult)
     payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
 
@@ -141,6 +153,21 @@ export class InquiryMainComponent implements OnInit {
         
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
 
+            console.log( res )
+            // ----------------------------------------------- Cleaning Data
+            res.createdate                = cleanUpDate( res.createdate )
+            res.accusationassigndate      = cleanUpDate( res.accusationassigndate )
+            res.accusationincidentdate    = cleanUpDate( res.accusationincidentdate )
+            res.accusationissuedate       = cleanUpDate( res.accusationissuedate )
+            res.inquiryjbdate             = cleanUpDate( res.inquiryjbdate )
+            res.inquiryorderdate          = cleanUpDate( res.inquiryorderdate )
+            res.investigationdate         = cleanUpDate( res.investigationdate )
+            res.investigationreportdate   = cleanUpDate( res.investigationreportdate)
+            res.investigationorderdate    = cleanUpDate( res.investigationorderdate)
+            res.resultcomitteedate        = cleanUpDate( res.resultcomitteedate )
+            res.resulttoaccuserdate       = cleanUpDate( res.resulttoaccuserdate )
+            res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
+            res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )
             // ----------------------------------------------- Fill Accused Info
             if(res?.licenseinfo){
               this.accusation.setAccusedInfo(res?.licenseinfo)
@@ -191,6 +218,7 @@ export class InquiryMainComponent implements OnInit {
               }
               res.inquirysubcommittee = dataobj;
             }
+            
             this.form.controls.accusation.patchValue(res);
             this.form.controls.inquiryresult.patchValue(res);
             this.form.controls.investigation.patchValue(res);
@@ -199,4 +227,34 @@ export class InquiryMainComponent implements OnInit {
       }
     });
   }
+}
+// ------------------------------------------------------------------------------------------------------
+function cleanUpDate(data: string)
+{
+  let convertSTRpass      = true
+  let convertFormSTRpass  = true
+  let convertSTR : any
+  let convertFormSTR : any
+
+  try{
+      convertSTR          = zdtform.from(data , 'UTC_MS',0)
+      const result        =  new Date( convertSTR ) 
+      convertSTRpass      = isFinite(result.getTime())
+  }catch(excp){
+      convertSTRpass      = false
+  }
+  try{
+      convertFormSTR      = zdtform.convertDateStrtoDTStr(data , 'DD-MMM-YY')
+      const result        = new Date( convertFormSTR ) 
+      convertFormSTRpass  = isFinite(result.getTime())
+  }catch(excp){
+      convertFormSTRpass  = false
+  }
+
+  if( convertSTRpass ) 
+      return convertSTR
+  else if( convertFormSTRpass ) 
+      return convertFormSTR
+  else 
+      return ""
 }
