@@ -134,7 +134,7 @@ export class AccusationMainComponent implements OnInit {
       console.log("Log payload insert" , selectData);
       this.service.createEthics(selectData).subscribe((res) => {
         console.log("Response insert ::",res);
-        const id = res.id;
+        const id = res.datareturn.id;
         if (id) {
           this.router.navigate(['/accusation', 'detail', id]);
         }
