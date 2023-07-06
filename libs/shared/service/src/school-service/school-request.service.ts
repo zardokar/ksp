@@ -15,6 +15,15 @@ import { map, Observable } from 'rxjs';
 export class SchoolRequestService {
   constructor(private http: HttpClient) {}
 
+  getKspRequest(id: string | null): Observable<SchTempLicense> {
+    return this.http.post<SchTempLicense>(
+      `${environment.shortApiUrl}/kspx/kspreq_search.php`,
+      {
+        id,
+      }
+    );
+  }
+
   getTempLicense(id: string | null): Observable<SchTempLicense> {
     return this.http.post<SchTempLicense>(
       `${environment.apiUrl}/kspstaff/ksprequestselectbyid`,
