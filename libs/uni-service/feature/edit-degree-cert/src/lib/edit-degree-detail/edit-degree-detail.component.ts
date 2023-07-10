@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -118,7 +118,7 @@ export class EditDegreeDetailComponent {
           }
         })
       )
-      .subscribe((res) => {
+      .subscribe((res: any) => {
         if (res) {
           this.showConfirmDialog(res?.requestno);
         }
@@ -223,7 +223,6 @@ export class EditDegreeDetailComponent {
       });
     } else {
       const subjectsdata = parseJson(res.courseplan);
-      console.log(subjectsdata);
       this.step2Form.setValue({
         step2: {
           ...step2TeacherInfo,
@@ -243,7 +242,6 @@ export class EditDegreeDetailComponent {
         },
       });
     }
-    console.log(this.step2Form.value);
 
     this.step3Form.setValue({
       step3: {
@@ -325,7 +323,7 @@ export class EditDegreeDetailComponent {
     returnData['step2Section1'] = {
       ...(() => {
         const reqBody: any = {};
-        if (['1', '2', '3', '4'].includes(this.step1DegreeType)) {
+        if (['1', '2', '3', '4'].includes(step1?.degreeTypeForm?.degreeType)) {
           reqBody['coursestructure'] = step2?.plan1?.plans
             ? JSON.stringify(step2?.plan1?.plans)
             : null;
@@ -418,7 +416,6 @@ export class EditDegreeDetailComponent {
     const form1Section = this.step1Form.value.step1;
     const form2Section = this.step2Form.value.step2;
     const form3Section = this.step3Form.value.step3;
-    console.log(form1Section, form2Section, form3Section);
     const formChange = this.getFormChange(newData, daftData);
     reqBody = {
       ...reqBody,

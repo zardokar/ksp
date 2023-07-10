@@ -134,7 +134,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col" class="w-25">แผนการรับนักศึกษา (รายปี)</th>
+            <!-- <th scope="col" class="w-25">แผนการรับนักศึกษา (รายปี)</th> -->
             <th scope="col" class="text-center" style="min-width: 13rem">
               ปีการศึกษา (พ.ศ)
             </th>
@@ -156,9 +156,9 @@
           <ng-container formArrayName="plans">
             <ng-container *ngFor="let item of plans.controls; let j = index">
               <tr [formGroupName]="j">
-                <th scope="row" class="align-middle">
+                <!-- <th scope="row" class="align-middle">
                   {{ item.value.label }}
-                </th>
+                </th> -->
                 <td>
                   <div>
                     <select class="form-select" formControlName="year">
@@ -214,7 +214,7 @@
           </ng-container>
 
           <tr>
-            <th scope="row"></th>
+            <!-- <th scope="row"></th> -->
             <td class="text-end fs-5">รวมทั้งหมด</td>
 
             <td>
