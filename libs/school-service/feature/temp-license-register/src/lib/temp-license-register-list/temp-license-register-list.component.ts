@@ -27,6 +27,7 @@ import {
   getCookie,
   schoolMapRequestType,
   thaiDate,
+  zutils
 } from '@ksp/shared/utility';
 import { Subject } from 'rxjs';
 
@@ -68,14 +69,38 @@ export class TempLicenseRegisterListComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
-
+  // ---------------------------------------------------------------------------------
   getTempLicense(request: KspRequest) {
-    this.requestService.getTempLicense(request.id).subscribe((res) => {
+    this.requestService.getKspRequest(request.id).subscribe((res) => {
       console.log('temp license = ', res);
-      this.genPdf(res);
+      this.genPdf(this.mapResponse(res) as any);
     });
   }
+  // ---------------------------------------------------------------------------------
+  mapResponse(resp: any)
+  {
+     let licenddate = (resp.data.history[0].CREATE_DATE).split(/-/g)
+         licenddate = `${licenddate[0]}-${licenddate[1]}-${ parseInt(licenddate[2]) + 2 }`
 
+      const approvedetail = resp.data.history.find( ( hist : any ) => {
+                                  console.log( hist.DETAIL )
+                                  return  !!hist.DETAIL && !!hist.DETAIL.checkdetail && !!hist.DETAIL.checkdetail.approveNo 
+                            })
+     return {
+                 licenseno : zutils.converttoTHNumber(approvedetail.DETAIL.checkdetail.approveNo) ,
+                  prefixth : resp.data.kspreq.PREFIX_TH,
+               firstnameth : resp.data.kspreq.FIRST_NAME_TH,
+                lastnameth : resp.data.kspreq.LAST_NAME_TH,
+                  prefixen : resp.data.kspreq.PREFIX_EN,
+               firstnameen : resp.data.kspreq.FIRST_NAME_EN,
+                lastnameen : resp.data.kspreq.LAST_NAME_EN,
+                  position : resp.data.kspreq.CAREER_TYPE,
+          licensestartdate : resp.data.history[0].CREATE_DATE,
+            licenseenddate : licenddate,
+               licensetype : resp.data.kspreq.CAREER_TYPE
+     }
+  }
+  // ---------------------------------------------------------------------------------
   genPdf(element: SchTempLicense) {
     console.log('element = ', element);
     const position = element?.position;
@@ -147,7 +172,7 @@ export class TempLicenseRegisterListComponent implements AfterViewInit {
     const careertype = SchoolRequestSubType[+(element?.licensetype ?? '1')];
     const careertypeen = SchoolLangMapping[careertype ?? 'ครู'] ?? '';
     const requestno = element.licenseno ?? '';
-    const prefix = element.licensetype == '1' ? 'ท.' : 'อ.';
+    const prefix = element.licensetype !== '5' ? 'ท.' : 'อ.';
     const payload = {
       schoolid: this.schoolId,
     };
@@ -189,7 +214,7 @@ export class TempLicenseRegisterListComponent implements AfterViewInit {
       });
     });
   }
-
+  // ---------------------------------------------------------------------------------
   clear() {
     this.form.reset();
     this.searchNotFound = false;

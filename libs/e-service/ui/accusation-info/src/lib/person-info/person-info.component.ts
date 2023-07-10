@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges , ViewChild } from '@angular/core';
 import { KspAccusationRequest } from '@ksp/shared/interface';
+import {  AddressInfoComponent } from '@ksp/e-service/ui/accusation-info';
 import {
   AddressService,
   EthicsService,
@@ -13,12 +14,13 @@ import { Observable } from 'rxjs';
   styleUrls: ['./person-info.component.scss'],
 })
 
-
-
 export class PersonInfoComponent implements OnInit {
-  @Input() identityNo : String | undefined
-  @Input() changeUpdate : Boolean | undefined
+  @Input() identityNo : string | undefined
+  @Input() personalInfo : any | undefined
+  @Input() changeUpdate : boolean | undefined
   
+  // @ViewChild(AddressInfoComponent) addressinfo!: AddressInfoComponent;
+
   personSelected  = false;
   selectedPerson  = new KspAccusationRequest()
   dataSource: any
@@ -42,7 +44,7 @@ export class PersonInfoComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     private addressService: AddressService,
   ) {
-    console.log(this.selectedPerson);
+    // console.log(this.selectedPerson);
   }
 
 
@@ -50,49 +52,26 @@ export class PersonInfoComponent implements OnInit {
     this.prefixList$ = this.generalInfoService.getPrefix();
     this.bureaus$ = this.generalInfoService.getBureau();
     this.provinces$ = this.addressService.getProvinces();
-    if(this.changeUpdate == true){
-        this.service
-        .searchSelfLicense({ identity_no: this.identityNo  }) //, ilicenseno: form.licenseno
-        .subscribe((res) => {
-
-          const resArray  = res as []
-          const person = resArray.find( (person) => { 
-            const person2 = person as any
-            if( person2.identitynumber == this.identityNo ){
-              this.mapData.identityNo = person2.identitynumber !== undefined ? person2.identitynumber : "--"
-              this.mapData.namefirstTH = person2.nameth !== undefined ? person2.nameth : "--"
-              this.mapData.namelastTH = person2.lastnameth !== undefined ? person2.lastnameth : "--"
-              this.mapData.namefirstEN = person2.nameen !== undefined ? person2.nameen : "--"
-              this.mapData.namelastEN = person2.lastnameen !== undefined ? person2.lastnameen : "--"
-              this.mapData.email = person2.email !== undefined ? person2.email : "--"
-              this.mapData.phoneNumber = person2.phonenumber !== undefined ? person2.phonenumber : "--"
-              this.mapData.birthDate = person2.birthdate !== undefined ? person2.birthdate : "--"
-              this.mapData.genderId = person2.genderid !== undefined ? person2.genderid : "--"
-              this.mapData.profileImage = person2.profileimage !== null ? person2.profileimage : "assets/images/profile.png"
-              this.changeUpdate == false
-            }
-            return person2.identitynumber === this.identityNo } ) 
-          console.log(person);
-
-          // for(let person of res){
-            // if( person.identitynumber == this.identityNo ){
-            //   console.log(this.identityNo);
-            //   console.log(person.identitynumber);
-            //   this.mapData.identityNo = person.identitynumber !== undefined ? person.identitynumber : "--"
-            //   this.mapData.namefirstTH = person.nameth !== undefined ? person.nameth : "--"
-            //   this.mapData.namelastTH = person.lastnameth !== undefined ? person.lastnameth : "--"
-            //   this.mapData.namefirstEN = person.nameen !== undefined ? person.nameen : "--"
-            //   this.mapData.namelastEN = person.lastnameen !== undefined ? person.lastnameen : "--"
-            //   this.mapData.email = person.email !== undefined ? person.email : "--"
-            //   this.mapData.phoneNumber = person.phonenumber !== undefined ? person.phonenumber : "--"
-            //   this.mapData.birthDate = person.birthdate !== undefined ? person.birthdate : "--"
-            //   this.mapData.genderId = person.genderid !== undefined ? person.genderid : "--"
-            //   this.mapData.profileImage = person.profileimage !== null ? person.profileimage : "assets/images/profile.png"
-            //   this.changeUpdate == false
-          //   break;
-            // }
-          // }
-        });
+    // console.log("Personal-info ::",this.personalInfo);
+    if(this.personalInfo){
+      this.assignPersonInfo( this.personalInfo )
+    }else{
+      if(this.changeUpdate == true){
+          this.service
+          .searchSelfMyInfo({ identity_no: this.identityNo  }) //, ilicenseno: form.licenseno   ,identity_no: this.identityNo
+          .subscribe((res) => {
+            // console.log("License info :::" , res);
+            const resArray  = res as []
+            const person = resArray.find( (person : any) => { 
+                          if( person.identitynumber == this.identityNo ){
+                              this.assignPersonInfo(person)  
+                              // this.addressinfo.assignAddressInfo(person);
+                          }
+                          return person.identitynumber  === this.identityNo 
+            }) 
+            // console.log(person);
+          });
+      }
     }
 
   }
@@ -100,4 +79,24 @@ export class PersonInfoComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     this.ngOnInit()
   }
+
+  assignPersonInfo(person_data: any)
+  {
+    const GENDER = { '1': 'ชาย' , '2': 'หญิง', '3': 'อื่นๆ'}
+    // console.log(person_data);
+    this.mapData.identityNo = person_data.identitynumber !== undefined ? person_data.identitynumber : "--"
+    this.mapData.namefirstTH = person_data.nameth !== undefined ? person_data.nameth : "--"
+    this.mapData.namelastTH = person_data.lastnameth !== undefined ? person_data.lastnameth : ""
+    this.mapData.namefirstEN = person_data.nameen !== undefined ? person_data.nameen : "--"
+    this.mapData.namelastEN = person_data.lastnameen !== undefined ? person_data.lastnameen : ""
+    this.mapData.email = person_data.email !== undefined ? person_data.email : "--"
+    this.mapData.phoneNumber = person_data.phonenumber !== undefined ? person_data.phonenumber : "--"
+    this.mapData.birthDate = person_data.birthdate !== undefined ? person_data.birthdate : "--"
+    this.mapData.genderId = person_data.genderid !== undefined ? GENDER[ (person_data.genderid as keyof typeof  GENDER) ] : "--"
+    this.mapData.profileImage = person_data.profileimage !== null ? person_data.profileimage : `assets/images/profile.png`
+    this.changeUpdate == false
+    
+    return person_data.identitynumber === this.identityNo 
+  }
+
 }

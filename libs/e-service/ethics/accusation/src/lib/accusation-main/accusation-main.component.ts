@@ -72,26 +72,9 @@ export class AccusationMainComponent implements OnInit {
               this.accusation.addRow()
             }
           }
-
-          if(res?.licenseinfo){
-            const json: any = res?.licenseinfo;
-            const idno = document.getElementById("person-idno") as HTMLInputElement;
-            const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
-            const nameen = document.getElementById("person-nameen") as HTMLInputElement;
-            const gender = document.getElementById("person-gender") as HTMLButtonElement;
-            const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
-            const phone = document.getElementById("person-phone") as HTMLButtonElement;
-            const email = document.getElementById("person-email") as HTMLButtonElement;
-            const image = document.getElementById("person-img") as HTMLButtonElement;
-            idno.innerText    = json.identitynumber !== undefined ? json.identitynumber : "--"
-            nameth.innerText  = json.nameth !== undefined ? json.nameth : "--"
-            nameen.innerText  = json.nameen !== undefined ? json.nameen : "--"
-            gender.innerText  = json.genderid !== undefined ? json.genderid : "--"
-            birthdate.innerText  = json?.birthdate !== undefined ? json.birthdate : "--"
-            phone.innerText  = json.phonenumber !== undefined ? json.phonenumber : "--"
-            email.innerText  = json.email !== undefined ? json.email : "--"
-            image.setAttribute("src" , json.profileimage) 
-          }
+          this.accusation.setAccusedInfo(res?.licenseinfo)
+          // this.accusation.setAddressInfo(res?.addressinfo ? res.addressinfo : {})
+          this.accusation.getAddressInfo(res?.licenseinfo)
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
@@ -138,17 +121,20 @@ export class AccusationMainComponent implements OnInit {
       mapFileInfo(this.accusation.accusationFiles)
     );
     const selectData = _.pick(data, allowKey);
+    selectData['licenseinfo']  =  JSON.stringify( objPerson );
     if (this.ethicsId) {
       selectData['id'] = this.ethicsId;
-      const payload = replaceEmptyWithNull(selectData);
-      this.service.updateEthicsAccusation(payload).subscribe((res) => {
+      // const payload = replaceEmptyWithNull(selectData);
+      console.log("Log payload update" , selectData);
+      this.service.updateEthicsAccusation(selectData).subscribe((res) => {
         console.log('save = ', res);
       });
     } else {
-      selectData['licenseinfo']  =  JSON.stringify( objPerson );
+      
+      console.log("Log payload insert" , selectData);
       this.service.createEthics(selectData).subscribe((res) => {
         console.log("Response insert ::",res);
-        const id = res.id;
+        const id = res.datareturn.id;
         if (id) {
           this.router.navigate(['/accusation', 'detail', id]);
         }

@@ -196,7 +196,8 @@
         <ng-container *ngIf="dataSource.data.length && personSelected">
           <e-service-person-info
             [identityNo] = "identityNo"
-            [changeUpdate] = personSelected
+            [personalInfo] = "personalInfo"
+            [changeUpdate] = "personSelected"
           ></e-service-person-info>
         </ng-container>
       </mat-tab>
@@ -207,13 +208,16 @@
             ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
           </div>
           <ksp-license-type-button-group></ksp-license-type-button-group>
-          <ksp-license-info></ksp-license-info>
+          <ksp-license-info
+          ></ksp-license-info>
         </ng-container>
       </mat-tab>
 
       <mat-tab label="ที่อยู่">
         <ng-container *ngIf="dataSource.data.length && personSelected"
-          ><e-service-address-info></e-service-address-info
+          ><e-service-address-info
+            [addressInfo] = "personalInfo"
+          ></e-service-address-info
         ></ng-container>
       </mat-tab>
 

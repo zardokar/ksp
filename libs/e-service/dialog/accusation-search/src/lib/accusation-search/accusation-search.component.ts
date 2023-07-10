@@ -33,10 +33,14 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
   });
   selectedRow: any;
   personSelected = false;
+  addressSelected = false;
   displayedColumns: string[] = column;
   dataSource = new MatTableDataSource<any>();
   dataSource2: any;
+  personalInfo : any;
+  addressInfo : any;
   identityNo: any;
+  licenseId: any;
   currentPage = 1;
   prefixList$!: Observable<any>;
   bureaus$!: Observable<any>;
@@ -83,16 +87,29 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     this.searchPage(this.currentPage);
   }
   onClickRadio(form: any) {
-    this.selectedIdCard = form.identitynumber;
+    // this.selectedIdCard = form.identitynumber;
+    this.selectedIdCard = form;
   }
   onClickGetInfo(form: any) {
-    this.service
-      .searchSelfLicense({ identitynumber: form.identitynumber , ilicenseno: form.licenseno })
-      .subscribe((res) => {
-        console.log(form)
-        this.identityNo = form.identitynumber
-        this.personSelected = true;
-      });
+    // this.service
+      // .searchSelfMyInfo({ identitynumber: form.identitynumber , licenseno: form.licenseno })
+      // .subscribe((res) => {
+      //   console.log(res)
+      //   // if(this.personinfo){
+        
+      //   // }
+      //   this.personalInfo  = res as any
+
+      //   this.identityNo = form.id
+      //   this.personSelected = true;
+      //   // this.personinfo.assignPersonInfo( this.personalInfo )
+      // });
+
+
+      this.personalInfo  = form as any
+      this.identityNo = form.identitynumber
+      this.personSelected = true;
+
   }
 }
 

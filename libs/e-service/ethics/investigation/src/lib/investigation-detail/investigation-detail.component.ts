@@ -62,8 +62,7 @@ export class InvestigationDetailComponent implements OnInit {
               payload.investigationsubcommittee
             );
             payload.id = this.ethicsId;
-            const pl = replaceEmptyWithNull(payload);
-            return this.service.updateEthicsInvestigation(pl);
+            return this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
           }
           return EMPTY;
         })
@@ -80,8 +79,7 @@ export class InvestigationDetailComponent implements OnInit {
       width: '375px',
       data: {
         header: `บันทึกข้อมูลสำเร็จ`,
-        content: `เลขที่รายการ : 640120000123
-        วันที่ : 10 ตุลาคม 2656`,
+        content: `วันที่ : 10 ตุลาคม 2656`,
         subContent: 'ผู้บันทึกข้อมูล : นางสาวปาเจรา ใกล้คุก',
         
       },
@@ -97,39 +95,47 @@ export class InvestigationDetailComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
-        this.service
-          .getEthicsByID({ id: this.ethicsId })
-          .subscribe((res: any) => {
+        this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
+            
+            // ----------------------------------------------- Fill Accused Info
+            if(res?.licenseinfo){
+              this.accusation.setAccusedInfo(res?.licenseinfo)
+            }
+
+            // ----------------------------------------------- Fill Files Upload
             this.accusation.accusationFiles.forEach((element, index) => {
-              if (res.accusationfile) {
-                const json: any = jsonParse(res?.accusationfile);
-                element.fileid = json[index]?.fileid;
-                element.filename = json[index]?.filename;
+              if (res.accusationfile && res.accusationfile.length > 0) {
+                  const dataobj: any = res.accusationfile;
+                    element.fileid = dataobj[index]?.fileid;
+                  element.filename = dataobj[index]?.filename;
               }
             });
+            // ----------------------------------------------- Fill Accusation user info
             if (res?.accuserinfo) {
-              const json = jsonParse(res?.accuserinfo);
-
-              if (json && json.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.accuserinfo !== "object" ? jsonParse(res?.accuserinfo) : res?.accuserinfo
+              if (dataobj && dataobj.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.accusation.addRow();
                 }
               }
-              res.accuserinfo = json;
+              res.accuserinfo = dataobj
             }
+            // -----------------------------------------------
             if (res?.investigationresult) {
-              const json = jsonParse(res?.investigationresult);
-              res.investigationresult = json;
+              const dataobj = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult
+              res.investigationresult = dataobj;
             }
+            // -----------------------------------------------
             if (res?.investigationsubcommittee) {
-              const json = jsonParse(res?.investigationsubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.investigationsubcommittee !== "object" ? jsonParse(res?.investigationsubcommittee) : res?.investigationsubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.investigation.addRow();
                 }
               }
-              res.investigationsubcommittee = json;
+              res.investigationsubcommittee = dataobj;
             }
+            // -----------------------------------------------
             this.form.controls.investigation.patchValue(res);
             this.form.controls.accusation.patchValue(res);
           });

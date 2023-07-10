@@ -108,8 +108,8 @@
   <div class="mb-3">
     <mat-tab-group class="tab-group" animationDuration="0ms">
         <mat-tab label="ข้อมูลผู้ได้รับหนังสืออนุญาต" class="tab-content">
-              <e-service-person-info 
-                  [identityNo] = "selectId"
+              <e-service-person-info
+                  [personalInfo] = "selectId"
                   [changeUpdate] = "updateStatus"
               ></e-service-person-info>
         </mat-tab>
@@ -119,12 +119,16 @@
         <div class="box-header">
           ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
         </div>
-        <ksp-license-type-button-group></ksp-license-type-button-group>
-        <ksp-license-info></ksp-license-info>
+        <ksp-license-type-button-group> </ksp-license-type-button-group>
+        <ksp-license-info
+        >
+        </ksp-license-info>
       </mat-tab>
 
       <mat-tab label="ที่อยู่">
-        <e-service-address-info></e-service-address-info>
+        <e-service-address-info
+          [addressInfo] = "addressId"
+        ></e-service-address-info>
       </mat-tab>
 
       <mat-tab label="สถานที่ทำงาน">
