@@ -25,3 +25,22 @@ export function converttoTHNumber(datestr: string)
     })
     return result
 }
+
+// ----------------------------------------------------------------------------------------------
+export function convertBase64toJSONStr(data: any, target_keys?: string[]) : any
+{
+    let result = data
+    
+    if( data instanceof Object ){
+        target_keys?.map( (key) => {
+            if(data[key]){
+                data[key]   = atob(data[key])
+                result[key] = data[key]
+            }
+        })
+    }else if( typeof data === 'string'){
+        result = atob(data) 
+    }
+
+    return result
+}
