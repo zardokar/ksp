@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+
+    <div
+      *ngIf=" license.licenseno !== '-' "
+      class="col-md-2 d-flex justify-content-center align-items-center mb-md-0 mb-2"
+    >
+      <img
+        src="assets/images/img-profile.png"
+        style="width: 96px; height: 144px"
+      />
+    </div>
+  
+    <div class="col-md-6" style="white-space: nowrap">
+      <div *ngIf=" license.licenseno === '-' " class="row justify-content-center fs-5 py-5">
+        ไม่พบข้อมูล
+      </div>
+      <div *ngIf=" license.licenseno !== '-' " class="row">
+        <div class="col-6 text-secondary ps-0 pe-3 text__size">
+          <div class="text-end">เลขที่หนังสืออนุญาตประกอบวิชาชีพ</div>
+          <div class="text-end">หมายเลขบัตรประชาชน</div>
+          <div class="text-end">ประเภทใบอนุญาตประกอบวิชาชีพ</div>
+          <div class="text-end">ชื่อ-นามสกุล (ภาษาไทย)</div>
+          <div class="text-end">ชื่อ-นามสกุล (ภาษาอังกฤษ)</div>
+          <div class="text-end">วันเดือนปีเกิด</div>
+          <div class="text-end">วันเดือนปีที่ออก</div>
+          <div class="text-end">วันเดือนปีที่หมดอายุ</div>
+        </div>
+  
+        <div class="col-6 ps-3 pe-0 text__size">
+          <div>{{license.licenseno}}</div>
+          <div>{{license.idcardno}}</div>
+          <div>{{license.licensetype}}</div>
+          <div>{{license.fullname_th}}</div>
+          <div>{{license.fullname_en}}</div>
+          <div>{{license.birthdate}}</div>
+          <div>{{license.licensestart}}</div>
+          <div>{{license.licenseexpire}}</div>
+        </div>
+      </div>
+    </div>
+</div>
+  

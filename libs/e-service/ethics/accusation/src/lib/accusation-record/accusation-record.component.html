@@ -121,10 +121,15 @@
         <div class="box-header">
           ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
         </div>
-        <ksp-license-type-button-group> </ksp-license-type-button-group>
-        <ksp-license-info
-        >
-        </ksp-license-info>
+        <ksp-license-type-button-group 
+            [selecttab]="this.currentlictab" 
+            (clickLicenseTab)="onChangeLicTab($event)" 
+        ></ksp-license-type-button-group>
+        <ksp-license-info-card 
+            [selectedata]="selectId" 
+            [changeTab]="this.currentlictab"
+            (selectTab)="onChangeLicTab($event)" 
+        ></ksp-license-info-card>
       </mat-tab>
 
       <mat-tab label="ที่อยู่">
