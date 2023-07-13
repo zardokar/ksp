@@ -38,7 +38,9 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="13"
                   formControlName="idcardno"
+                  (keyup)="onChangeIDcardno($event)"
                 />
               </td>
               <td>

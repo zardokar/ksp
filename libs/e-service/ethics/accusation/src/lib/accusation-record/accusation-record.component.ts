@@ -170,4 +170,11 @@ export class AccusationRecordComponent
   {
     this.addressinfo.queryAddressInfo( accused_data )
   }
+  // ------------------------------------------------------
+  onChangeIDcardno(event : any)
+  {
+    const regex = /[^0-9]/g
+    const dom   = event.target
+    dom.value = dom.value.replace(regex, '')
+  }
 }
