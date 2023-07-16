@@ -83,9 +83,13 @@ export class Ethics {
 
 export const defaultEhicsMember: EhicsMember = {
   idcardno: null,
+  accusertype: null,
+  groupname: null,
+  address: null,
   prefix: null,
-  firstname: null,
-  lastname: null,
+  fullname: null,
+  // firstname: null,
+  // lastname: null,
   phone: null,
 };
 
@@ -101,9 +105,13 @@ export const defaultSubcommittee: EhicsSubcommittee = {
 };
 export interface EhicsMember {
   idcardno: string | null;
+  accusertype: string | null;
+  groupname: string | null;
+  address: string | null;
   prefix: number | null;
-  firstname: string | null;
-  lastname: string | null;
+  fullname : string | null;
+  // firstname: string | null;
+  // lastname: string | null;
   phone: string | null;
 }
 export interface EhicsSubcommittee {

@@ -65,6 +65,7 @@ export class AccusationRecordComponent
   accusationFiles: any[] = structuredClone(ACCUSATION_FILES);
   uniqueTimestamp: any;
   updateStatus = false;
+  accusertype: any;
   selectId: any;
   addressId: any;
   prefixList$!: Observable<any>;
@@ -115,9 +116,11 @@ export class AccusationRecordComponent
   addRow(data: EhicsMember = defaultEhicsMember) {
     const rewardForm = this.fb.group({
       idcardno: [data.idcardno],
+      accusertype:[data.accusertype],
+      groupname:[data.groupname],
+      address:[data.address],
       prefix: [data.prefix],
-      firstname: [data.firstname],
-      lastname: [data.lastname],
+      fullname: [data.fullname],
       phone: [data.phone],
     });
     this.members.push(rewardForm);
