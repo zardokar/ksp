@@ -19,7 +19,7 @@ const SEARCH_LIC_URL                 = `${environment.shortApiUrl}/kspx/ethic/es
 export class LicenseInfoCardComponent {
     // -------------------------------------------------
     license                             = {
-                                            licenseno         : '-',
+                                            certificateno         : '-',
                                             idcardno          : '-',
                                             licensetype       : '-',
                                             fullname_th       : '-',
@@ -36,13 +36,20 @@ export class LicenseInfoCardComponent {
                                             'SUPERVISOR'      : []
     }
 
+    licTHmap : any                      = {
+                                            'TEACHER'         : 'หนังสืออนุญาตประกอบวิชาชีพ  - ครู',
+                                            'SCHOOL_ADMIN'    : 'หนังสืออนุญาตประกอบวิชาชีพ - ผู้บริหารสถานศึกษา',
+                                            'EDUCATION_ADMIN' : 'หนังสืออนุญาตประกอบวิชาชีพ - ผู้บริหารการศึกษา',
+                                            'SUPERVISOR'      : 'หนังสืออนุญาตประกอบวิชาชีพ - ศึกษานิเทศก์'
+    }
+
     // -------------------------------------------------
     @Input() selectedata : any          = null
     @Input()  changeTab  : any          = null
     @Output() selectTab                 = new EventEmitter<string>()
     // -------------------------------------------------
     ngOnChanges(changes: SimpleChanges) {
-        if( this.changeTab === '' && this.license.licenseno === '-')
+        if( this.changeTab === '' && this.license.certificateno === '-')
             this.onSetupComponent()
         else{
             this.mapLicenseInfoCard(this.licenses[this.changeTab][0])
@@ -87,16 +94,16 @@ export class LicenseInfoCardComponent {
     mapLicenseInfoCard(data: any[any])
     {
         try{
-            this.license.licenseno      = data.licenseno
+            this.license.certificateno  = data.certificateno
             this.license.idcardno       = this.selectedata.identitynumber
-            this.license.licensetype    = data.usertype
+            this.license.licensetype    = this.licTHmap[data.usertype]
             this.license.fullname_th    = `${this.selectedata.nameth} ${this.selectedata.lastnameth}`
             this.license.fullname_en    = `${this.selectedata.nameen} ${this.selectedata.lastnameen}`
-            this.license.birthdate      = this.selectedata.birthdate
+            this.license.birthdate      = zdtform.convertDateForm(this.selectedata.birthdate, 'th', 'be', 'DD MMMM YYYY')
             this.license.licensestart   = data.licensestartdate
             this.license.licenseexpire  = data.licenseexpiredate
         }catch(excp){
-            this.license.licenseno      = '-'
+            this.license.certificateno  = '-'
         }
 
     }
