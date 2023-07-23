@@ -63,7 +63,11 @@ export class AccusationDecisionComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/', 'accusation', 'detail', this.ethicsId || null]);
+    // if(this.ethicsId){
+      this.router.navigate(['/', 'accusation', 'detail', this.ethicsId || '']);
+    // }else{
+    //   this.router.navigate(['/', 'accusation', 'detail']);
+    // }
   }
 
   save() {
@@ -83,6 +87,7 @@ export class AccusationDecisionComponent implements OnInit {
   }
   checkRequestId() {
     this.route.paramMap.subscribe((params) => {
+      // console.log(params);
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
@@ -100,8 +105,11 @@ export class AccusationDecisionComponent implements OnInit {
     const data = this.form.value as any;
     data.accusationconsideration = JSON.stringify(data.accusationconsideration);
     data.accuserinfo              = JSON.stringify(data?.accuserinfo);
+    // console.log(this.ethicsId);
+    // console.log(data.accuserinfo);
+    // console.log(data.accusationfile);
     data.accusationfile           = JSON.stringify(
-      mapFileInfo(data.accusationfile)
+      mapFileInfo(data?.accusationfile)
     );
     const selectData = _.pick(data, allowKey);
     console.log(data);

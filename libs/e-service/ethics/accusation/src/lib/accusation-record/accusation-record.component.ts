@@ -11,6 +11,7 @@ import { SharedFormOthersModule } from '@ksp/shared/form/others';
 import { BottomNavComponent, StepperNavComponent } from '@ksp/shared/menu';
 import {
   LicenseInfoComponent,
+  LicenseInfoCardComponent,
   LicenseTypeButtonGroupComponent,
   RequestHeaderInfoComponent,
 } from '@ksp/shared/ui';
@@ -50,6 +51,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     TopNavComponent,
     LicenseTypeButtonGroupComponent,
     LicenseInfoComponent,
+    LicenseInfoCardComponent,
     ReactiveFormsModule,
     StepperNavComponent,
     MatDatepickerModule,
@@ -65,9 +67,11 @@ export class AccusationRecordComponent
   accusationFiles: any[] = structuredClone(ACCUSATION_FILES);
   uniqueTimestamp: any;
   updateStatus = false;
+  accusertype: any;
   selectId: any;
   addressId: any;
   prefixList$!: Observable<any>;
+  sellictypetab: any;
 
   override form = this.fb.group({
     accusationblackno: [null, Validators.required],
@@ -92,6 +96,7 @@ export class AccusationRecordComponent
   @ViewChild(AddressInfoComponent)
   addressinfo!: AddressInfoComponent;
 
+  currentlictab : any = ''
 
   constructor(
     public dialog: MatDialog,
@@ -115,9 +120,11 @@ export class AccusationRecordComponent
   addRow(data: EhicsMember = defaultEhicsMember) {
     const rewardForm = this.fb.group({
       idcardno: [data.idcardno],
+      accusertype:[data.accusertype],
+      groupname:[data.groupname],
+      address:[data.address],
       prefix: [data.prefix],
-      firstname: [data.firstname],
-      lastname: [data.lastname],
+      fullname: [data.fullname],
       phone: [data.phone],
     });
     this.members.push(rewardForm);
@@ -170,4 +177,18 @@ export class AccusationRecordComponent
   {
     this.addressinfo.queryAddressInfo( accused_data )
   }
+  // ------------------------------------------------------
+  onChangeIDcardno(event : any)
+  {
+    const regex = /[^0-9]/g
+    const dom   = event.target
+    dom.value = dom.value.replace(regex, '')
+  }
+
+  // ------------------------------------------------------
+  onChangeLicTab(event : any)
+  {
+      this.currentlictab = event
+  }
+
 }

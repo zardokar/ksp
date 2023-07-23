@@ -37,7 +37,16 @@ import {
   formatRequestNo,
 } from '@ksp/shared/utility';
 import { Subject } from 'rxjs';
-
+// ------------------------------------------------------------------------
+const CONVERTPDF_SYSTYPE: any[any] = {
+    '3': {
+      systemtype: 1, subsystype: 3
+    },
+    '6': {
+      systemtype: 99, subsystype: 6
+    }
+}
+// ------------------------------------------------------------------------
 @Component({
   templateUrl: './school-request-list.component.html',
   styleUrls: ['./school-request-list.component.scss'],
@@ -212,13 +221,15 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
 
   getTempLicense(request: KspRequest) {
     this.requestService.getTempLicense(request.id).subscribe((res) => {
-      //console.log('temp license = ', res);
       this.genPdf(res);
     });
   }
 
-  genPdf(element: SchTempLicense) {
-    //console.log('element = ', element);
+  genPdf(element: any) {
+    console.log('element = ', element);
+    console.log('CONVERTPDF_SYSTYPE = ', CONVERTPDF_SYSTYPE[element.requesttype] );
+    const systemtype = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
+    const subsystype = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
     const position = element?.position;
     const startDate = new Date(element.licensestartdate || '');
     const endDate = new Date(element.licenseenddate || '');
@@ -298,12 +309,13 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
       const bureauname = res.bureauname;
       const schoolapprovename = 'ผู้อํานวยการสถานศึกษา';
       const schoolapprovenameen = 'Director of the Educational Institution';
+
       this.dialog.open(PdfRenderComponent, {
         width: '1200px',
         height: '100vh',
         data: {
-          pdfType: element.licensetype,
-          pdfSubType: 3,
+          pdfType: systemtype,
+          pdfSubType: subsystype,
           input: {
             prefix,
             schoolapprovename,
@@ -1258,7 +1270,7 @@ export const displayedColumns = [
   'updatedate',
   'requestdate',
   'requestpdf',
-  // 'licensepdf',
+  'licensepdf',
 ];
 
 export const displayedColumnsKSP = [

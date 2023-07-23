@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-center my-3">
-  <mat-button-toggle-group name="licenseType" aria-label="Font Style">
+  <mat-button-toggle-group name="licenseType" aria-label="Font Style" [value]="this.selecttab" (change)="clickTabChange($event.value)" >
     <ng-container *ngFor="let button of licenseButtons; index as i">
-      <mat-button-toggle value="{{ i }}">{{
-        button
-      }}</mat-button-toggle></ng-container
-    >
+      <mat-button-toggle value="{{ button.value }}">{{
+        button.label
+      }}</mat-button-toggle>
+    </ng-container>
   </mat-button-toggle-group>
 </div>

@@ -48,6 +48,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable, Subject, switchMap } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { zutils } from '@ksp/shared/utility';
 
 @UntilDestroy()
 @Component({
@@ -466,6 +467,9 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
 
             const data = replaceEmptyWithNull(payload);
             const formatedData = formatDatePayload(data);
+            
+            zutils.convertBase64toJSONStr( formatedData , ['hiringinfo', 'teachinginfo'])
+            
             return this.requestService.schCreateRequest(formatedData);
           }
           return EMPTY;

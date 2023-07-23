@@ -20,10 +20,12 @@
       <thead>
         <tr>
           <th scope="col">ลำดับ</th>
-          <th scope="col">หมายเลขบัตรประชาชน</th>
-          <th scope="col"></th>
-          <th scope="col">ชื่อ</th>
-          <th scope="col">นามสกุล</th>
+          <th scope="col">ประเภทผู้กล่าวหา</th>
+          <th scope="col">ชื่อบริษัท / คณะบุคคล / สมาคม</th>
+          <th scope="col">ที่อยู่</th>
+          <th scope="col">เลขบัตรประชาชน / เลขนิติบุคคล</th>
+          <th scope="col">คำนำหน้าชื่อ</th>
+          <th scope="col">ชื่อ-นามสกุล</th>
           <th scope="col">เบอร์โทรศัพท์</th>
           <!-- <th scope="col">แก้ไข</th> -->
           <th scope="col">ลบ</th>
@@ -35,10 +37,54 @@
             <tr [formGroupName]="i">
               <th class="text-center">{{ i + 1 }}</th>
               <td>
+                <select #accuserType class="form-select" formControlName="accusertype">
+                  <option value="null" disabled hidden selected>กรุณาเลือก</option>
+                  <option value=1>บุคคล</option>
+                  <option value=2>คณะบุคคล</option>
+                  <option value=3>องค์กร</option>
+                  <option value=4>อื่นๆ</option>
+                </select>
+              </td>
+
+              <ng-container *ngIf="accuserType.selectedIndex === 1 || accuserType.selectedIndex === 0" >
+                <td >
+                  <input 
+                    disabled
+                    type="text"
+                    class="form-control "
+                    >
+                </td>
+              </ng-container>
+
+              <ng-container *ngIf="accuserType.selectedIndex > 1">
+                <td>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="groupname"
+                  />
+                </td>
+              </ng-container>
+              <!-- <td>
+                <i
+                  role="button"
+                  class="bi bi-pencil-square fs-5 text-primary"
+                ></i>
+              </td> -->
+              <td>
                 <input
                   type="text"
                   class="form-control"
+                  formControlName="address"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="13"
                   formControlName="idcardno"
+                  (keyup)="onChangeIDcardno($event)"
                 />
               </td>
               <td>
@@ -56,14 +102,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="firstname"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="lastname"
+                  formControlName="fullname"
                 />
               </td>
               <td>
@@ -73,12 +112,6 @@
                   formControlName="phone"
                 />
               </td>
-              <!-- <td>
-                <i
-                  role="button"
-                  class="bi bi-pencil-square fs-5 text-primary"
-                ></i>
-              </td> -->
               <td>
                 <i
                   role="button"
@@ -119,10 +152,15 @@
         <div class="box-header">
           ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
         </div>
-        <ksp-license-type-button-group> </ksp-license-type-button-group>
-        <ksp-license-info
-        >
-        </ksp-license-info>
+        <ksp-license-type-button-group 
+            [selecttab]="this.currentlictab" 
+            (clickLicenseTab)="onChangeLicTab($event)" 
+        ></ksp-license-type-button-group>
+        <ksp-license-info-card 
+            [selectedata]="selectId" 
+            [changeTab]="this.currentlictab"
+            (selectTab)="onChangeLicTab($event)" 
+        ></ksp-license-info-card>
       </mat-tab>
 
       <mat-tab label="ที่อยู่">
