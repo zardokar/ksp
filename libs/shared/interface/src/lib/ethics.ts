@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { ListData } from './input-type';
 import { FileGroup } from './ksp-file';
 import { MenuConfig } from './ksp-menu-config';
-export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish';
+export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation';
 
 export interface EthicsCustomRouteData {
   menuConfig: MenuConfig[];
