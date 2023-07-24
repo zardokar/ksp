@@ -7,52 +7,72 @@
 <div class="bg-secondary bg-opacity-10 px-4 py-2 full-height-2">
   <div class="box-header">นำเข้าผลทดสอบ</div>
   <div class="bg-white p-3">
-   <form [formGroup]="form">
-    <div class="bg-light p-3">
-      <div class="box-header mb-3">
-        กรุณาเลือกปีการศึกษา และรายวิชาที่ต้องการนำเข้า
-      </div>
+    <form [formGroup]="form">
+      <div class="bg-light p-3">
+        <div class="box-header mb-3">
+          กรุณาเลือกปีการศึกษา และรายวิชาที่ต้องการนำเข้า
+        </div>
 
-      <div class="row mb-3">
-        <label class="form-label text-end text-black col-2"
-          >ปีการศึกษาที่สอบ</label
-        >
-        <div class="col-4">
-          <select class="form-select" formControlName="calendaryear">
-            <option [defaultSelected]="true" [value]="null">กรุณาเลือก</option>
-            <option *ngFor="let item of yearOption" [value]="item?.value">
-              {{ item?.label }}
-            </option>
-          </select>
+        <div class="row mb-3">
+          <label class="form-label text-end text-black col-2"
+            >ปีการศึกษาที่สอบ</label
+          >
+          <div class="col-4">
+            <select class="form-select" formControlName="calendaryear">
+              <option [defaultSelected]="true" [value]="null">
+                กรุณาเลือก
+              </option>
+              <option *ngFor="let item of yearOption" [value]="item?.value">
+                {{ item?.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label text-end text-black col-2"
+            >รายวิชาที่สอบ</label
+          >
+          <div class="col-4">
+            <select class="form-select" formControlName="subjectname">
+              <option [defaultSelected]="true" [value]="null">
+                กรุณาเลือก
+              </option>
+              <option
+                *ngFor="let item of courseNameOption"
+                [value]="item?.value"
+              >
+                {{ item?.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label text-end text-black col-2">รหัสวิชา</label>
+          <div class="col-5">
+            <label class="form-label">{{ this.subjectCode || '-' }}</label>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label text-end col-2">หมายเหตุ</label>
+          <div class="col-5">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="note"
+            ></textarea>
+          </div>
         </div>
       </div>
-
-      <div class="row mb-3">
-        <label class="form-label text-end text-black col-2"
-          >รายวิชาที่สอบ</label
-        >
-        <div class="col-4">
-          <select class="form-select" formControlName="subjectname">
-            <option [defaultSelected]="true" [value]="null">กรุณาเลือก</option>
-            <option *ngFor="let item of courseNameOption" [value]="item?.value">
-              {{ item?.label }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <label class="form-label text-end text-black col-2">รหัสวิชา</label>
-        <div class="col-5">
-          <label class="form-label">{{this.subjectCode || "-"}}</label>
-        </div>
-      </div>
-    </div>
-   </form>
+    </form>
 
     <div class="d-flex justify-content-end mt-3">
-      <button class="btn border-success text-success w-auto"
-              (click)="downloadfile()">
+      <button
+        class="btn border-success text-success w-auto"
+        (click)="downloadfile()"
+      >
         <img
           src="/assets/images/img-uni/microsoft excel.png"
           class="me-1"
@@ -213,5 +233,4 @@
     [disableSaveButton]="disableSaveButton"
     (saveClicked)="save()"
   ></ksp-bottom-nav>
-
 </div>

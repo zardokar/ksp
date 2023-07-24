@@ -71,11 +71,11 @@ export class TeacherGeneralInfoComponent extends KspFormBaseComponent {
         label: name_th,
       }));
     });
-    const currYear = new Date().getFullYear() + 10;
-    for (let index = 0; index <= 20; index++) {
+    const currYear = new Date().getFullYear() - 30;
+    for (let index = 0; index <= 30; index++) {
       this.calendaryearList.push({
-        value: (currYear - index + 543).toString(),
-        label: (currYear - index + 543).toString(),
+        value: (currYear + index + 543).toString(),
+        label: (currYear + index + 543).toString(),
       });
     }
   }

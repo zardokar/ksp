@@ -71,6 +71,18 @@ export class FormRegisterRequesterInfoComponent
     });
   }
 
+  chageposition(event: any) {
+    if (event.target.value == '0') {
+      this.form.controls['other'].setValidators([Validators.required]);
+    } else {
+      this.form.controls['other'].clearValidators();
+      this.form.patchValue({
+        other: null
+      })
+    }
+    this.form.controls['other'].updateValueAndValidity();
+  }
+
   changePrefix(event: any) {
     if ((this.form.controls.prefixth && this.form.controls.prefixen) &&
       (this.form.controls.prefixth.value != this.form.controls.prefixen.value) &&
@@ -135,5 +147,9 @@ export class FormRegisterRequesterInfoComponent
 
   get permission() {
     return this.form.controls.permission;
+  }
+
+  get other() {
+    return this.form.controls.other;
   }
 }
