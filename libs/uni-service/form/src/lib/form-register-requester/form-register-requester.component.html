@@ -187,13 +187,21 @@
     <div class="row mb-3">
       <div class="col-sm-6">
         <label class="form-label required">ตำแหน่ง</label>
-        <input
+        <select 
+          class="form-select" 
+          formControlName="position" 
+          (change)="chageposition($event)"
+          [ngClass]="{'invalid': isSubmit && position.invalid}">
+          <option value="null" selected hidden disabled>กรุณาเลือก</option>
+          <option *ngFor="let occupy of occupyList" [value]="occupy.eduoccupytype">{{occupy.eduoccupyname}}</option>
+        </select>
+        <!-- <input
           class="form-control"
           type="text"
           placeholder="กรุณากรอกตำแหน่ง"
           formControlName="position"
           [ngClass]="{'invalid': isSubmit && position.invalid}"
-        />
+        /> -->
         <ng-container
           *ngIf="isSubmit && position.invalid"
         >
@@ -205,17 +213,24 @@
           </span>
         </ng-container>
       </div>
-      <div
-        class="col-sm-6"
-        *ngIf="form.value.position && form.value.position === '0'"
-      >
+      <div class="col-sm-6" *ngIf="form.value.position && form.value.position === '0'">
         <label class="form-label"><br /></label>
         <input
           class="form-control"
           type="text"
           placeholder="อื่นๆ โปรดระบุ"
           formControlName="other"
+          [ngClass]="{'invalid': isSubmit && other.invalid}"
         />
+        <ng-container
+          *ngIf="
+            isSubmit && other.invalid
+          "
+        >
+          <span class="text-danger">
+            {{ validatorMessages.required.replace('field', 'อื่นๆ') }} !
+          </span>
+        </ng-container>
       </div>
     </div>
 
