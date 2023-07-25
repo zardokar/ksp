@@ -306,52 +306,56 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
           this.uniRequestService
             .uniRequestUpdate(this._getRequest(currentprocess, '1'))
             .subscribe((res: any) => {
-              if (
-                process !== '99' &&
-                emailForm.step1.coordinator &&
-                emailForm.step1.coordinator.email
-              ) {
-                this.uniRequestService
-                  .kspSendEmailUni({
-                    fromname: 'ksplicense',
-                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                    emailaddress: emailForm.step1.coordinator.email,
-                  })
-                  .subscribe((resEmail: any) => {
-                    if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno, process);
-                  });
-              } else {
-                if (res?.returncode == 99) return;
+              if (res?.returncode == 99) return;
                 this.showConfirmDialog(res?.requestno, process);
-              }
+              // if (
+              //   process !== '99' &&
+              //   emailForm.step1.coordinator &&
+              //   emailForm.step1.coordinator.email
+              // ) {
+              //   this.uniRequestService
+              //     .kspSendEmailUni({
+              //       fromname: 'ksplicense',
+              //       subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+              //       body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+              //       emailaddress: emailForm.step1.coordinator.email,
+              //     })
+              //     .subscribe((resEmail: any) => {
+              //       if (res?.returncode == 99) return;
+              //       this.showConfirmDialog(res?.requestno, process);
+              //     });
+              // } else {
+              //   if (res?.returncode == 99) return;
+              //   this.showConfirmDialog(res?.requestno, process);
+              // }
             });
         } else {
           const emailForm = this.step1Form.value;
           this.uniRequestService
             .uniRequestInsert(this._getRequest(process, '1'))
             .subscribe((res: any) => {
-              if (
-                process !== '99' &&
-                emailForm.step1.coordinator &&
-                emailForm.step1.coordinator.email
-              ) {
-                this.uniRequestService
-                  .kspSendEmailUni({
-                    fromname: 'ksplicense',
-                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                    emailaddress: emailForm.step1.coordinator.email,
-                  })
-                  .subscribe((resEmail: any) => {
-                    if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno, process);
-                  });
-              } else {
-                if (res?.returncode == 99) return;
+              if (res?.returncode == 99) return;
                 this.showConfirmDialog(res?.requestno, process);
-              }
+              // if (
+              //   process !== '99' &&
+              //   emailForm.step1.coordinator &&
+              //   emailForm.step1.coordinator.email
+              // ) {
+              //   this.uniRequestService
+              //     .kspSendEmailUni({
+              //       fromname: 'ksplicense',
+              //       subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+              //       body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+              //       emailaddress: emailForm.step1.coordinator.email,
+              //     })
+              //     .subscribe((resEmail: any) => {
+              //       if (res?.returncode == 99) return;
+              //       this.showConfirmDialog(res?.requestno, process);
+              //     });
+              // } else {
+              //   if (res?.returncode == 99) return;
+              //   this.showConfirmDialog(res?.requestno, process);
+              // }
             });
         }
       }

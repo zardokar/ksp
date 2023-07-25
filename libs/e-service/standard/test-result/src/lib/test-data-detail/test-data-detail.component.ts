@@ -54,7 +54,7 @@ export class TestDataDetailComponent implements OnInit {
   form = this.fb.group({
     calendaryear: [],
     subjectname: [],
-    note: []
+    remark: []
   });
   constructor(
     private router: Router,
