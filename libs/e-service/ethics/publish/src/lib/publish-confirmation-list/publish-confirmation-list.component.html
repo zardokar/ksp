@@ -1,0 +1,21 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
+
+<ksp-top-nav
+  ><span header>ระบบงานจรรยาบรรณ </span
+  ><span subHeader>ยืนยันการกล่าวหา / กล่าวโทษ</span></ksp-top-nav
+>
+
+<form [formGroup]="form">
+  <div class="bg-secondary bg-opacity-10 px-3 pt-1 pb-3 full-height">
+    <div class="box-header">ข้อมูลยืนยันการกล่าวหา / กล่าวโทษ</div>
+
+    <ksp-ethics-accusation-search
+      (submited)="onSubmit($event)"
+      formControlName="ethicSearch"
+    >
+    </ksp-ethics-accusation-search>
+  </div>
+</form>

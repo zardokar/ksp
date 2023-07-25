@@ -309,6 +309,12 @@ export const ethicsMenu: MenuConfig[] = [
   },
   {
     icon: 'assets/images/icon-sidenav/paper.svg',
+    label: 'ยืนยันการกล่าวหา/กล่าวโทษ',
+    path: '/publish/confirmlist',
+    subMenuName: 'confirmation',
+  },
+  {
+    icon: 'assets/images/icon-sidenav/paper.svg',
     label: 'เผยแพร่การกล่าวหา/กล่าวโทษ',
     path: '/publish/list',
     subMenuName: 'publish',

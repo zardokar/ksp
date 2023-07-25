@@ -15,6 +15,8 @@ import { TopNavComponent } from '@ksp/shared/menu';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
 import { PublishListComponent } from './publish-list/publish-list.component';
+import { PublishConfirmationComponent } from './publish-confirmation/publish-confirmation.component';
+import { PublishConfirmationListComponent } from './publish-confirmation-list/publish-confirmation-list.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +27,18 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'list',
         pathMatch: 'full',
+      },
+      {
+        path: 'confirmlist',
+        component: PublishConfirmationListComponent,
+      },
+      {
+        path: 'confirmation',
+        component: PublishConfirmationComponent,
+      },
+      {
+        path: 'confirmation/:id',
+        component: PublishConfirmationComponent,
       },
       {
         path: 'list',
@@ -57,7 +71,14 @@ export const routes: Routes = [
     FormInvestigationDetailComponent,
   ],
 
-  declarations: [PublishReviewComponent],
-  exports: [PublishReviewComponent],
+  declarations: [
+    PublishReviewComponent,
+    PublishConfirmationComponent,
+    // PublishConfirmationListComponent
+  ],
+  exports: [PublishReviewComponent,
+            PublishConfirmationComponent,
+            // PublishConfirmationListComponent
+          ],
 })
 export class EServiceEthicsPublishModule {}
