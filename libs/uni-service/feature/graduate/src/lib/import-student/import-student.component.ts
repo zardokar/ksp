@@ -34,6 +34,7 @@ import {
   nameEnPattern,
   nameThPattern,
   phonePattern,
+  toUpperCaseName,
   validatorMessages,
 } from '@ksp/shared/utility';
 import moment from 'moment';
@@ -370,12 +371,11 @@ export class ImportStudentComponent implements OnInit {
   edituser(data: any) {
     let userAddress: any;
     if (this.pageType == 'admissionList') {
-      userAddress = JSON.parse(data.address);
+      userAddress = data.address ? JSON.parse(data.address) : null;
     } else {
-      const parsedata = JSON.parse(data.addressinfo);
+      const parsedata = data.addressinfo ? JSON.parse(data.addressinfo) : null;
       userAddress = parsedata?.addressInfo;
     }
-    console.log(data)
     return this.fb.group({
       id: [data.id],
       checked: [data.checked ? data.checked : false],
@@ -430,19 +430,19 @@ export class ImportStudentComponent implements OnInit {
         this.pageType == 'admissionList' ? Validators.required : undefined,
       ],
       firstnameen: [
-        data.firstnameen,
+        toUpperCaseName(data.firstnameen),
         this.pageType == 'admissionList'
           ? [Validators.required, Validators.pattern(nameEnPattern)]
           : undefined,
       ],
       middlenameen: [
-        data.middlenameen,
+        toUpperCaseName(data.middlenameen),
         this.pageType == 'admissionList'
           ? [Validators.pattern(nameEnPattern)]
           : undefined,
       ],
       lastnameen: [
-        data.lastnameen,
+        toUpperCaseName(data.lastnameen),
         this.pageType == 'admissionList'
           ? [Validators.required, Validators.pattern(nameEnPattern)]
           : undefined,
@@ -669,7 +669,6 @@ export class ImportStudentComponent implements OnInit {
       let invalidform = false;
       let empytychecked = true;
       this.user.controls.forEach((user) => {
-        console.log(user)
         if (user.value.checked && user.invalid) {
           invalidform = true;
         }
@@ -794,14 +793,13 @@ export class ImportStudentComponent implements OnInit {
         identity_no: params
       };
       this.uniInfoService.searchSelfStudent(payload).subscribe((response) => {
-        console.log(response)
         if (response) {
           response.addressinfo = response.addressinfo ? JSON.parse(response.addressinfo) : {};
           this.user.at(index).patchValue({
             firstnameth: response.first_name_th || null,
             lastnameth: response.last_name_th || null,
-            firstnameen: response.first_name_en || null,
-            lastnameen: response.last_name_en || null,
+            firstnameen: toUpperCaseName(response.first_name_en) || null,
+            lastnameen: toUpperCaseName(response.last_name_en) || null,
             email: response.email || null,
             phone: response.phone_number || null,
             admissiondate: moment().format('YYYY-MM-DD'),
@@ -809,7 +807,7 @@ export class ImportStudentComponent implements OnInit {
             nationality: response.nationality || null,
             prefixth: response.prefixth || null,
             prefixen: response.prefixen || null,
-            middlenameen: response.middlenameen || null,
+            middlenameen: toUpperCaseName(response.middlenameen) || null,
             birthdate: response.birthdate || null,
           });
           this.user
@@ -913,4 +911,17 @@ export class ImportStudentComponent implements OnInit {
   deleteUser(index: any) {
     this.user.removeAt(index);
   }
+
+  changeFirstName(event: any, index: any) {
+    this.user.at(index).patchValue({ firstnameen: toUpperCaseName(event.target.value) });
+  }
+
+  changeMiddleName(event:any, index: any) {
+    this.user.at(index).patchValue({ middlenameen: toUpperCaseName(event.target.value) });
+  }
+
+  changeLastName(event:any, index: any) {
+    this.user.at(index).patchValue({ lastnameen: toUpperCaseName(event.target.value) });
+  }
+
 }

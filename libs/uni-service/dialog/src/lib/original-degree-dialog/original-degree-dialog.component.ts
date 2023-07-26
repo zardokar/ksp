@@ -9,12 +9,14 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
 
 @UntilDestroy()
 @Component({
   selector: 'ksp-original-degree-dialog',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule, MatDialogModule],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule, MatDialogModule, MatDatepickerModule, MatInputModule],
   templateUrl: './original-degree-dialog.component.html',
   styleUrls: ['./original-degree-dialog.component.scss'],
   providers: providerFactory(OriginalDegreeDialogComponent),
@@ -28,7 +30,6 @@ export class OriginalDegreeDialogComponent {
     private dialogRef: MatDialogRef<OriginalDegreeDialogComponent>
   ) {
     if (this.data) {
-      console.log(this.data)
       this.degreeData = this.data;
       if (this.data.disableAll) {
         this.disabledField = true;

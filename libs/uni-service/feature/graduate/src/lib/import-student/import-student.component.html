@@ -213,7 +213,7 @@
                 class="p-2 text-nowrap align-text-top"
                 *ngIf="pageType === 'admissionList'"
               >
-                เลขประจำตัวนักศึกษา
+                รหัสนักศึกษา
               </th>
               <th
                 class="p-2 text-nowrap align-text-top"
@@ -348,7 +348,7 @@
                 class="p-2 text-nowrap align-text-top"
                 *ngIf="pageType === 'admissionList'"
               >
-                รายวิชา
+              วิชาที่ปฏิบัติการสอน
               </th>
               <th
                 class="p-2 text-nowrap align-text-top"
@@ -690,6 +690,7 @@
                   pInputText
                   type="text"
                   formControlName="firstnameen"
+                  (input)="changeFirstName($event, ri)"
                   [readonly]="pageType === 'graduateList' || control.value.locked"
                   [ngClass]="{'invalid': submitted && control.get('firstnameen').invalid}"
                 />
@@ -709,6 +710,7 @@
                   pInputText
                   type="text"
                   formControlName="middlenameen"
+                  (input)="changeMiddleName($event, ri)"
                   [readonly]="pageType === 'graduateList' || control.value.locked"
                 />
               </td>
@@ -720,6 +722,7 @@
                   pInputText
                   type="text"
                   formControlName="lastnameen"
+                  (input)="changeLastName($event, ri)"
                   [readonly]="pageType === 'graduateList' || control.value.locked"
                   [ngClass]="{'invalid': submitted && control.get('lastnameen').invalid}"
                 />
@@ -833,7 +836,7 @@
                   role="button"
                   (click)="insertSubject(control.value.subjects, ri, control.value.locked)"
                 >
-                  รายวิชา
+                วิชาที่ปฏิบัติการสอน
                 </div>
               </td>
 
@@ -848,7 +851,7 @@
               </td>
               <td class="p-2 text-nowrap" *ngIf="pageType === 'admissionList'">
                 <i
-                  *ngIf="ri"
+                  *ngIf="ri && !control.value.locked"
                   role="button"
                   (click)="deleteUser(ri)"
                   class="bi bi-trash text-danger fs-5"

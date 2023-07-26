@@ -16,7 +16,7 @@ export class HistoryRequestAdmissionDialogComponent implements OnInit {
     if (this.dataSource.data) {
       this.dataSource.data.map((data:any)=>{
         if (this.dataSource.system == 'uniservice') {
-          data.statusname = this.mapStatusUniserviceProcess(data.requeststatus, data.requestprocess);
+          data.statusname = this.mapStatusEServiceProcess(data.requeststatus, data.requestprocess);
         } else {
           data.statusname = this.mapStatusEServiceProcess(data.status, data.process);
         }
@@ -66,6 +66,8 @@ export class HistoryRequestAdmissionDialogComponent implements OnInit {
       return 'แก้ไข';
     } else if (process == '3' && status == '3') {
       return 'ตรวจสอบเรียบร้อย';
+    } else if (process == '1' && status == '1') {
+      return 'บันทึกชั่วคราว';
     } else {
       return '';
     }

@@ -126,6 +126,11 @@
     </div>
     <div class="table-reponsive bg-white p-3">
       <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="no">
+          <th mat-header-cell *matHeaderCellDef>ลำดับ</th>
+          <td mat-cell *matCellDef="let element">{{ element.index }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="examcount">
           <th mat-header-cell *matHeaderCellDef>ลำดับ</th>
           <td mat-cell *matCellDef="let element">{{ element.examcount }}</td>

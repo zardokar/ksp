@@ -25,6 +25,8 @@
     <ksp-request-header-info
       [requestDate]="requestDate"
       [requestNumber]="requestNo"
+      [showOthers]="true"
+      [others]="{ title: 'ปีการศึกษา', detail: payload?.plancalendaryear }"
     ></ksp-request-header-info>
     <hr />
 
@@ -174,7 +176,7 @@
                 class="p-2 text-nowrap align-text-top"
                 *ngIf="pageType === 'admissionList'"
               >
-                เลขประจำตัวนักศึกษา
+              รหัสนักศึกษา
               </th>
               <th
                 class="p-2 text-nowrap align-text-top"
@@ -308,7 +310,7 @@
                 class="p-2 text-nowrap align-text-top"
                 *ngIf="pageType === 'admissionList'"
               >
-                รายวิชา
+              วิชาที่ปฏิบัติการสอน
               </th>
               
               <th
