@@ -262,6 +262,7 @@ export class ConsiderStudentComponent implements OnInit {
         }
         delete data.index;
         data.address = JSON.stringify(data.address.addressInfo);
+        data.originaldegree = JSON.stringify(data.originaldegree);
         data.subjects = JSON.stringify(data.subjects);
         return data;
       });
