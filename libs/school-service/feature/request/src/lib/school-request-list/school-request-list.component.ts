@@ -24,6 +24,7 @@ import {
   SchoolRequestService,
 } from '@ksp/shared/service';
 import {
+  zutils,
   checkProcess,
   schoolMapRequestType,
   checkStatus,
@@ -220,21 +221,33 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
   }
 
   getTempLicense(request: KspRequest) {
-    this.requestService.getTempLicense(request.id).subscribe((res) => {
-      this.genPdf(res);
-    });
+    
+    this.requestService.getKspRequest(request.id).subscribe( (histres:any) => {
+      
+      this.requestService.getTempLicense(request.id).subscribe((res) => {
+        this.genPdf(  { ...res, 
+                        history: histres.data.history.length > 0 ? histres.data.history : null 
+                      }
+                  );
+      });
+    } )
   }
 
   genPdf(element: any) {
     console.log('element = ', element);
     console.log('CONVERTPDF_SYSTYPE = ', CONVERTPDF_SYSTYPE[element.requesttype] );
-    const systemtype = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
-    const subsystype = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
-    const position = element?.position;
-    const startDate = new Date(element.licensestartdate || '');
-    const endDate = new Date(element.licenseenddate || '');
-    const date = new Date(element.licensestartdate || '');
-    const thai = thaiDate(date);
+    const approveDetail = this.getApproveDetail(element.history)
+    console.log(approveDetail)
+    const systemtype    = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
+    const subsystype    = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
+    const position      = element?.position;
+    const licstartdate  = element.requestdate
+    const licenddate    = approveDetail.approveDate
+    const startDate     = new Date(licstartdate || '');
+    const endDate       = new Date(licenddate || '');
+          endDate.setFullYear(endDate.getFullYear() + 2)
+    const date          = new Date(licstartdate || '');
+    const thai          = thaiDate(date);
     const [day, month, year] = thai.split(' ');
     const fulldateth = `${changeToThaiNumber(
       day
@@ -299,7 +312,7 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
     const careertype = SchoolRequestSubType[+(element?.licensetype ?? '1')];
     const careertypeen = SchoolLangMapping[careertype ?? 'ครู'] ?? '';
     const requestno = element.licenseno ?? '';
-    const prefix = element.licensetype == '1' ? 'ท.' : 'อ.';
+    const prefix = `${element.careertype !== '5' ? 'ท.' : 'อ.'}${ zutils.converttoTHNumber(approveDetail.approveNo) }` ;
     const payload = {
       schoolid: this.schoolId,
     };
@@ -491,6 +504,21 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
     }
   }
 
+  // ---------------------------------------
+  getApproveDetail(histarray : [])
+  {
+    const approvdetail : any = histarray.find( (history: any) => { 
+                    return history.DETAIL !== null && Object.keys(history.DETAIL).length > 1 && typeof history.DETAIL.checkdetail.approveNo !== 'undefined'
+    })
+
+    if(approvdetail !== undefined){
+      return approvdetail.DETAIL.checkdetail
+    }
+
+    return approvdetail
+  }
+
+  // -------------------------------------------------------------------------
   requestPdf(element: KspRequest) {
     //console.log('requestPdf= ', element.requesttype);
     const pdfType = element.requesttype;
