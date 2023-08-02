@@ -101,6 +101,11 @@ export class UniContainerPageComponent implements OnInit {
       path: '',
       permission: '',
     },
+    {
+      label: 'ออกจากระบบ',
+      path: '',
+      permission: '',
+    },
     /* {
       icon: 'assets/images/icon-sidenav/gear-fill.svg',
       label: 'ตั้งค่า',

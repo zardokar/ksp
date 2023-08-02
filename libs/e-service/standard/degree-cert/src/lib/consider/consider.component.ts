@@ -137,7 +137,7 @@ export class ConsiderComponent implements OnInit {
   considerCert: any = [];
   newConsiderCourses: any = [];
   newConsiderCert: any = [];
-  degreeType = '';
+  degreeType = 'a';
   choices = [
     { name: 'เห็นควรพิจารณาให้การรับรอง', value: 1 },
     { name: 'เห็นควรพิจารณาไม่ให้การรับรอง', value: 2 },
@@ -146,6 +146,7 @@ export class ConsiderComponent implements OnInit {
   ];
   historyList: Array<any> = [];
   result: any = { '1': 'ผ่านการพิจารณา', '2': 'ไม่ผ่านการพิจารณา' };
+  result2: any = { 1: 'เห็นควรพิจารณาให้การรับรอง', 2: 'เห็นควรพิจารณาไม่ให้การรับรอง', 3: 'ให้สถาบันแก้ไข / เพิ่มเติม', 4: 'ส่งคืนหลักสูตร' };
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   requestKey: any = '';
 
@@ -168,6 +169,14 @@ export class ConsiderComponent implements OnInit {
       'considerCourses',
       []
     );
+    console.log(this.newConsiderCert, this.newConsiderCourses)
+    if (this.newConsiderCert && this.newConsiderCert.length > 0) {
+      this.form.controls.verify.patchValue({
+        detail: null,
+        reason: _.get(_.last(this.newConsiderCert), 'verifyForm', null),
+        result: _.get(_.last(this.newConsiderCert), 'considerationResult.result', null),
+      })
+    }
     this.eRequestService
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
@@ -337,6 +346,7 @@ export class ConsiderComponent implements OnInit {
       considerCourses: this.newConsiderCourses,
       considerCert: this.newConsiderCert,
       oldPlan: this.stepData.step2,
+      newPlan: this.form.controls.plan.getRawValue()
     });
     let reqProcess = '';
     let reqStatus = '';
