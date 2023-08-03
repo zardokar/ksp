@@ -6,9 +6,8 @@ export const kspPdfMapping: IKspPdfMapping[] = [
   {
     pdfType: 1,
     pdfSubType: 3,
-    //pdfSrc: 'assets/pdf/school-temp-approve-license.pdf',
-    pdfSrc:
-      'https://ksp-eservice.ksp.or.th/pdf/school-temp-approve-license.pdf',
+    pdfSrc: 'assets/pdf/school-temp-approve-license.pdf',
+    //pdfSrc: 'https://ksp-eservice.ksp.or.th/pdf/school-temp-approve-license.pdf',
     input: [
       {
         text: [
