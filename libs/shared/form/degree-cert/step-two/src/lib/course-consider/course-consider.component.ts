@@ -23,6 +23,9 @@ export class CourseConsiderComponent
   newPlanSums: number[] = [0, 0, 0];
   contactForm?: FormGroup;
   @Input() degreeType = '';
+  @Input() showSector1 = true;
+  @Input() showSector2 = true;
+  @Input() showOldPlan = true;
   calendaryearList: Array<any> = [];
 
   override form = this.fb.group({
@@ -52,6 +55,7 @@ export class CourseConsiderComponent
         label: (currYear - index + 543).toString(),
       });
     }
+    console.log(this.form.value);
     if (this.degreeType == 'a') {
       this.addData();
     } else {
@@ -135,13 +139,11 @@ export class CourseConsiderComponent
 
   addDataTypeB() {
     const subjects = [
-      this.newSubject('วิชาชีพครู : ภาคทฤษฎีและปฏิบัติ'),
-      this.newSubject('วิชาชีพครู : ฝึกปฏิบัติวิชาชีพระหว่างเรียน'),
-      this.newSubject(
-        'วิชาชีพครู : ปฏิบัติการสอนในสถานศึกษา / การบริหารสถานศึกษา'
-      ),
-      this.newSubject('วิชาเอกแรก'),
-      this.newSubject('วิชาเอกที่สองหรือวิชาโท'),
+      this.newSubject('หมวดวิชาเลือก'),
+      this.newSubject('วิทยานิพนธ์'),
+      this.newSubject('การค้นคว้าอิสระ'),
+      this.newSubject('รายวิชาเสริม'),
+      this.newSubject('วิชาอื่นๆ'),
     ];
 
     const plans = [
@@ -236,5 +238,20 @@ export class CourseConsiderComponent
       credit2: [''],
       credit3: [''],
     });
+  }
+
+  setCheckedData(event: any, index: any) {
+    console.log(index, this.plansResult.at(index).value);
+    if (!this.plansResult.at(index).value.consider) {
+      this.plansResult.at(index).patchValue({
+        year: this.plans.at(index).value.year || null,
+        student: this.plans.at(index).value.student || null,
+      });
+    } else {
+      this.plansResult.at(index).patchValue({
+        year: null,
+        student: null,
+      });
+    }
   }
 }

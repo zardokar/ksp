@@ -29,6 +29,7 @@ export class FormMultiAttachmentComponent {
   @Output() downloadClick = new EventEmitter<any>();
   @Output() uploadComplete = new EventEmitter<any>();
   @Output() confirmChoice = new EventEmitter<any>();
+  @Input() maxSize = 10097152;
   @Input() showLicense = true;
 
   constructor(public dialog: MatDialog, private fileService: FileService) {}
