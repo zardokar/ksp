@@ -129,17 +129,83 @@
 
   <div class="d-flex justify-content-between align-items-center">
     <div class="box-header">ข้อมูลผู้ถูกกล่าวหา/กล่าวโทษ</div>
-    <button
+    <div class="d-flex justify-content-end">
+      <label
+        class="text-primary"
+        role="button"
+        (click)="openSearchDialog()"
+        *ngIf="accuseds.length < 5"
+        >+ เพิ่มรายการ</label
+      >
+    </div>
+    <!-- <button
       (click)="openSearchDialog()"
       type="button"
       class="btn btn-primary w-auto"
     >
       ค้นหา/เปลี่ยนแปลงข้อมูลผู้มีหนังสืออนุญาต
-    </button>
+    </button> -->
   </div>
 
   <div class="mb-3">
-    <mat-tab-group class="tab-group" animationDuration="0ms">
+    <div class="table-responsive mb-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ลำดับ</th>
+            <th scope="col">เลขบัตรประชาชน</th>
+            <th scope="col">ชื่อ-นามสกุล</th>
+            <th scope="col">เบอร์โทรศัพท์</th>
+            <th scope="col">เลขที่ใบอนุญาตฯ</th>
+            <th scope="col">ประเภทวิชาชีพ</th>
+            <th scope="col">วันที่ออก</th>
+            <th scope="col">วันที่หมดอายุ</th>
+            <!-- <th scope="col">แก้ไข</th> -->
+            <th scope="col">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container formArrayName="licenseinfo">
+            <ng-container *ngFor="let row of accuseds.controls; let i = index">
+              <tr [formGroupName]="i">
+                <th class="text-center">{{ i + 1 }}</th>
+                <td>
+                  {{row.value.identitynumber}}
+                </td>      
+                <td >
+                  {{row.value.nameth}} {{row.value.lastnameth}}
+                </td>
+                <td>
+                  {{row.value.phonenumber}}
+                </td>
+                <td>
+                  {{row.value.licenseno}}
+                </td>
+                <td>
+                  {{row.value.usertype}}
+                </td>
+                <td>
+                  {{row.value.certificatestartdate}}
+                </td>
+                <td>
+                  {{row.value.certificateenddate}}
+                </td>
+                <td>
+                  <i
+                    role="button"
+                    class="bi bi-trash fs-5 text-danger"
+                    (click)="deleteAccusedRow(i)"
+                  ></i>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <br />
+
+    <!-- <mat-tab-group class="tab-group" animationDuration="0ms">
         <mat-tab label="ข้อมูลผู้ได้รับหนังสืออนุญาต" class="tab-content">
               <e-service-person-info
                   [personalInfo] = "selectId"
@@ -172,7 +238,7 @@
       <mat-tab label="สถานที่ทำงาน">
         <e-service-workplace-info></e-service-workplace-info>
       </mat-tab>
-    </mat-tab-group>
+    </mat-tab-group> -->
   </div>
 
   <div class="box-header">รายละเอียดการกล่าวหา/กล่าวโทษ</div>
@@ -233,7 +299,78 @@
     </div>
   </div>
 
+  <div class="row d-flex justify-content-between align-items-center">
+    
+      <label class="form-label required">ประเภท และประเด็นข้อกล่าวโทษ/ข้อกล่าวโทษ</label>
+      <div class="d-flex justify-content-end">
+        <label
+          class="text-primary"
+          role="button"
+          (click)="addCondemnationRow()"
+          *ngIf="accusationcondemnations.length < 5"
+          >+ เพิ่มรายการ</label
+        >
+      </div>
+    
+  </div>
+
   <div class="row mb-2">
+    <div class="table-responsive mb-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ลำดับ</th>
+            <th scope="col">ประเภทของการกล่าวหา/กล่าวโทษ</th>
+            <th class="w-50" scope="col">ประเด็นตั้งข้อกล่าวหา/กล่าวโทษ</th>
+            <th scope="col">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container formArrayName="accusationcondemnation">
+            <ng-container *ngFor="let row of accusationcondemnations.controls; let i = index">
+              <tr [formGroupName]="i">
+                <th class="text-center">{{ i + 1 }}</th>
+                <td>
+                  <select class="form-select " formControlName="condemnationtype">
+                    <option value="null" disabled hidden selected>กรุณาเลือก</option>
+                    <option value="1">ปฏิบัติหน้าที่โดยมิชอบ</option>
+                    <option value="2">ทำร้ายร่างกาย</option>
+                    <option value="3">ชู้สาว</option>
+                    <option value="4">ความผิดเกี่ยวกับเพศ</option>
+                    <option value="5">การพนันและสุรา</option>
+                    <option value="6">ความผิดเกี่ยวกับยาเสพติด</option>
+                    <option value="7">ความผิดเกี่ยวกับทรัพย์</option>
+                    <option value="8">ละทิ้ง ละเว้น</option>
+                    <option value="9">ดูหมิ่น หมิ่นประมาท กล่าวถ้อยคำไม่เหมาะสม</option>
+                    <option value="10">ความผิดทางแพ่ง</option>
+                    <option value="11">อื่นๆ</option>
+                  </select>
+                </td>
+                <td>
+                    <textarea
+                    class="form-control "
+                    type="text"
+                    rows="2"
+                    formControlName="condemnationdetail"
+                  >
+                  </textarea>
+                </td>
+                <td>
+                  <i
+                    role="button"
+                    class="bi bi-trash fs-5 text-danger"
+                    (click)="deleteCondemnationRow(i)"
+                  ></i>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <br />
+  </div>
+  <!-- <div class="row mb-2">
     <div class="col-6">
       <label class="form-label required"
         >ประเภทของการกล่าวโทษ/ข้อกล่าวโทษ</label
@@ -266,7 +403,7 @@
       >
       </textarea>
     </div>
-  </div>
+  </div> -->
 
   <div class="row mb-2">
     <div class="col-6">
@@ -372,4 +509,29 @@
       [pageType]="'accusationFiles'"
     ></ksp-form-attachment>
   </div>
+
+  <div formGroupName="accusationconsideration" class="bg-light p-3 m-4">
+    <div class="fs-5">การพิจารณาดำเนินการ</div>
+
+    <div class="py-2 px-3">
+      <ng-container *ngFor="let item of decisions"
+        ><div class="d-flex flex-row align-items-center mb-2">
+          <input
+            type="radio"
+            class="form-check-input me-2"
+            formControlName="decisions"
+            value="{{ item.value }}"
+          />
+          <label class="form-label">{{ item.label }}</label>
+        </div>
+      </ng-container>
+
+      <div class="row ps-4">
+        <div class="col-6">
+          <input class="form-control" formControlName="otherDetail" />
+        </div>
+      </div>
+    </div>
+  </div>
+
 </form>

@@ -21,6 +21,8 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   form = this.fb.group({
+    id:'',
+    licenseno:'',
     idcardno: '',
     prefixth: '',
     firstnameth: '',
@@ -28,6 +30,9 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     bureauid: '',
     schoolname: '',
     province: '',
+    usertype:'',
+    certificatestartdate:'',
+    certificateenddate:'',
     offset: '0',
     row: '20',
   });
@@ -81,6 +86,10 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     this.service.searchSelfMyInfo(payload).subscribe((res) => {
       this.dataSource.data = res;
     });
+
+
+
+
   }
   goNext() {
     this.currentPage += 1;
@@ -88,6 +97,14 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
   }
   onClickRadio(form: any) {
     // this.selectedIdCard = form.identitynumber;
+    const payload2 = { "id" : form.id }
+    this.service.searchSelfLicense(payload2).subscribe((res) => {
+      console.log(res);
+      form.licenseno  = res[0].licenseno as string;
+      form.usertype   = res[0].usertype as string;
+      form.certificatestartdate   = res[0].certificatestartdate as string;
+      form.certificateenddate   = res[0].certificateenddate as string;
+    });
     this.selectedIdCard = form;
   }
   onClickGetInfo(form: any) {
@@ -105,7 +122,8 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
       //   // this.personinfo.assignPersonInfo( this.personalInfo )
       // });
 
-
+      
+      console.log(form);
       this.personalInfo  = form as any
       this.identityNo = form.identitynumber
       this.personSelected = true;

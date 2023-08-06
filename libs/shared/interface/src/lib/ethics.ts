@@ -19,6 +19,7 @@ export class Ethics {
   ethicsno: string | null = null;
   accuserinfo: string | null = null;
   licenseinfo: string | null = null;
+  licenseno: string | null = null;
   addressinfo: string | null = null;
   workplaceinfo: string | null = null;
   idcardno: string | null = '999999999';
@@ -47,6 +48,7 @@ export class Ethics {
   accusationassigndate: string | null = null;
   accusationfile: string | null = null;
   accusationconsideration: string | null = null;
+  accusedinfo: string | null = null;
 
   investigationorderno: string | null = null;
   investigationorderdate: string | null = null;
@@ -103,6 +105,26 @@ export const defaultSubcommittee: EhicsSubcommittee = {
   position: null,
   bureau: null,
 };
+
+export const defaultAccused: Ehicsaccused = {
+  id: null,
+  licenseno: null,
+  identitynumber: null,
+  usertype: null,
+  titlethid: null,
+  nameth: null,
+  lastnameth: null,
+  phonenumber: null,
+  certificatestartdate: null,
+  certificateenddate: null,
+  bureau: null
+};
+
+export const defaultCondemnation: EhicsCondemnation = {
+  condemnationtype:  null,
+  condemnationdetail: null
+};
+
 export interface EhicsMember {
   idcardno: string | null;
   accusertype: string | null;
@@ -123,6 +145,25 @@ export interface EhicsSubcommittee {
   lastname: string | null;
   position: string | null;
   bureau: string | null;
+}
+
+export interface Ehicsaccused {
+  id: string | null;
+  licenseno: string | null;
+  identitynumber: number | null;
+  usertype: string | null;
+  titlethid: string | null;
+  nameth: string | null;
+  lastnameth: string | null;
+  phonenumber: string | null;
+  certificatestartdate: string | null;
+  certificateenddate: string | null;
+  bureau: string | null;
+}
+
+export interface EhicsCondemnation {
+  condemnationtype: string | null;
+  condemnationdetail: string | null;
 }
 
 export const ACCUSATION_FILES: FileGroup[] = [
