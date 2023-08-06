@@ -72,9 +72,31 @@ export class AccusationMainComponent implements OnInit {
               this.accusation.addRow()
             }
           }
-          this.accusation.setAccusedInfo(res?.licenseinfo)
+          if( typeof res?.licenseinfo == "string"){
+            res.licenseinfo = jsonParse(res.licenseinfo)
+          }  
+          if( isArray( res?.licenseinfo )){
+            for(let accused of res?.licenseinfo){
+              this.accusation.addAccusedRow()
+            }
+          }
+
+          if( typeof res?.accusationcondemnation == "string"){
+            res.accusationcondemnation = jsonParse(res.accusationcondemnation)
+          }  
+          if( isArray( res?.accusationcondemnation )){
+            for(let condemnation of res?.accusationcondemnation){
+              this.accusation.addCondemnationRow()
+            }
+          }
+
+
+          if( typeof res?.accusationconsideration == "string"){
+            res.accusationconsideration = jsonParse(res.accusationconsideration)
+          }  
+
           // this.accusation.setAddressInfo(res?.addressinfo ? res.addressinfo : {})
-          this.accusation.getAddressInfo(res?.licenseinfo)
+          // this.accusation.getAddressInfo(res?.licenseinfo)
           if (res?.investigationresult) {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
@@ -93,35 +115,48 @@ export class AccusationMainComponent implements OnInit {
     const ethics = new Ethics();
     const allowKey = Object.keys(ethics);
     const data = this.form.controls.accusation.value as any;
-    const idno = document.getElementById("person-idno") as HTMLInputElement;
-    const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
-    const nameen = document.getElementById("person-nameen") as HTMLInputElement;
-    const gender = document.getElementById("person-gender") as HTMLButtonElement;
-    const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
-    const phone = document.getElementById("person-phone") as HTMLButtonElement;
-    const email = document.getElementById("person-email") as HTMLButtonElement;
-    const image = document.getElementById("person-img") as HTMLButtonElement;
-    // console.log("data in form :: " , idno.innerText);
-    const objPerson = {
-       identitynumber : idno.innerText,
-       nameth : nameth.innerText,
-       nameen : nameen.innerText,
-       email : email.innerText,
-       phonenumber : phone.innerText,
-       birthdate : birthdate.innerText,
-       genderid : gender.innerText,
-       profileimage : image.getAttribute("src")
-    }
+    // const idno = document.getElementById("person-idno") as HTMLInputElement;
+    // const nameth = document.getElementById("person-nameth") as HTMLButtonElement;
+    // const nameen = document.getElementById("person-nameen") as HTMLInputElement;
+    // const gender = document.getElementById("person-gender") as HTMLButtonElement;
+    // const birthdate = document.getElementById("person-birthdate") as HTMLInputElement;
+    // const phone = document.getElementById("person-phone") as HTMLButtonElement;
+    // const email = document.getElementById("person-email") as HTMLButtonElement;
+    // const image = document.getElementById("person-img") as HTMLButtonElement;
+    console.log("data in form :: " , data);
+    // const objPerson = {
+    //    identitynumber : idno.innerText,
+    //    nameth : nameth.innerText,
+    //    nameen : nameen.innerText,
+    //    email : email.innerText,
+    //    phonenumber : phone.innerText,
+    //    birthdate : birthdate.innerText,
+    //    genderid : gender.innerText,
+    //    profileimage : image.getAttribute("src")
+    // }
     
-    console.log("data form accusation :: " , objPerson);
+    // console.log("data form accusation :: " , objPerson);
+    if (data?.licenseinfo) {
+      data.licenseinfo = JSON.stringify(data?.licenseinfo);
+    }
     if (data?.accuserinfo) {
       data.accuserinfo = JSON.stringify(data?.accuserinfo);
+    }
+    if (data?.accusedinfo) {
+      data.accusedinfo = JSON.stringify(data?.accusedinfo);
+    }
+    if (data?.accusationcondemnation) {
+      data.accusationcondemnationtype = 0
+      data.accusationcondemnation = JSON.stringify(data?.accusationcondemnation);
+    }
+    if (data?.accusationconsideration) {
+      data.accusationconsideration = JSON.stringify(data?.accusationconsideration);
     }
     data.accusationfile = JSON.stringify(
       mapFileInfo(this.accusation.accusationFiles)
     );
     const selectData = _.pick(data, allowKey);
-    selectData['licenseinfo']  =  JSON.stringify( objPerson );
+    // selectData['licenseinfo']  =  JSON.stringify(  );
     if (this.ethicsId) {
       selectData['id'] = this.ethicsId;
       // const payload = replaceEmptyWithNull(selectData);
