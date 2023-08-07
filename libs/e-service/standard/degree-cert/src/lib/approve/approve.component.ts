@@ -235,9 +235,7 @@ export class ApproveComponent implements OnInit {
         this.form.controls.approveData.patchValue(
           lastPlan?.detail?.approveData
         );
-        console.log(res?.verifyResult)
         this.form.controls.plan.patchValue({plansResult: _.get(_.last(res?.verifyResult), 'detail.newPlan.plansResult', []) as any});
-        console.log(this.planResult);
       });
   }
 
