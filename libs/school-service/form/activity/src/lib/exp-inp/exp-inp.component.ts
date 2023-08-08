@@ -153,6 +153,7 @@ export class ExperienceInputComponent extends KspFormBaseComponent implements On
             // Assign to element
             target.value = res.schoolname;
             this.workInfo.controls[grpind].get('affiliation')?.setValue(res.bureauid);
+            this.workInfo.controls[grpind].get('schoolname')?.setValue(res.schoolname)
           }
         });
     }
