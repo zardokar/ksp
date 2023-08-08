@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -56,8 +56,8 @@ import { zutils } from '@ksp/shared/utility';
   templateUrl: './qualification-detail.component.html',
   styleUrls: ['./qualification-detail.component.scss'],
 })
-export class QualificationDetailComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  isLoading: Subject<boolean> = this.loaderService.isLoading;
+export class QualificationDetailComponent implements OnInit, AfterViewInit, AfterViewChecked, AfterContentInit {
+  isLoading: Subject<boolean> = this.loaderService.isLoading ;
 
   form = this.fb.group({
     userInfo: [],
@@ -144,12 +144,15 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
     this.changedetector.detectChanges();
   }
 
+  ngAfterContentInit(): void {
+    this.changedetector.detectChanges();
+  }
+
   ngAfterViewChecked(): void {
     this.changedetector.detectChanges();
   }
 
   // ---------------------------------------------------------------------------
-
   checkRequestId() {
     this.route.paramMap.subscribe((params) => {
       this.requestId = Number(params.get('id'));
@@ -302,6 +305,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
     }
   }
 
+  // ----------------------------------------------------------------------
   experienceSelect(exp: number, evt: any) {
     const checked = evt.target.checked;
     this.experienceSelected[exp] = checked;
@@ -364,8 +368,9 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
         this.onCancelCompleted();
       });
   }
-
+  // ---------------------------------------------------------------------
   onSave() {
+
     const confirmDialog = this.dialog.open(
       QualificationApproveDetailComponent,
       {
@@ -400,7 +405,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
       }
     });
   }
-
+  // ---------------------------------------------------------------
   onConfirmed(reasonForm: any, refPersonForm: any) {
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -428,7 +433,8 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
             userInfo.schoolid = this.schoolId;
             userInfo.bureauname = this.bureauName;
             userInfo.schoolname = this.schoolName;
-            userInfo.schooladdress = this.address;
+            userInfo.schooladdress  = this.address;
+            userInfo.experienceinfo = JSON.stringify( { exp1: formData.exp1,  exp2: formData.exp2, exp3: formData.exp3,  exp4: formData.exp4 })
             userInfo.process = '1';
             userInfo.status = '1';
             let eduForm = [{ ...formData.edu1, ...{ degreeLevel: 1 } }];
@@ -634,10 +640,6 @@ const files: FileGroup[] = [
     name: 'สำเนาบัตรประจำตัวประชาชน / บัตรประจำตัวข้าราชการ',
     files: [],
   },
-  /* {
-    name: 'สำเนาทะเบียนบ้าน',
-    files: [],
-  }, */
   {
     name: 'สำเนาหนังสือแจ้งการเทียบคุณวุฒิ (กรณีจบการศึกษาจากต่างประเทศ)',
     files: [],
