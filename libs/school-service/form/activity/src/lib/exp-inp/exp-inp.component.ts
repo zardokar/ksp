@@ -148,6 +148,16 @@ export class ExperienceInputComponent extends KspFormBaseComponent implements On
     
         dialog.afterClosed().subscribe((res: SchInfo) => {
           if (res) {
+            // Check bureau
+            const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
+            if(bureau === undefined)
+            {
+              this.bureaus.push({
+                bureauId : res.bureauid,
+                bureauName : res.bureauname
+              })
+            }
+
             const grpind =  parseInt( target.getAttribute('grpind') )
 
             // Assign to element
