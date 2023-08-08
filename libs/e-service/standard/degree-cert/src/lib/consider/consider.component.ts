@@ -176,6 +176,7 @@ export class ConsiderComponent implements OnInit {
         reason: _.get(_.last(this.newConsiderCert), 'verifyForm', null),
         result: _.get(_.last(this.newConsiderCert), 'considerationResult.result', null),
       })
+      this.form.controls.verify.updateValueAndValidity();
     }
     this.eRequestService
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
@@ -244,8 +245,8 @@ export class ConsiderComponent implements OnInit {
               ? lastPlan?.detail?.plan.subject3GroupName
               : '',
           });
+          this.form.controls.verify.patchValue(lastPlan?.detail?.verify);
         }
-        this.form.controls.verify.patchValue(lastPlan?.detail?.verify);
       });
   }
 
