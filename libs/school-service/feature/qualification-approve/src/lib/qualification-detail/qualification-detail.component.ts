@@ -271,22 +271,36 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
 
   patchEdu(edus: any[]) {
     //console.log('edus = ', edus);
-    if (edus && edus.length) {
-      edus.map((edu, i) => {
-        if (edu.degreeLevel === 2) {
-          this.showEdu2 = true;
-        }
-        if (edu.degreeLevel === 3) {
-          this.showEdu3 = true;
-        }
-        if (edu.degreeLevel === 4) {
-          this.showEdu4 = true;
-        }
-        (this.form.get(`edu${i + 1}`) as AbstractControl<any, any>).patchValue(
-          edu
-        );
-      });
-    }
+    this.universityList$.subscribe((unidata) => {
+      if (edus && edus.length) {
+        edus.map((edu, i) => {
+          // ------------------------------------------------------------------------------
+          // Convert data when found number in institution
+          if( isNaN( Number( edu.institution )) === false )
+          {
+            const uresult = unidata?.find( u => {
+              return u.id === edu.institution
+            })
+            edu.institution = `${uresult?.name || ''} ${uresult?.campusname || ''}`
+          }
+          // ------------------------------------------------------------------------------
+
+          if (edu.degreeLevel === 2) {
+            this.showEdu2 = true;
+          }
+          if (edu.degreeLevel === 3) {
+            this.showEdu3 = true;
+          }
+          if (edu.degreeLevel === 4) {
+            this.showEdu4 = true;
+          }
+          (this.form.get(`edu${i + 1}`) as AbstractControl<any, any>).patchValue(
+            edu
+          );
+        });
+      }
+
+    })
   }
 
   eduSelected(type: number, evt: any) {
@@ -375,7 +389,15 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
       QualificationApproveDetailComponent,
       {
         width: '850px',
+        autoFocus: false,
+        maxHeight: '97vh', //you can adjust the value as per your view
         data: {
+          educations: { 
+                        edu1: this.form.get('edu1')?.value,
+                        edu2: this.form.get('edu2')?.value,
+                        edu3: this.form.get('edu3')?.value,
+                        edu4: this.form.get('edu4')?.value
+          },
           education: this.form.get('edu1')?.value,
           mode: this.mode,
           otherreason: this.otherreason,
