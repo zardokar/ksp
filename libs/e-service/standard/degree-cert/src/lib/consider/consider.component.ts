@@ -91,7 +91,7 @@ const mapProcess = (data: any) => {
   status = _.find(status?.status, {
     id: _.toNumber(data.status),
   });
-  return status.sname;
+  return status?.sname;
 };
 @Component({
   selector: 'e-service-consider',
