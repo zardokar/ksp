@@ -138,6 +138,7 @@ export class EditStudentDetailComponent implements OnInit {
             dataEdit.teachingpracticeschool = JSON.parse(
               dataEdit.teachingpracticeschool
             );
+            console.log(dataEdit)
             this.user.push(this.edituser(dataEdit));
           } else {
             this.data = false;

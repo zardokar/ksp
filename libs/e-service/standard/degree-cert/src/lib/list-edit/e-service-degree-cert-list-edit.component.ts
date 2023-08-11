@@ -116,7 +116,7 @@ export class EServiceDegreeCertListEditComponent extends KspPaginationComponent 
       .searchTypeidUniUniversity(getCookie('uniType'))
       .pipe(
         map((data) => {
-          return data.map(({ id, name, campusname }: any) => ({
+          return data?.map(({ id, name, campusname }: any) => ({
             value: id,
             label: name + (campusname ? `, ${campusname}` : ''),
           }));
