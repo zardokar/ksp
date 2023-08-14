@@ -258,8 +258,8 @@ export class AccusationRecordComponent
   // ------------------------------------------------------
   setAccusedInfo(accused_data: any)
   {
-    this.personinfo.assignPersonInfo( accused_data )
-    this.addressinfo.queryAddressInfo( accused_data )
+    this.personinfo?.assignPersonInfo( accused_data )
+    this.addressinfo?.queryAddressInfo( accused_data )
   }
 
   setAddressInfo(accused_data: any)
