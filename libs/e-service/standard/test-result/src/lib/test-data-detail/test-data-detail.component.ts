@@ -287,9 +287,9 @@ export class TestDataDetailComponent implements OnInit {
 const displayedColumns: string[] = [
   'select',
   // 'examcount',
-  'calendaryear',
-  'subjectid',
-  'subjectname',
+  // 'calendaryear',
+  // 'subjectid',
+  // 'subjectname',
   'idcardno',
   'fullname',
   'userscore',

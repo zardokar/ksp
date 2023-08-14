@@ -32,7 +32,11 @@
         class="btn btn-primary w-25"
         *ngIf="showHistoryButton"
       >
-        {{ pageType === 'admissionList' ? 'ประวัติการยื่นผู้เข้าศึกษา' : 'ประวัติการยื่นผู้สำเร็จการศึกษา' }}
+        {{
+          pageType === 'admissionList'
+            ? 'ประวัติการยื่นผู้เข้าศึกษา'
+            : 'ประวัติการยื่นผู้สำเร็จการศึกษา'
+        }}
       </button>
     </div>
     <hr />
@@ -340,23 +344,15 @@
               <th class="p-2 text-nowrap align-text-top">
                 วัน/เดือน/ปีเกิด(พ.ศ.)
               </th>
-              <th class="p-2 text-nowrap align-text-top">
-                อีเมล
-              </th>
+              <th class="p-2 text-nowrap align-text-top">อีเมล</th>
               <th class="p-2 text-nowrap align-text-top">ที่อยู่</th>
-              <th
-                class="p-2 text-nowrap align-text-top"
-                *ngIf="pageType === 'admissionList'"
-              >
-              วิชาที่ปฏิบัติการสอน
+              <th class="p-2 text-nowrap align-text-top">
+                วิชาที่ปฏิบัติการสอน
               </th>
-              <th
-                class="p-2 text-nowrap align-text-top"
-                *ngIf="pageType === 'admissionList'"
-              >
-                วุฒิการศึกษาเดิม
+              <th class="p-2 text-nowrap align-text-top">วุฒิการศึกษาเดิม</th>
+              <th class="p-2 text-nowrap" *ngIf="pageType === 'admissionList'">
+                ลบรายการ
               </th>
-              <th class="p-2 text-nowrap">ลบรายการ</th>
             </tr>
           </ng-template>
           <ng-template
@@ -388,7 +384,9 @@
                   type="text"
                   formControlName="approveno"
                   [readonly]="control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('approveno').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('approveno').invalid
+                  }"
                 />
               </td>
               <td class="p-2 text-nowrap" *ngIf="pageType === 'graduateList'">
@@ -400,7 +398,9 @@
                     class="form-control form-date"
                     formControlName="approvedate"
                     [readonly]="control.value.locked"
-                    [ngClass]="{'invalid': submitted && control.get('approvedate').invalid}"
+                    [ngClass]="{
+                      invalid: submitted && control.get('approvedate').invalid
+                    }"
                   />
                   <mat-datepicker-toggle
                     class="button-date"
@@ -426,7 +426,10 @@
                     class="form-control form-date"
                     formControlName="graduationdate"
                     [readonly]="control.value.locked"
-                    [ngClass]="{'invalid': submitted && control.get('graduationdate').invalid}"
+                    [ngClass]="{
+                      invalid:
+                        submitted && control.get('graduationdate').invalid
+                    }"
                   />
                   <mat-datepicker-toggle
                     class="button-date"
@@ -446,7 +449,9 @@
 
               <td class="p-2 text-nowrap" *ngIf="pageType === 'graduateList'">
                 <div
-                  (click)="searchAddress(control.value.index, control.value.locked)"
+                  (click)="
+                    searchAddress(control.value.index, control.value.locked)
+                  "
                   class="text-orange text-decoration-underline whitespace-nowrap"
                   role="button"
                 >
@@ -462,17 +467,24 @@
                     autocomplete="off"
                     class="form-control form-date"
                     formControlName="admissiondate"
-                    [readonly]="pageType === 'graduateList' || control.value.locked"
-                    [ngClass]="{'invalid': submitted && control.get('admissiondate').invalid}"
+                    [readonly]="
+                      pageType === 'graduateList' || control.value.locked
+                    "
+                    [ngClass]="{
+                      invalid: submitted && control.get('admissiondate').invalid
+                    }"
                   />
                   <mat-datepicker-toggle
                     class="button-date"
                     matSuffix
                     [for]="picker"
                   ></mat-datepicker-toggle>
-                  <mat-datepicker 
-                    #picker 
-                    [disabled]="pageType === 'graduateList' || control.value.locked"></mat-datepicker>
+                  <mat-datepicker
+                    #picker
+                    [disabled]="
+                      pageType === 'graduateList' || control.value.locked
+                    "
+                  ></mat-datepicker>
                 </div>
                 <!-- <input
                   class="form-control"
@@ -492,21 +504,26 @@
                   maxlength="13"
                   type="text"
                   formControlName="idcardno"
-                  (blur)="
-                    searchByIdcard(
-                      idcard.value,
-                      control.value.index
-                    )
-                  "
+                  (blur)="searchByIdcard(idcard.value, control.value.index)"
                   (keyup.enter)="idcard.blur()"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('idcardno').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('idcardno').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('idcardno').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'เลขบัตรประจำตัวประชาชน/เลขประจำตัวคุรุสภา') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'เลขบัตรประจำตัวประชาชน/เลขประจำตัวคุรุสภา'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -518,7 +535,9 @@
                   #passport
                   type="text"
                   formControlName="passportno"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
                 />
               </td>
 
@@ -528,7 +547,9 @@
                   style="width: 150px"
                   formControlName="nationality"
                   [attr.disabled]="control.value.locked ? '' : null"
-                  [ngClass]="{'invalid': submitted && control.get('nationality').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('nationality').invalid
+                  }"
                 >
                   <option value="null" selected hidden disabled>
                     กรุณาเลือก
@@ -544,7 +565,13 @@
                   *ngIf="submitted && control.get('nationality').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.requiredSelect.replace('field', 'สัญชาติ') }} !
+                    {{
+                      validatorMessages.requiredSelect.replace(
+                        'field',
+                        'สัญชาติ'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -557,13 +584,21 @@
                   type="text"
                   formControlName="studentno"
                   [readonly]="control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('studentno').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('studentno').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('studentno').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'เลขประจำตัวนักศึกษา') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'เลขประจำตัวนักศึกษา'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -574,7 +609,9 @@
                   style="width: 150px"
                   formControlName="studentstatus"
                   [attr.disabled]="control.value.locked ? '' : null"
-                  [ngClass]="{'invalid': submitted && control.get('studentstatus').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('studentstatus').invalid
+                  }"
                 >
                   <option value="null" selected hidden disabled>
                     กรุณาเลือก
@@ -590,7 +627,13 @@
                   *ngIf="submitted && control.get('studentstatus').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.requiredSelect.replace('field', 'สถานะนักศึกษา') }} !
+                    {{
+                      validatorMessages.requiredSelect.replace(
+                        'field',
+                        'สถานะนักศึกษา'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -598,9 +641,15 @@
               <td class="p-2 text-nowrap">
                 <select
                   class="form-select"
-                  [attr.disabled]="pageType === 'graduateList' || control.value.locked ? '' : null"
+                  [attr.disabled]="
+                    pageType === 'graduateList' || control.value.locked
+                      ? ''
+                      : null
+                  "
                   formControlName="prefixth"
-                  [ngClass]="{'invalid': submitted && control.get('prefixth').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('prefixth').invalid
+                  }"
                 >
                   <option value="null" selected hidden disabled>
                     กรุณาเลือก
@@ -616,7 +665,13 @@
                   *ngIf="submitted && control.get('prefixth').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.requiredSelect.replace('field', 'คำนำหน้าชื่อ (ภาษาไทย)') }} !
+                    {{
+                      validatorMessages.requiredSelect.replace(
+                        'field',
+                        'คำนำหน้าชื่อ (ภาษาไทย)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -628,14 +683,24 @@
                   pInputText
                   type="text"
                   formControlName="firstnameth"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('firstnameth').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('firstnameth').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('firstnameth').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'ชื่อ (ภาษาไทย)') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'ชื่อ (ภาษาไทย)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -646,23 +711,39 @@
                   pInputText
                   type="text"
                   formControlName="lastnameth"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('lastnameth').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('lastnameth').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('lastnameth').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'นามสกุล (ภาษาไทย)') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'นามสกุล (ภาษาไทย)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
               <td class="p-2 text-nowrap">
                 <select
                   class="form-select"
-                  [attr.disabled]="pageType === 'graduateList' || control.value.locked ? '' : null"
+                  [attr.disabled]="
+                    pageType === 'graduateList' || control.value.locked
+                      ? ''
+                      : null
+                  "
                   formControlName="prefixen"
-                  [ngClass]="{'invalid': submitted && control.get('prefixen').invalid}"
+                  [ngClass]="{
+                    invalid: submitted && control.get('prefixen').invalid
+                  }"
                 >
                   <option value="null" selected hidden disabled>
                     กรุณาเลือก
@@ -678,7 +759,13 @@
                   *ngIf="submitted && control.get('prefixen').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.requiredSelect.replace('field', 'คำนำหน้าชื่อ (ภาษาอังกฤษ)') }} !
+                    {{
+                      validatorMessages.requiredSelect.replace(
+                        'field',
+                        'คำนำหน้าชื่อ (ภาษาอังกฤษ)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -691,14 +778,24 @@
                   type="text"
                   formControlName="firstnameen"
                   (input)="changeFirstName($event, ri)"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('firstnameen').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('firstnameen').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('firstnameen').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'ชื่อ (ภาษาอังกฤษ)') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'ชื่อ (ภาษาอังกฤษ)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -711,7 +808,9 @@
                   type="text"
                   formControlName="middlenameen"
                   (input)="changeMiddleName($event, ri)"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
                 />
               </td>
 
@@ -723,14 +822,24 @@
                   type="text"
                   formControlName="lastnameen"
                   (input)="changeLastName($event, ri)"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('lastnameen').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('lastnameen').invalid
+                  }"
                 />
                 <ng-container
                   *ngIf="submitted && control.get('lastnameen').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'นามสกุล (ภาษาอังกฤษ)') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'นามสกุล (ภาษาอังกฤษ)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -743,14 +852,22 @@
                   type="text"
                   maxlength="10"
                   formControlName="phone"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('phone').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('phone').invalid
+                  }"
                 />
-                <ng-container
-                  *ngIf="submitted && control.get('phone').invalid"
-                >
+                <ng-container *ngIf="submitted && control.get('phone').invalid">
                   <span class="text-danger">
-                    {{ validatorMessages.required.replace('field', 'เบอร์โทรศัพท์มือถือ') }} !
+                    {{
+                      validatorMessages.required.replace(
+                        'field',
+                        'เบอร์โทรศัพท์มือถือ'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
               </td>
@@ -762,23 +879,36 @@
                     autocomplete="off"
                     class="form-control form-date"
                     formControlName="birthdate"
-                    [readonly]="pageType === 'graduateList' || control.value.locked"
-                    [ngClass]="{'invalid': submitted && control.get('birthdate').invalid}"
+                    [readonly]="
+                      pageType === 'graduateList' || control.value.locked
+                    "
+                    [ngClass]="{
+                      invalid: submitted && control.get('birthdate').invalid
+                    }"
                   />
                   <mat-datepicker-toggle
                     class="button-date"
                     matSuffix
                     [for]="pickerbirthdate"
                   ></mat-datepicker-toggle>
-                  <mat-datepicker 
+                  <mat-datepicker
                     #pickerbirthdate
-                    [disabled]="pageType === 'graduateList' || control.value.locked"></mat-datepicker>
+                    [disabled]="
+                      pageType === 'graduateList' || control.value.locked
+                    "
+                  ></mat-datepicker>
                 </div>
                 <ng-container
                   *ngIf="submitted && control.get('birthdate').invalid"
                 >
                   <span class="text-danger">
-                    {{ validatorMessages.requiredSelect.replace('field', 'วัน/เดือน/ปีเกิด(พ.ศ.)') }} !
+                    {{
+                      validatorMessages.requiredSelect.replace(
+                        'field',
+                        'วัน/เดือน/ปีเกิด(พ.ศ.)'
+                      )
+                    }}
+                    !
                   </span>
                 </ng-container>
                 <!-- <input
@@ -797,12 +927,14 @@
                   pInputText
                   type="text"
                   formControlName="email"
-                  [readonly]="pageType === 'graduateList' || control.value.locked"
-                  [ngClass]="{'invalid': submitted && control.get('email').invalid}"
+                  [readonly]="
+                    pageType === 'graduateList' || control.value.locked
+                  "
+                  [ngClass]="{
+                    invalid: submitted && control.get('email').invalid
+                  }"
                 />
-                <ng-container
-                  *ngIf="submitted && control.get('email').invalid"
-                >
+                <ng-container *ngIf="submitted && control.get('email').invalid">
                   <span class="text-danger">
                     {{ validatorMessages.required.replace('field', 'อีเมล') }} !
                   </span>
@@ -830,21 +962,33 @@
                 </div>
               </td>
 
-              <td class="p-2 text-nowrap" *ngIf="pageType === 'admissionList'">
+              <td class="p-2 text-nowrap">
                 <div
                   class="text-orange text-decoration-underline whitespace-nowrap"
                   role="button"
-                  (click)="insertSubject(control.value.subjects, ri, control.value.locked)"
+                  (click)="
+                    insertSubject(
+                      control.value.subjects,
+                      ri,
+                      control.value.locked || pageType === 'graduateList'
+                    )
+                  "
                 >
-                วิชาที่ปฏิบัติการสอน
+                  วิชาที่ปฏิบัติการสอน
                 </div>
               </td>
 
-              <td class="p-2 text-nowrap" *ngIf="pageType === 'admissionList'">
+              <td class="p-2 text-nowrap">
                 <div
                   class="text-orange text-decoration-underline whitespace-nowrap"
                   role="button"
-                  (click)="viewOriginalDegree(control.value.originaldegree, ri, control.value.locked)"
+                  (click)="
+                    viewOriginalDegree(
+                      control.value.originaldegree,
+                      ri,
+                      control.value.locked || pageType === 'graduateList'
+                    )
+                  "
                 >
                   วุฒิการศึกษาเดิม
                 </div>
