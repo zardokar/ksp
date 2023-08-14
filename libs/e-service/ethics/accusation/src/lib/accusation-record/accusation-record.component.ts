@@ -240,15 +240,15 @@ export class AccusationRecordComponent
   //   this.accusationactions.push()
   // }
   checkAction(index:number){
-    let getCheckBoxAction = document.getElementById(`actionbox-${index}`)
-    console.log(getCheckBoxAction);
+    const getCheckBoxAction = document.getElementById(`actionbox-${index}`)
+    console.log("checkAction() ",getCheckBoxAction);
   }
 
   // ------------------------------------------------------
   setAccusedInfo(accused_data: any)
   {
-    this.personinfo.assignPersonInfo( accused_data )
-    this.addressinfo.queryAddressInfo( accused_data )
+    this.personinfo?.assignPersonInfo( accused_data )
+    this.addressinfo?.queryAddressInfo( accused_data )
   }
 
   setAddressInfo(accused_data: any)
