@@ -202,7 +202,8 @@ export class ImportStudentComponent implements OnInit {
               'YYYY-MM-DD'
             );
             user.birthdate = moment(user.birthdate).format('YYYY-MM-DD');
-            user.subjects = JSON.parse(user.subjects);
+            user.subjects = user.subjects ? JSON.parse(user.subjects) : null;
+            user.originaldegree = user.originaldegree ? JSON.parse(user.originaldegree) : null;
             this.user.push(this.edituser(user));
           });
           this.requestService
