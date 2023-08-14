@@ -36,7 +36,7 @@ export class FormEducationInfoComponent
     degreeName: [null, Validators.required],
     isEducationDegree: [],
     major: [null, Validators.required],
-    institution: [null, Validators.required],
+    institution: ['', Validators.required],
     country: [],
     admissionDate: [],
     graduateDate: [],
@@ -68,6 +68,18 @@ export class FormEducationInfoComponent
   optionalEdu() {
     if (this.isOptional) {
       this.clearValidator();
+    }
+  }
+
+  onInstitutionUpdate(event : any)
+  {
+    if( isNaN( Number( this.form.controls.institution.value )) === false )
+    {
+      const uresult = this.universityList?.find( u => {
+        return u.id === this.form.controls.institution.value 
+      })
+      const assignres = `${uresult?.name || ''} ${uresult?.campusname || ''}`
+      this.form.controls.institution?.setValue(assignres)
     }
   }
 
