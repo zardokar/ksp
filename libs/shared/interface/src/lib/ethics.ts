@@ -49,7 +49,10 @@ export class Ethics {
   accusationfile: string | null = null;
   accusationconsideration: string | null = null;
   accusedinfo: string | null = null;
+  accusationaction: string | null = null;
 
+  investigationaccusedinformeddate: string | null = null;
+  investigationaccusedclarifieddate: string | null = null;
   investigationorderno: string | null = null;
   investigationorderdate: string | null = null;
   investigationsubcommittee: string | null = null;
@@ -58,6 +61,24 @@ export class Ethics {
   investigationreport: string | null = null;
   investigationfile: string | null = null;
   investigationresult: string | null = null;
+  
+  investigationrecognizedate: string | null = null;
+  investigationexplaindate: string | null = null;
+  investigationnotificationdate: string | null = null;
+  investigationaccusedrecognizedate: string | null = null;
+  investigationaction: string | null = null;
+  investigationdetail: string | null = null;
+  investigationevidencefile: string | null = null;
+
+  considerationaction: string | null = null;
+  considerationnotificationdate: string | null = null;
+  considerationrecognizedate: string | null = null;
+  considerationoverruledate: string | null = null;
+  considerationcause: string | null = null;
+
+  // allegation: string | null = null;
+  // allegationinformdate: string | null = null;
+  // allegationaccusedinformdate: string | null = null;
 
   inquiryorderno: string | null = null;
   inquiryorderdate: string | null = null;
@@ -201,25 +222,61 @@ export interface AccusationList {
 }
 export const decisions: ListData[] = [
   {
-    label: 'มีมูลความผิด วินิจฉัยชี้ขาดความผิดเล็กน้อย',
+    label: 'ไม่มีมูล ยุติเรื่อง ยกข้อกล่าวหา',
+    name: 'decisions',
+    value: 0,
+  },
+  {
+    label: 'มีมูล เป็นการประพฤติผิดจรรยาบรรณไม่ร้ายแรง วินิจฉัยโทษตักเตือน ตามข้อ 13/1',
     name: 'decisions',
     value: 1,
   },
   {
-    label: 'ตักเตือน / ภาคภัณฑ์ (ต้องเลือกอย่างใดอย่างหนึ่งเสมอ)',
+    label: 'มีมูล เป็นการประพฤติผิดจรรยาบรรณไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์ ตามข้อ 13/1',
     name: 'decisions',
     value: 2,
   },
   {
-    label: 'มีมูลความผิด นำเสนอคณะกรรมการตั้งคณะอนุกรรมการสอบสวน',
+    label: 'มีมูล เป็นการประพฤติผิด และแต่งตั้งคณะอนุกรรมการสอบสวน',
     name: 'decisions',
     value: 3,
   },
   {
-    label: 'ไม่มีมูล ยุติเรื่อง ยกข้อกล่าวหา',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน',
     name: 'decisions',
     value: 4,
   },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์',
+    name: 'decisions',
+    value: 5,
+  },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษตักเตือน',
+    name: 'decisions',
+    value: 6,
+  },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษภาคทัณฑ์',
+    name: 'decisions',
+    value: 7,
+  },
+  // {
+  //   label: 'มีมูลความผิด วินิจฉัยชี้ขาดความผิดเล็กน้อย',
+  //   name: 'decisions',
+  //   value: 1,
+  // },
+  // {
+  //   label: 'ตักเตือน / ภาคภัณฑ์ (ต้องเลือกอย่างใดอย่างหนึ่งเสมอ)',
+  //   name: 'decisions',
+  //   value: 2,
+  // },
+  // {
+  //   label: 'มีมูลความผิด นำเสนอคณะกรรมการตั้งคณะอนุกรรมการสอบสวน',
+  //   name: 'decisions',
+  //   value: 3,
+  // },
+
 ];
 
 export type EthicsKey = keyof Ethics;

@@ -32,6 +32,8 @@ import {
   EhicsCondemnation,
   Ehicsaccused,
   KspFormBaseComponent,
+  decisionsSelector,
+  accusationtypeList
 } from '@ksp/shared/interface';
 import { providerFactory, thaiDate } from '@ksp/shared/utility';
 import { v4 as uuidv4 } from 'uuid';
@@ -67,6 +69,7 @@ export class AccusationRecordComponent
   implements OnInit
 {
   decisions = decisionsSelector;
+  accusationtypeList = accusationtypeList;
   today = thaiDate(new Date());
   requestNumber = '';
   accusationFiles: any[] = structuredClone(ACCUSATION_FILES);
@@ -78,6 +81,7 @@ export class AccusationRecordComponent
   accusedInfo: any;
   prefixList$!: Observable<any>;
   sellictypetab: any;
+  isActionBox= false;
 
   override form = this.fb.group({
     accusationblackno: [null, Validators.required],
@@ -85,6 +89,13 @@ export class AccusationRecordComponent
     accusationincidentdate: [null, Validators.required],
     accusationincidentplace: [null, Validators.required],
     accusationcondemnationtype: 0,
+    accusationaction: this.fb.group({
+                                      self: false,
+                                      profession: false,
+                                      service: false,
+                                      coworkers: false,
+                                      society: false,
+                                    }),
     accusationcondemnation: this.fb.array([] as FormGroup[]), //[null, Validators.required],
     accusationissuedate: [],
     accusationdetail: [],
@@ -134,6 +145,10 @@ export class AccusationRecordComponent
   get accusationcondemnations() {
     return this.form.controls.accusationcondemnation as FormArray;
   }
+
+  // get accusationactions() {
+  //   return this.form.controls.accusationaction as FormArray;
+  // }
 
   addRow(data: EhicsMember = defaultEhicsMember) {
     const rewardForm = this.fb.group({
@@ -220,6 +235,15 @@ export class AccusationRecordComponent
     });
   }
 
+  // setAccusationaction(actionlist:any)
+  // {
+  //   this.accusationactions.push()
+  // }
+  checkAction(index:number){
+    let getCheckBoxAction = document.getElementById(`actionbox-${index}`)
+    console.log(getCheckBoxAction);
+  }
+
   // ------------------------------------------------------
   setAccusedInfo(accused_data: any)
   {
@@ -253,34 +277,34 @@ export class AccusationRecordComponent
 }
 
 
-export const decisionsSelector = [
-  {
-    label: 'รับเรื่องพิจารณา และดำเนินการขั้นต่อไป',
-    value: 1,
-  },
-  {
-    label: 'ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี',
-    value: 2,
-  },
-  {
-    label: 'ยุติเรื่องกรณีไม่มีหนังสืออนุญาต',
-    value: 3,
-  },
-  {
-    label: 'บัตรสนเทห์',
-    value: 4,
-  },
-  {
-    label: 'หนังสือร้องเรียนขาดสาระสำคัญ',
-    value: 5,
-  },
-  {
-    label:
-      'เหตุเกิดก่อนข้อบังคับคุรุสภาว่าด้วยมาตรฐานวิชาชีพและจรรยาบรรณวิชาชีพ พ.ศ.2548',
-    value: 6,
-  },
-  {
-    label: 'อื่นๆ (ระบุด้วยตนเอง)',
-    value: 7,
-  },
-];
+// export const decisionsSelector = [
+//   {
+//     label: 'รับเรื่องพิจารณา และดำเนินการขั้นต่อไป',
+//     value: 1,
+//   },
+//   {
+//     label: 'ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี',
+//     value: 2,
+//   },
+//   {
+//     label: 'ยุติเรื่องกรณีไม่มีหนังสืออนุญาต',
+//     value: 3,
+//   },
+//   {
+//     label: 'บัตรสนเทห์',
+//     value: 4,
+//   },
+//   {
+//     label: 'หนังสือร้องเรียนขาดสาระสำคัญ',
+//     value: 5,
+//   },
+//   {
+//     label:
+//       'เหตุเกิดก่อนข้อบังคับคุรุสภาว่าด้วยมาตรฐานวิชาชีพและจรรยาบรรณวิชาชีพ พ.ศ.2548',
+//     value: 6,
+//   },
+//   {
+//     label: 'อื่นๆ (ระบุด้วยตนเอง)',
+//     value: 7,
+//   },
+// ];

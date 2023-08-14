@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Ethics } from '@ksp/shared/interface';
+import { Ethics , accusationtypeList } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
 import {
   jsonParse,
@@ -39,6 +39,7 @@ export class AccusationMainComponent implements OnInit {
   ngOnInit(): void {
     this.checkRequestId();
     this.form.valueChanges.subscribe((res) => {
+      console.log(res);
       // console.log('form value = ', this.form.controls.accusation.value);
     });
   }
@@ -81,15 +82,15 @@ export class AccusationMainComponent implements OnInit {
             }
           }
 
-          if( typeof res?.accusationcondemnation == "string"){
-            res.accusationcondemnation = jsonParse(res.accusationcondemnation)
+          if( isArray( res?.accusationaction)){
+            res.accusationaction = jsonParse(res.accusationaction)
           }  
+
           if( isArray( res?.accusationcondemnation )){
             for(let condemnation of res?.accusationcondemnation){
               this.accusation.addCondemnationRow()
             }
           }
-
 
           if( typeof res?.accusationconsideration == "string"){
             res.accusationconsideration = jsonParse(res.accusationconsideration)
@@ -145,6 +146,17 @@ export class AccusationMainComponent implements OnInit {
     if (data?.accusedinfo) {
       data.accusedinfo = JSON.stringify(data?.accusedinfo);
     }
+
+    if (data?.accusationaction) {
+      
+      let getKeyAction  = Object.keys( data?.accusationaction )
+      for(let actionType of getKeyAction){
+        data.accusationaction[actionType]  = data?.accusationaction[actionType] !== null ? true : false
+      }
+      
+      data.accusationaction = JSON.stringify(data?.accusationaction);
+    }
+
     if (data?.accusationcondemnation) {
       data.accusationcondemnationtype = 0
       data.accusationcondemnation = JSON.stringify(data?.accusationcondemnation);
