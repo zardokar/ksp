@@ -10,6 +10,10 @@
       {{ requestLabel2 }} :
       <span class="text-primary">{{ requestNumber | reqNoFormat }}</span>
     </div>
+    <div *ngIf="showOthers" class="form-label text-secondary ms-4">
+      {{ others.title }} :
+      <span class="text-primary">{{ others.detail }}</span>
+    </div>
   </div>
   <div class="form-label text-secondary" *ngIf="showCurrentDate">
     วันที่ตรวจสอบ :

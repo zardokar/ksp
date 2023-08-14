@@ -282,80 +282,138 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
     this.router.navigate(['/', 'degree-cert']);
   }
 
-  save(process: string) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: {
-        title: `คุณต้องการยืนยันข้อมูลใช่หรือไม่?`,
-        subTitle: `คุณยืนยันข้อมูลและส่งเรื่องเพื่อขออนุมัติ
-        ใช่หรือไม่`,
-        btnLabel: 'ยืนยัน',
-      },
-    });
-
-    dialogRef.componentInstance.confirmed.subscribe(async (e) => {
+  validateCredit(process: string) {
+    let step2TotalCredit: any;
+    const step3TotalCredit =
+      _.sumBy(
+        this.step3Form.value?.step3?.training?.rows,
+        (item: any) => { return parseInt(item?.credit) || 0}
+      ) || 0;
+    if (
+      this.step1DegreeType === 'a' ||
+      this.step1DegreeType === 'b' ||
+      this.step1DegreeType === 'c' ||
+      this.step1DegreeType === 'd'
+    ) {
+      step2TotalCredit =
+        _.sumBy(
+          this.step2Form.value?.step2?.plan1?.subjects,
+          (item: any) => { return parseInt(item?.credit) || 0}
+        ) || 0;
+    } else {
+      step2TotalCredit =
+        _.sumBy(
+          this.step2Form.value?.step2?.plan2?.subjects,
+          (item: any) => { return parseInt(item?.credit1) + parseInt(item?.credit2) + parseInt(item?.credit3)}
+        ) || 0;
+    }
+    let dialogRef: any;
+    if (step3TotalCredit > step2TotalCredit) {
+      dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          title: `ผลรวมจำนวนหน่วยกิตไม่ตรงกับข้อมูลโครงสร้างหลักสูตร`,
+          subTitle: `คุณต้องการยืนยันข้อมูลใช่หรือไม่?`,
+          btnLabel: 'ยืนยัน',
+        },
+      });
+    } else {
+      dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '350px',
+        data: {
+          title: `คุณต้องการยืนยันข้อมูลใช่หรือไม่?`,
+          subTitle: `คุณยืนยันข้อมูลและส่งเรื่องเพื่อขออนุมัติ
+          ใช่หรือไม่`,
+          btnLabel: 'ยืนยัน',
+        },
+      });
+    }
+    dialogRef.componentInstance.confirmed.subscribe(async (e: any) => {
       if (e) {
-        if (this.id) {
-          let currentprocess = '';
-          if (this.process != '1' && this.process != '99') {
-            currentprocess = this.process;
-          } else {
-            currentprocess = process;
-          }
-          const emailForm = this.step1Form.value;
-          this.uniRequestService
-            .uniRequestUpdate(this._getRequest(currentprocess, '1'))
-            .subscribe((res: any) => {
-              if (
-                process !== '99' &&
-                emailForm.step1.coordinator &&
-                emailForm.step1.coordinator.email
-              ) {
-                this.uniRequestService
-                  .kspSendEmailUni({
-                    fromname: 'ksplicense',
-                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                    emailaddress: emailForm.step1.coordinator.email,
-                  })
-                  .subscribe((resEmail: any) => {
-                    if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno, process);
-                  });
-              } else {
-                if (res?.returncode == 99) return;
-                this.showConfirmDialog(res?.requestno, process);
-              }
-            });
-        } else {
-          const emailForm = this.step1Form.value;
-          this.uniRequestService
-            .uniRequestInsert(this._getRequest(process, '1'))
-            .subscribe((res: any) => {
-              if (
-                process !== '99' &&
-                emailForm.step1.coordinator &&
-                emailForm.step1.coordinator.email
-              ) {
-                this.uniRequestService
-                  .kspSendEmailUni({
-                    fromname: 'ksplicense',
-                    subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
-                    body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
-                    emailaddress: emailForm.step1.coordinator.email,
-                  })
-                  .subscribe((resEmail: any) => {
-                    if (res?.returncode == 99) return;
-                    this.showConfirmDialog(res?.requestno, process);
-                  });
-              } else {
-                if (res?.returncode == 99) return;
-                this.showConfirmDialog(res?.requestno, process);
-              }
-            });
-        }
+        this.save(process);
       }
     });
+  }
+
+  save(process: string) {
+    // const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    //   width: '350px',
+    //   data: {
+    //     title: `คุณต้องการยืนยันข้อมูลใช่หรือไม่?`,
+    //     subTitle: `คุณยืนยันข้อมูลและส่งเรื่องเพื่อขออนุมัติ
+    //     ใช่หรือไม่`,
+    //     btnLabel: 'ยืนยัน',
+    //   },
+    // });
+
+    // dialogRef.componentInstance.confirmed.subscribe(async (e) => {
+    //   if (e) {
+
+    //   }
+    // });
+    if (this.id) {
+      let currentprocess = '';
+      if (this.process != '1' && this.process != '99') {
+        currentprocess = this.process;
+      } else {
+        currentprocess = process;
+      }
+      // const emailForm = this.step1Form.value;
+      this.uniRequestService
+        .uniRequestUpdate(this._getRequest(currentprocess, '1'))
+        .subscribe((res: any) => {
+          if (res?.returncode == 99) return;
+          this.showConfirmDialog(res?.requestno, process);
+          // if (
+          //   process !== '99' &&
+          //   emailForm.step1.coordinator &&
+          //   emailForm.step1.coordinator.email
+          // ) {
+          //   this.uniRequestService
+          //     .kspSendEmailUni({
+          //       fromname: 'ksplicense',
+          //       subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+          //       body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+          //       emailaddress: emailForm.step1.coordinator.email,
+          //     })
+          //     .subscribe((resEmail: any) => {
+          //       if (res?.returncode == 99) return;
+          //       this.showConfirmDialog(res?.requestno, process);
+          //     });
+          // } else {
+          //   if (res?.returncode == 99) return;
+          //   this.showConfirmDialog(res?.requestno, process);
+          // }
+        });
+    } else {
+      // const emailForm = this.step1Form.value;
+      this.uniRequestService
+        .uniRequestInsert(this._getRequest(process, '1'))
+        .subscribe((res: any) => {
+          if (res?.returncode == 99) return;
+          this.showConfirmDialog(res?.requestno, process);
+          // if (
+          //   process !== '99' &&
+          //   emailForm.step1.coordinator &&
+          //   emailForm.step1.coordinator.email
+          // ) {
+          //   this.uniRequestService
+          //     .kspSendEmailUni({
+          //       fromname: 'ksplicense',
+          //       subject: 'ขอรับรองปริญญาและประกาศนียบัตร',
+          //       body: `ขอรับรองปริญญาและประกาศนียบัตร เลขที่คำขอ: ${res?.requestno}`,
+          //       emailaddress: emailForm.step1.coordinator.email,
+          //     })
+          //     .subscribe((resEmail: any) => {
+          //       if (res?.returncode == 99) return;
+          //       this.showConfirmDialog(res?.requestno, process);
+          //     });
+          // } else {
+          //   if (res?.returncode == 99) return;
+          //   this.showConfirmDialog(res?.requestno, process);
+          // }
+        });
+    }
   }
   private _getRequest(process: string, status: string): any {
     const step1: any = this.step1Form.value.step1;
@@ -431,7 +489,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
         : null,
       tokenkey: getCookie('userToken') || null,
     };
-    if (['a', 'b', 'c'].includes(this.step1DegreeType)) {
+    if (['a', 'b', 'c', 'd'].includes(this.step1DegreeType)) {
       reqBody['coursestructure'] = step2?.plan1?.plans
         ? JSON.stringify(step2?.plan1?.plans)
         : null;

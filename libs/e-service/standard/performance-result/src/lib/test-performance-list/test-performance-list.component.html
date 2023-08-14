@@ -78,7 +78,7 @@
             </select>
           </div>
           <div class="col">
-            <label class="form-label">ปีการศึกษาที่สอบ</label>
+            <label class="form-label">ปีการศึกษาที่เข้าศึกษา</label>
             <input
               class="form-control"
               type="text"
@@ -104,7 +104,12 @@
   </form>
 
   <div class="d-flex justify-content-end mt-3 mb-2">
-    <button class="btn btn-primary w-auto" type="button" (click)="save()">
+    <button
+      class="btn btn-primary w-auto"
+      [disabled]="!dataSource1.data.length"
+      type="button"
+      (click)="save()"
+    >
       บันทึกผลการประเมิน
     </button>
     <button
@@ -127,18 +132,26 @@
 
     <div class="table-reponsive bg-white table__scroll">
       <table mat-table matSort [dataSource]="dataSource1">
+        <ng-container matColumnDef="no">
+          <th mat-header-cell *matHeaderCellDef>ลำดับ</th>
+          <td mat-cell *matCellDef="let element">{{ element.index }}</td>
+        </ng-container>
         <ng-container matColumnDef="university">
           <th mat-header-cell *matHeaderCellDef style="min-width: 250px">
             สถาบัน/มหาวิทยาลัย
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.uniname || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.uniname || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="faculty">
           <th mat-header-cell *matHeaderCellDef style="min-width: 250px">
             สังกัด/คณะ
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.unitypename || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.unitypename || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="degreeCode">
@@ -163,21 +176,27 @@
           <th mat-header-cell *matHeaderCellDef style="min-width: 200px">
             สาขาวิชา
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.coursemajor || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.coursemajor || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="year">
           <th mat-header-cell *matHeaderCellDef style="min-width: 100px">
-            ปีการศึกษาที่สอบ
+            ปีพ.ศ.ที่สอบ
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.calendaryear || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.calendaryear || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="importDate">
           <th mat-header-cell *matHeaderCellDef style="min-width: 100px">
             วันที่นำเข้าข้อมูล
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.createdate || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.createdate || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
@@ -208,11 +227,13 @@
       </table>
     </div>
     <mat-paginator
-      [pageSizeOptions]="[25]"
+      [pageSizeOptions]="[10]"
+      [pageSize]="10"
       showFirstLastButtons
       [length]="pageEvent.length"
       [pageSize]="pageEvent.pageSize"
       [pageIndex]="pageEvent.pageIndex"
+      (page)="onPaginatorEvent($event)"
     >
     </mat-paginator>
   </div>
@@ -245,6 +266,22 @@
     </form>
     <div class="table-reponsive bg-white table__scroll">
       <table mat-table [dataSource]="dataSource2">
+        <ng-container matColumnDef="no">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.rowspan]="2"
+            style="min-width: 1rem"
+          >
+            ลำดับ
+          </th>
+        </ng-container>
+        <ng-container matColumnDef="noIndex">
+          <th mat-header-cell *matHeaderCellDef [ngStyle]="{ display: 'none' }">
+            ลำดับ
+          </th>
+          <td mat-cell *matCellDef="let element">{{ element.index }}</td>
+        </ng-container>
         <ng-container matColumnDef="idcardnoHeader">
           <th
             mat-header-cell
@@ -310,7 +347,9 @@
           <th mat-header-cell *matHeaderCellDef [ngStyle]="{ display: 'none' }">
             สาขาวิชา
           </th>
-          <td mat-cell *matCellDef="let element">{{ element.coursemajor || '-' }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.coursemajor || '-' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="importDateHeader">
@@ -486,6 +525,7 @@
         <tr
           mat-header-row
           *matHeaderRowDef="[
+            'no',
             'idcardnoHeader',
             'nameHeader',
             'academicHeader',

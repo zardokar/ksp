@@ -1,6 +1,6 @@
 <form [formGroup]="form">
   <div class="bg-light p-3">
-    <div class="row mb-2">
+    <!-- <div class="row mb-2">
       <div class="col-2">
         <label class="form-label">ปีการศึกษาที่รับรอง (พ.ศ.)</label>
         <select class="form-select" formControlName="year">
@@ -9,14 +9,8 @@
           </option>
           <option *ngFor="let year of calendaryearList" [value]="year.value">{{ year.label }}</option>
         </select>
-        <!-- <input
-          class="form-control"
-          type="text"
-          placeholder="กรุณากรอก"
-          formControlName="year"
-        /> -->
       </div>
-    </div>
+    </div> -->
     <div class="row mb-2">
       <div class="col-2">
         <label class="form-label">มติครั้งที่</label>
@@ -49,7 +43,7 @@
     </div>
     <div class="row mb-2">
       <div class="col-6">
-        <label class="form-label">ประเภทกรรมการ</label>
+        <label class="form-label">ประเภทคณะกรรมการ</label>
         <select class="search__content form-select" formControlName="boardType">
           <option value="null" selected hidden disabled>กรุณาเลือก</option>
           <option *ngFor="let item of boardOption" [value]="item.value">{{item?.label}}</option>
@@ -58,7 +52,7 @@
     </div>
     <div class="row mb-2">
       <div class="col">
-        <label class="form-label">ชื่อกรรมการ</label>
+        <label class="form-label">ชื่อคณะกรรมการ</label>
         <input
           class="form-control"
           type="text"

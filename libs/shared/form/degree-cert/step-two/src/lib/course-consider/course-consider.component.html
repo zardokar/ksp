@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-    <div class="bg-light p-3 my-3">
+    <div class="bg-light p-3 my-3" *ngIf="showSector1">
       <div class="box-header">โครงสร้างหลักสูตร</div>
       <div class="table-responsive" *ngIf="degreeType === 'a'">
         <table class="table p-3">
@@ -162,10 +162,10 @@
       </div>
     </div>
   
-    <div class="bg-light p-3 my-3">
+    <div class="bg-light p-3 my-3" *ngIf="showSector2">
       <div class="table-responsive" *ngIf="degreeType === 'a'">
         <table class="table">
-          <thead>
+          <thead *ngIf="showOldPlan">
             <tr>
               <th scope="col" class="w-50 text-center">แผนการรับนิสิต / นักศึกษา</th>
               <th scope="col" class="w-50 text-center">พิจารณารับรอง</th>
@@ -173,11 +173,11 @@
           </thead>
           <tbody>
             <tr>
-              <td class="detail-table">
+              <td class="detail-table" *ngIf="showOldPlan">
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col" class="w-50">แผนการรับนักศึกษา (รายปี)</th>
+                      <!-- <th scope="col" class="w-50">แผนการรับนักศึกษา (รายปี)</th> -->
                       <th scope="col" class="text-center">ปีการศึกษา (พ.ศ)</th>
                       <th scope="col" class="text-center">จำนวนนักศึกษา</th>
                     </tr>
@@ -187,9 +187,9 @@
                     <ng-container formArrayName="plans">
                       <ng-container *ngFor="let item of plans.controls; let j = index">
                         <tr [formGroupName]="j">
-                          <th scope="row" class="align-middle">
+                          <!-- <th scope="row" class="align-middle">
                             {{ item.value.label }}
-                          </th>
+                          </th> -->
                           <td>
                             <div>
                               <input
@@ -217,7 +217,7 @@
                       </ng-container>
                     </ng-container>
                     <tr>
-                      <th scope="row"></th>
+                      <!-- <th scope="row"></th> -->
                       <td class="fs-5 text-end">รวมทั้งหมด</td>
                       <td>
                         <input
@@ -249,12 +249,14 @@
                               <input
                                 type="checkbox"
                                 formControlName="consider"
+                                (input)="setCheckedData($event, j)"
+                                [disabled]="mode === 'view'"
                               />
                             </div>
                           </td>
                           <td>
                             <div>
-                              <select class="form-select" formControlName="year">
+                              <select class="form-select" formControlName="year" [disabled]="mode === 'view'">
                                 <option value="null" selected disabled hidden>
                                   กรุณาเลือกปีการศึกษา
                                 </option>
@@ -276,6 +278,7 @@
                                 type="text"
                                 placeholder="จำนวนนักศึกษา"
                                 formControlName="student"
+                                [readonly]="mode === 'view'"
                               />
                             </div>
                           </td>
@@ -314,7 +317,7 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col" class="w-25">แผนการรับนักศึกษา (รายปี)</th>
+                      <!-- <th scope="col" class="w-25">แผนการรับนักศึกษา (รายปี)</th> -->
                       <th scope="col" class="text-center" style="min-width: 11rem">
                         ปีการศึกษา (พ.ศ)
                       </th>
@@ -333,9 +336,9 @@
                     <ng-container formArrayName="plans">
                       <ng-container *ngFor="let item of plans.controls; let j = index">
                         <tr [formGroupName]="j">
-                          <th scope="row" class="align-middle">
+                          <!-- <th scope="row" class="align-middle">
                             {{ item.value.label }}
-                          </th>
+                          </th> -->
                           <td>
                             <div>
                               <input
@@ -381,7 +384,7 @@
                     </ng-container>
           
                     <tr>
-                      <th scope="row"></th>
+                      <!-- <th scope="row"></th> -->
                       <td class="text-end fs-5">รวมทั้งหมด</td>
           
                       <td>

@@ -12,13 +12,31 @@
   </div>
   <div class="detail__content--primary">
     <div>
-      <label class="form-label">ชื่อวิชาเอก / แขนงวิชา</label>
-      <input
-        class="form-control"
-        type="text"
-        placeholder="กรุณากรอก"
-        formControlName="major2"
-      />
+      <label class="form-label col-12">ชื่อวิชาเอก / แขนงวิชา</label>
+      <div class="row">
+        <div class="col-4">
+          <select
+          class="search__content form-select col-4"
+          formControlName="majortype"
+        >
+          <option value="null" selected hidden disabled>กรุณาเลือก</option>
+          <option
+            *ngFor="let item of majorTypeList"
+            [value]="item?.value"
+          >
+            {{ item.label }}
+          </option>
+        </select>
+        </div>
+        <div class="col-8">
+          <input
+          class="form-control col-8"
+          type="text"
+          placeholder="กรุณากรอก"
+          formControlName="major2"
+        />
+        </div>
+      </div>
     </div>
   </div>
 

@@ -57,7 +57,11 @@ export class TestDataListComponent
       .subscribe((res) => {
         if (res?.returncode === '00') {
           this.pageEvent.length = res.countrow;
-          this.dataSource.data = res?.datareturn || [];
+          this.dataSource.data =
+            res?.datareturn.map((data: any, index: any) => {
+              data.index = index + 1;
+              return data;
+            }) || [];
         } else {
           this.dataSource.data = [];
           this.clearPageEvent();
@@ -94,6 +98,7 @@ export class TestDataListComponent
 }
 
 export const column = [
+  'no',
   'examcount',
   'calendaryear',
   'subjectid',
@@ -108,6 +113,7 @@ export const column = [
 ];
 
 export interface TestResult {
+  no: number;
   examcount: string;
   calendaryear: string;
   subjectid: string;

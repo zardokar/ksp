@@ -82,7 +82,7 @@
       </fieldset>
     </mat-tab>
 
-    <mat-tab label="ที่ปรึกษาวิทยานิพนธ์และการค้นคว้าอิสระ">
+    <mat-tab label="ที่ปรึกษาวิทยานิพนธ์และการค้นคว้าอิสระ" *ngIf="formType !== 'a' && formType !== 'b'">
       <div class="d-flex align-items-center" *ngIf="showEditCheckbox">
         <input
           formControlName="section5"

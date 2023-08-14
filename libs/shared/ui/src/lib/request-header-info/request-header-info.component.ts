@@ -17,6 +17,11 @@ export class RequestHeaderInfoComponent {
   @Input() requestDate: string | null | undefined = '';
 
   @Input() showCurrentDate = false;
+  @Input() showOthers = false;
+  @Input() others = {
+    title: '',
+    detail: ''
+  }
   @Input() showRequestDate = true;
 
   today = `${new Date()}`;

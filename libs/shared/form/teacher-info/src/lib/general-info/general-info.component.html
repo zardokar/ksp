@@ -38,6 +38,7 @@
           type="text"
           placeholder="หมายเลขบัตรประชาชนจำนวน 13 หลัก"
           formControlName="personId"
+          (input)="checkID($event)"
         />
         <ng-container
           *ngIf="(idCardNo.invalid) || !validIdcard"
@@ -62,14 +63,14 @@
       </div>
     </div>
 
-    <div class="box-header">คุณวุฒิการศึกษา</div>
+    <div class="box-header">วุฒิการศึกษา</div>
     <ng-container formArrayName="degrees">
       <ng-container *ngFor="let degreeForm of degrees.controls; let j = index">
         <ng-container [formGroupName]="j">
           <div class="row">
             <div class="col mb-3">
               <label class="form-label"
-                >คุณวุฒิ / สาขาวิชา ที่ {{ j + 1 }}</label
+                >วุฒิ / สาขาวิชา ที่ {{ j + 1 }}</label
               >
               <input
                 class="form-control"
@@ -121,7 +122,7 @@
         *ngIf="degrees.length < 4"
         (addRowClick)="addDegree()"
       >
-        เพิ่มคุณวุฒิการศึกษา
+        เพิ่มวุฒิการศึกษา
       </ksp-add-row-button>
     </div>
   </div>

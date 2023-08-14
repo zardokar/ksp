@@ -91,6 +91,9 @@ export class ApproveComponent implements OnInit {
     step1: '',
     verify: [],
     approveData: [],
+    plan: [{
+      plansResult: []
+    }]
   });
   allowEdit = false;
   step1Data: any;
@@ -111,8 +114,16 @@ export class ApproveComponent implements OnInit {
   newConsiderCourses: any = [];
   newConsiderCert: any = [];
   result: any = { '1': 'ผ่านการพิจารณา', '2': 'ไม่ผ่านการพิจารณา' };
+  result2: any = {
+    1: 'เห็นควรพิจารณาให้การรับรอง',
+    2: 'เห็นควรพิจารณาไม่ให้การรับรอง',
+    3: 'ให้สถาบันแก้ไข / เพิ่มเติม',
+    4: 'ส่งคืนหลักสูตร',
+  };
+  degreeType = 'a';
   historyList: Array<any> = [];
   requestKey: any = '';
+  planResult: any = [];
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
@@ -144,6 +155,16 @@ export class ApproveComponent implements OnInit {
         .pipe(
           map((res) => {
             this.daftRequest = res;
+            if (
+              res.degreelevel == '1' ||
+              res.degreelevel == '2' ||
+              res.degreelevel == '3' ||
+              res.degreelevel == '4'
+            ) {
+              this.degreeType = 'a';
+            } else {
+              this.degreeType = 'b';
+            }
             this.allowEdit =
               res?.requestprocess === '4' && res?.requeststatus === '1';
             return this.uniInfoService.mappingUniverSitySelectByIdWithForm(
@@ -170,6 +191,7 @@ export class ApproveComponent implements OnInit {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res) => {
+        console.log(res);
         this.historyList = res.response
           .filter((data: any) => {
             return (
@@ -213,6 +235,7 @@ export class ApproveComponent implements OnInit {
         this.form.controls.approveData.patchValue(
           lastPlan?.detail?.approveData
         );
+        this.form.controls.plan.patchValue({plansResult: _.get(_.last(res?.verifyResult), 'detail.newPlan.plansResult', []) as any});
       });
   }
 

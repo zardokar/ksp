@@ -142,23 +142,24 @@ export class EserviceEditStudentDetailComponent implements OnInit {
       .getRequestEditAdmissionById({ id: this.requestid })
       .subscribe((response: any) => {
         if (response) {
-          console.log(response);
           this.requestDate = thaiDate(new Date(response.requestdate));
           this.requestNo = response.requestno;
           this.requestid = response.id;
           this.systemtype = response.systemtype;
           const requestdata = parseJson(response.admissionlist);
-          console.log(requestdata);
           this.uploadFileList = JSON.parse(requestdata.files);
-          const dataEdit = requestdata.admissionlist[0];
-          console.log(dataEdit);
-          dataEdit.originaldegree = JSON.parse(dataEdit.originaldegree);
-          // dataEdit. = JSON.parse(dataEdit.originaldegree);
-          dataEdit.subjects = JSON.parse(dataEdit.subjects);
-          dataEdit.teachingpracticeschool = JSON.parse(
-            dataEdit.teachingpracticeschool
-          );
-          this.user.push(this.edituser(dataEdit));
+          requestdata.admissionlist.forEach((admission: any) => {
+            admission.subjects = admission.subjects
+              ? JSON.parse(admission.subjects)
+              : null;
+            admission.originaldegree = admission.originaldegree
+              ? JSON.parse(admission.originaldegree)
+              : null;
+            admission.teachingpracticeschool = JSON.parse(
+              admission.teachingpracticeschool
+            );
+            this.user.push(this.edituser(admission));
+          });
         } else {
           this.data = false;
           this.isNotFound = true;
@@ -259,7 +260,8 @@ export class EserviceEditStudentDetailComponent implements OnInit {
   }
 
   edituser(data: any) {
-    const userAddress = JSON.parse(data.address);
+    console.log(data);
+    const userAddress = data.address ? JSON.parse(data.address) : null;
     return this.fb.group({
       id: [data.id],
       checked: [data.checked ? data.checked : false],
