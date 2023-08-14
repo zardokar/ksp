@@ -59,12 +59,18 @@ export class TrainingComponent extends KspFormBaseComponent implements OnInit {
 
   addRow() {
     const step3Form = this.fb.group({
+      coursename: [''],
       year: [''],
       term: [''],
+      credit: [''],
       hour: [''],
     });
 
     this.rows.push(step3Form);
+  }
+
+  calculateCredit(event: any, index: number) {
+    this.rows.at(index).patchValue({ credit: event.target.value > 3 ? (event.target.value / 3).toFixed(0) : 0 });
   }
 
   get rows() {

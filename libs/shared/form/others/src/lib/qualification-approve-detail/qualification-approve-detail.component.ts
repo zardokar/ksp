@@ -29,10 +29,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   styleUrls: ['./qualification-approve-detail.component.scss'],
   imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
 })
-export class QualificationApproveDetailComponent
-  extends KspFormBaseComponent
-  implements OnInit, AfterViewInit
+export class QualificationApproveDetailComponent extends KspFormBaseComponent implements OnInit, AfterViewInit
 {
+  edu2_degreename  = ''
+  edu3_degreename  = ''
+  edu4_degreename  = ''
   institutname     = '';
   degreeLevelName  = '';
   degreelevelMapping = new Map([
@@ -48,6 +49,15 @@ export class QualificationApproveDetailComponent
     degreename: [],
     major: [],
     institute: new FormControl(''),
+    edu2_major: [],
+    edu2_institute: [],
+    edu2_degreename: [],
+    edu3_major: [],
+    edu3_institute: [],
+    edu3_degreename: [],
+    edu4_major: [],
+    edu4_institute: [],
+    edu4_degreename: [],
     reason1: [],
     reason2: [],
   });
@@ -84,7 +94,24 @@ export class QualificationApproveDetailComponent
       major: this.data?.education?.major,
       institute: education.institution,
       degreename: this.data?.education?.degreeName,
+
+      edu2_major : this.data?.educations?.edu2.major,
+      edu2_institute : this.data?.educations?.edu2.institution,
+      edu2_degreename : this.data?.educations?.edu2.degreeName,
+
+      edu3_major : this.data?.educations?.edu3.major,
+      edu3_institute : this.data?.educations?.edu3.institution,
+      edu3_degreename : this.data?.educations?.edu3.degreeName,
+
+      edu4_major : this.data?.educations?.edu4.major,
+      edu4_institute : this.data?.educations?.edu4.institution,
+      edu4_degreename : this.data?.educations?.edu4.degreeName,
     };
+
+    this.edu2_degreename = eduData.edu2_degreename || null
+    this.edu3_degreename = eduData.edu3_degreename || null
+    this.edu4_degreename = eduData.edu4_degreename || null
+
     this.form.patchValue(eduData);
 
     if (mode == 'view') {
@@ -95,6 +122,18 @@ export class QualificationApproveDetailComponent
       this.form.controls.degreename.disable();
       this.form.controls.major.disable();
       this.form.controls.institute.disable();
+
+      this.form.controls.edu2_major.disable();
+      this.form.controls.edu2_institute.disable();
+      this.form.controls.edu2_degreename.disable();
+
+      this.form.controls.edu3_major.disable();
+      this.form.controls.edu3_institute.disable();
+      this.form.controls.edu3_degreename.disable();
+
+      this.form.controls.edu4_major.disable();
+      this.form.controls.edu4_institute.disable();
+      this.form.controls.edu4_degreename.disable();
     }
 
     this.degreeLevelName =

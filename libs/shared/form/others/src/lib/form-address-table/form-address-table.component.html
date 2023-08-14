@@ -49,26 +49,6 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-4 col-md-2 mb-1">
-      <label class="form-label"
-        >รหัสไปรษณีย์<span class="text-danger"> *</span>
-      </label>
-      <input 
-        class="form-control" 
-        type="text" 
-        formControlName="zipcode" 
-        (blur)="onSearchPostcode()"
-        #postcode
-        (keyup.enter)="postcode.blur()"
-        [ngClass]="{'invalid': submitted && form.controls.zipcode.invalid}"  />
-      <ng-container
-        *ngIf="submitted && form.controls.zipcode.invalid"
-      >
-        <span class="text-danger">
-          {{ validatorMessages.required.replace('field', 'รหัสไปรษณีย์') }} !
-        </span>
-      </ng-container>
-    </div>
     <div class="col-sm-4 col-md-4 mb-1">
       <label class="form-label"
         >จังหวัด<span class="text-danger"> *</span>
@@ -144,6 +124,26 @@
       >
         <span class="text-danger">
           {{ validatorMessages.requiredSelect.replace('field', 'แขวง/ตำบล') }} !
+        </span>
+      </ng-container>
+    </div>
+    <div class="col-sm-4 col-md-2 mb-1">
+      <label class="form-label"
+        >รหัสไปรษณีย์<span class="text-danger"> *</span>
+      </label>
+      <input 
+        class="form-control" 
+        type="text" 
+        formControlName="zipcode" 
+        (blur)="onSearchPostcode()"
+        #postcode
+        (keyup.enter)="postcode.blur()"
+        [ngClass]="{'invalid': submitted && form.controls.zipcode.invalid}"  />
+      <ng-container
+        *ngIf="submitted && form.controls.zipcode.invalid"
+      >
+        <span class="text-danger">
+          {{ validatorMessages.required.replace('field', 'รหัสไปรษณีย์') }} !
         </span>
       </ng-container>
     </div>

@@ -70,8 +70,10 @@ export class VerifyComponent implements OnInit {
       { name: 'ยกเลิกการรับรอง', value: 5 },
     ],
     [
-      { name: 'ผ่านการพิจารณา', value: 1 },
-      { name: 'ไม่ผ่านการพิจารณา', value: 2 },
+      { name: 'เห็นควรพิจารณาให้การรับรอง', value: 1 },
+      { name: 'เห็นควรพิจารณาไม่ให้การรับรอง', value: 2 },
+      { name: 'ให้สถาบันแก้ไข / เพิ่มเติม', value: 3 },
+      { name: 'ส่งคืนหลักสูตร', value: 4 },
     ],
     [
       { name: 'เป็นไปตามเกณฑ์การรับรอง', value: 1 },

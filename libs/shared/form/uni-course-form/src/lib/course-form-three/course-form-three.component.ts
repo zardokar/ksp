@@ -12,11 +12,23 @@ import { providerFactory } from '@ksp/shared/utility';
 export class CourseFormThreeComponent extends KspFormBaseComponent {
   @Input() data: any;
 
+  majorTypeList: Array<any> = [
+    {
+      value: '1',
+      label: 'วิชาเอก'
+    },
+    {
+      value: '2',
+      label: 'แขนงวิชา'
+    }
+  ]
+
   override form = this.fb.group({
     major1: [],
     major2: [],
     sendApproveYear: [],
     firstYearOpen: [],
+    majortype: [null]
   });
 
   constructor(private fb: FormBuilder) {

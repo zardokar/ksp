@@ -54,6 +54,7 @@ export class TestDataDetailComponent implements OnInit {
   form = this.fb.group({
     calendaryear: [],
     subjectname: [],
+    remark: []
   });
   constructor(
     private router: Router,
@@ -286,9 +287,9 @@ export class TestDataDetailComponent implements OnInit {
 const displayedColumns: string[] = [
   'select',
   // 'examcount',
-  'calendaryear',
-  'subjectid',
-  'subjectname',
+  // 'calendaryear',
+  // 'subjectid',
+  // 'subjectname',
   'idcardno',
   'fullname',
   'userscore',

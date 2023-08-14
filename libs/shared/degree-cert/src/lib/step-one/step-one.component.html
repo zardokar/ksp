@@ -95,7 +95,7 @@
               class="search__content form-select"
             >
               <option value="null" selected hidden disabled>กรุณาเลือก</option>
-              <option *ngFor="let item of courseTypes" [value]="item.value">
+              <option *ngFor="let item of courseTypesFilter" [value]="item.value">
                 {{ item.label }}
               </option>
             </select>
