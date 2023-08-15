@@ -61,7 +61,7 @@ export class Ethics {
   investigationreport: string | null = null;
   investigationfile: string | null = null;
   investigationresult: string | null = null;
-  
+
   investigationrecognizedate: string | null = null;
   investigationexplaindate: string | null = null;
   investigationnotificationdate: string | null = null;
@@ -146,6 +146,14 @@ export const defaultCondemnation: EhicsCondemnation = {
   condemnationdetail: null
 };
 
+export const defaultAccusationaction: EhicsAccusationaction = {
+  self: null,
+  profession: null,
+  service: null,
+  coworkers: null,
+  society: null,
+}
+
 export interface EhicsMember {
   idcardno: string | null;
   accusertype: string | null;
@@ -185,6 +193,14 @@ export interface Ehicsaccused {
 export interface EhicsCondemnation {
   condemnationtype: string | null;
   condemnationdetail: string | null;
+}
+
+export interface EhicsAccusationaction {
+  self: Boolean | null;
+  profession: Boolean | null;
+  service: Boolean | null;
+  coworkers: Boolean | null;
+  society: Boolean | null;
 }
 
 export const ACCUSATION_FILES: FileGroup[] = [

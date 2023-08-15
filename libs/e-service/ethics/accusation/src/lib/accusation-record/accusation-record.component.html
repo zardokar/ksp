@@ -275,8 +275,10 @@
               id="actionbox-{{j+1}}"
               class="form-check-input"
               value="{{ item.value }}"
+              name="{{item.name}}"
               formControlName="{{ item.name }}"
-              (click)="checkAction(j+1)"
+              (click)="checkAction(item.name)"
+              [checked]="item.value"
             />
             <label class="form-label ms-2">{{ item.label }}</label>
           </div>

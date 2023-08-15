@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccusationRecordComponent } from '@ksp/e-service/ethics/accusation';
-import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
+import { FormInvestigationDetailComponent , FormInvestigationAllegationComponent } from '@ksp/e-service/ethics/form';
 import {
   CompleteDialogComponent,
   ConfirmDialogComponent,
@@ -11,6 +11,7 @@ import {
 import { EthicsService } from '@ksp/shared/service';
 import { jsonParse, replaceEmptyWithNull } from '@ksp/shared/utility';
 import { EMPTY, switchMap } from 'rxjs';
+import _, { isArray } from 'lodash';
 @Component({
   selector: 'e-service-investigation-main',
   templateUrl: './investigation-detail.component.html',
@@ -20,6 +21,9 @@ export class InvestigationDetailComponent implements OnInit {
   form = this.fb.group({
     accusation: [],
     investigation: [],
+    allegation:[],
+    // allegationinformdate:[],
+    // allegationaccusedinformdate:[]
   });
   ethicsId: any;
   constructor(
@@ -33,6 +37,8 @@ export class InvestigationDetailComponent implements OnInit {
   accusation!: AccusationRecordComponent;
   @ViewChild(FormInvestigationDetailComponent)
   investigation!: FormInvestigationDetailComponent;
+  @ViewChild(FormInvestigationAllegationComponent)
+  allegation!: FormInvestigationAllegationComponent;
   ngOnInit(): void {
     this.checkRequestId();
   }
@@ -96,10 +102,18 @@ export class InvestigationDetailComponent implements OnInit {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
-            
+            console.log(res);
             // ----------------------------------------------- Fill Accused Info
-            if(res?.licenseinfo){
-              this.accusation.setAccusedInfo(res?.licenseinfo)
+            // if(res?.licenseinfo){
+            //   this.accusation.setAccusedInfo(res?.licenseinfo)
+            // }
+            if( typeof res?.licenseinfo == "string"){
+              res.licenseinfo = jsonParse(res.licenseinfo)
+            }  
+            if( isArray( res?.licenseinfo )){
+              for(let accused of res?.licenseinfo){
+                this.accusation.addAccusedRow()
+              }
             }
 
             // ----------------------------------------------- Fill Files Upload
@@ -120,6 +134,19 @@ export class InvestigationDetailComponent implements OnInit {
               }
               res.accuserinfo = dataobj
             }
+            // ----------------------------------------------- Accusation condemnation
+            if( typeof res?.accusationcondemnation == "string"){
+              res.accusationcondemnation = jsonParse(res.accusationcondemnation)
+            }  
+            if( isArray( res?.accusationcondemnation )){
+              for(let condemnation of res?.accusationcondemnation){
+                this.accusation.addCondemnationRow()
+              }
+            }
+            // ----------------------------------------------- Accusation consideration
+            if( typeof res?.accusationconsideration == "string"){
+              res.accusationconsideration = jsonParse(res.accusationconsideration)
+            }  
             // -----------------------------------------------
             if (res?.investigationresult) {
               const dataobj = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult
@@ -135,9 +162,15 @@ export class InvestigationDetailComponent implements OnInit {
               }
               res.investigationsubcommittee = dataobj;
             }
+            if( typeof res?.accusationaction == "string"){
+              res.accusationaction = jsonParse(res.accusationaction)
+              this.allegation.setAccusationAction(res.accusationaction)
+            }  
             // -----------------------------------------------
+            
             this.form.controls.investigation.patchValue(res);
             this.form.controls.accusation.patchValue(res);
+            this.form.controls.allegation.patchValue(res);
           });
       }
     });

@@ -28,9 +28,11 @@ import {
   defaultEhicsMember,
   defaultCondemnation,
   defaultAccused,
+  defaultAccusationaction,
   EhicsMember,
   EhicsCondemnation,
   Ehicsaccused,
+  EhicsAccusationaction,
   KspFormBaseComponent,
   decisionsSelector,
   accusationtypeList
@@ -90,11 +92,11 @@ export class AccusationRecordComponent
     accusationincidentplace: [null, Validators.required],
     accusationcondemnationtype: 0,
     accusationaction: this.fb.group({
-                                      self: false,
-                                      profession: false,
-                                      service: false,
-                                      coworkers: false,
-                                      society: false,
+                                      self: [],
+                                      profession: [],
+                                      service: [],
+                                      coworkers: [],
+                                      society: [],
                                     }),
     accusationcondemnation: this.fb.array([] as FormGroup[]), //[null, Validators.required],
     accusationissuedate: [],
@@ -235,13 +237,22 @@ export class AccusationRecordComponent
     });
   }
 
-  // setAccusationaction(actionlist:any)
-  // {
-  //   this.accusationactions.push()
-  // }
-  checkAction(index:number){
-    const getCheckBoxAction = document.getElementById(`actionbox-${index}`)
-    console.log("checkAction() ",getCheckBoxAction);
+  setAccusationaction(data: EhicsAccusationaction = defaultAccusationaction)
+  {
+    // console.log(data);
+    let getdata = this.form.controls.accusationaction.value as any;
+    
+
+  }
+
+  checkAction(name:any){
+    let getdata = this.form.controls.accusationaction.value as any;
+    if(getdata[name] == null){
+      getdata[name] = true 
+    }else if( !isNaN( getdata[name]) ){
+      getdata[name] = false 
+    }
+    // console.log(getdata);
   }
 
   // ------------------------------------------------------

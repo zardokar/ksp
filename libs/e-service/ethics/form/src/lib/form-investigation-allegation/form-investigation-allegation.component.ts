@@ -22,17 +22,21 @@ import {
 import {
   decisions,
   defaultSubcommittee,
+  defaultAccusationaction,
   EhicsSubcommittee,
+  EhicsAccusationaction,
   KspFormBaseComponent,
+  allegationList,
+  accusationtypeList
 } from '@ksp/shared/interface';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
 
 @Component({
-  selector: 'e-service-form-investigation-detail',
-  templateUrl: './form-investigation-detail.component.html',
-  styleUrls: ['./form-investigation-detail.component.scss'],
+  selector: 'e-service-form-investigation-allegation',
+  templateUrl: './form-investigation-allegation.component.html',
+  styleUrls: ['./form-investigation-allegation.component.scss'],
   standalone: true,
   imports: [
     MatTabsModule,
@@ -48,9 +52,9 @@ import { GeneralInfoService } from '@ksp/shared/service';
     ReactiveFormsModule,
     MatDatepickerModule,
   ],
-  providers: providerFactory(FormInvestigationDetailComponent),
+  providers: providerFactory(FormInvestigationAllegationComponent),
 })
-export class FormInvestigationDetailComponent
+export class FormInvestigationAllegationComponent
   extends KspFormBaseComponent
   implements OnInit
 {
@@ -63,8 +67,13 @@ export class FormInvestigationDetailComponent
   decisions = decisions;
   selecteddecisions : any;
   disabled = false;
+  allegationList = allegationList;
+  accusationtypeList  = accusationtypeList;
+  actionShow  = [] as string[];
 
   override form = this.fb.group({
+    accusationcondemnation:[],
+    accusationaction:[],
     investigationaccusedinformeddate: [],
     investigationaccusedclarifieddate: [],
     investigationorderno: [],
@@ -74,12 +83,24 @@ export class FormInvestigationDetailComponent
     investigationreportdate: [],
     investigationreport: [],
     investigationfile: [],
+    investigationaction: this.fb.group({
+                                        self: [],
+                                        profession: [],
+                                        service: [],
+                                        coworkers: [],
+                                        society: [],
+                                      }),
+    investigationnotificationdate:[],
+    investigationaccusedrecognizedate:[],
+    investigationdetail:[],
+    investigationevidencefile:[],
     investigationresult: this.fb.group({
       informaccused:[],
       confirminformaccused:[],
       rejectinformaccused:[],
       decisions: [],
       causedetail: [],
+      evidence:[],
     }),
   });
 
@@ -101,25 +122,38 @@ export class FormInvestigationDetailComponent
       })
     );
   }
-  get members() {
-    return this.form.controls.investigationsubcommittee as FormArray;
+  // get members() {
+  //   return this.form.controls.investigationsubcommittee as FormArray;
+  // }
+  // addRow(data: EhicsSubcommittee = defaultSubcommittee) {
+  //   const rewardForm = this.fb.group({
+  //     idcardno: data.idcardno,
+  //     idnumber: data.idnumber,
+  //     positioncommittee: data.positioncommittee,
+  //     prefix: data.prefix,
+  //     firstname: data.firstname,
+  //     lastname: data.lastname,
+  //     position: data.position,
+  //     bureau: data.bureau,
+  //   });
+  //   this.members.push(rewardForm);
+  // }
+  // deleteRow(index: number) {
+  //   this.members.removeAt(index);
+  // }
+  setAccusationAction(data:any){
+    let getkeys = Object.keys(data)
+    for(let name of getkeys){
+      let checkstatus = data[name]
+      if(checkstatus == true){
+        let getListLabel  = accusationtypeList.find((action)=>{return action.name == name})
+        let getLabel  = getListLabel?.label as string
+        this.actionShow.push(getLabel)
+      }
+    }
   }
-  addRow(data: EhicsSubcommittee = defaultSubcommittee) {
-    const rewardForm = this.fb.group({
-      idcardno: data.idcardno,
-      idnumber: data.idnumber,
-      positioncommittee: data.positioncommittee,
-      prefix: data.prefix,
-      firstname: data.firstname,
-      lastname: data.lastname,
-      position: data.position,
-      bureau: data.bureau,
-    });
-    this.members.push(rewardForm);
-  }
-  deleteRow(index: number) {
-    this.members.removeAt(index);
-  }
+
+
   getListData() {
     
     this.prefixList$ = this.generalInfoService.getPrefix();
