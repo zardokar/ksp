@@ -3,7 +3,7 @@
   <!-- <ng-container *ngIf="degreeLevelName"> -->
   <div class="mb-2" class="fs-5 mt-3">
     <div class="d-flex align-items-center">
-      <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="degree1" checked/>
+      <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="1" checked />
       <label class="fs-5">{{ degreeLevelName }}</label>
     </div>
   </div>
@@ -30,7 +30,7 @@
   <div *ngIf="edu2_degreename !== null" class="fs-5 mt-3">
     <div class="mb-2">
       <div class="d-flex align-items-center">
-        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="degree2"/>
+        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="2" />
         <label class="fs-5">วุฒิการศึกษาปริญญาโท</label>
       </div>
     </div>
@@ -57,7 +57,7 @@
   <div *ngIf="edu3_degreename !== null" class="fs-5 mt-3">
     <div class="mb-2">
       <div class="d-flex align-items-center">
-        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="degree3"/>
+        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="3" />
         <label class="fs-5">วุฒิการศึกษาปริญญาเอก</label>
       </div>
     </div>
@@ -84,7 +84,7 @@
     <div *ngIf="edu4_degreename !== null" class="fs-5 mt-3">
       <div class="mb-2">
         <div class="d-flex align-items-center">
-          <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="degree4"/>
+          <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="4" />
           <label class="fs-5">วุฒิการศึกษาปริญญาอื่นๆที่เทียบเท่าปริญญาตรี / ปริญญาทางการศึกษา</label>
         </div>
       </div>
@@ -131,13 +131,13 @@
 
   <div>
     <div>
-      <input type="checkbox" />
+      <input type="checkbox" formControlName="reason2_1" value="false" (click)="onClickCheckBox($event)" />
       <span class="form-label">
         (1) มีประสบการณ์เป็นที่ยอมรับและสามารถนำมาใช้ให้เกิดประโยชน์ต่อการศึกษาได้อย่างดียิ่ง เช่น ภูมิปัญญาท้องถิ่น วิชาชีพเฉพาะทางที่มีประสบการณ์เป็นที่ประจักษ์ ฯลฯ ไม่น้อยกว่า 10 ปี
       </span>
     </div>
         <div>
-      <input type="checkbox" />
+      <input type="checkbox" formControlName="reason2_2" value="false" (click)="onClickCheckBox($event)" />
       <span class="form-label">
         (2) เป็นบุคคากรที่ได้รับการยอมรับในสังคมว่า มีผลงานทางด้านการศึกษาเป็นที่ประจักษ์เกี่ยวกับการจัดการเรียนการสอน ซึ่งพิจารณาแล้วเห็นว่าสามารถใช้ผลงานดังกล่าวในการประกอบวิชาชีพครูให้เกิดประโยชน์ เช่น 
         เป็นอาจารย์ในสถาบันผลิตครูและรับผิดชอบสอนในรายวิชาชีพครู หรือเป็นบุคลากรทางการศึกษาในระดับอุดมศึกษา ที่มีผลงานที่เกี่ยวข้องกับการส่งเสริมการศึกษา ในระดับการศึกษาขั้นพื้นฐานและอุมดศึกาษา 
@@ -145,7 +145,7 @@
       </span>
     </div>
         <div>
-      <input type="checkbox" />
+      <input type="checkbox" formControlName="reason2_3" value="false" (click)="onClickCheckBox($event)" />
       <span class="form-label">
         (3) มีประสบการณ์ๆด้านการสอน การบริหารสถานศึกษา การบริหารการศึกษา หรือการนิเทศการศึกษาในระดับการศึกษาขั้นพื้นฐานและอุดมศึกษาที่ต่ำกว่าปริญยา ที่มีประสบการณ์ไม่น้อยกว่า 10 ปี
       </span>

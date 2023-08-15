@@ -60,6 +60,9 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
     edu4_degreename: [],
     reason1: [],
     reason2: [],
+    reason2_1: [],
+    reason2_2: [],
+    reason2_3: [],
   });
 
   @Input() set otherReason(value: any) {
@@ -90,7 +93,7 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
     const mode          = this.data.mode;
 
     const eduData: any  = {
-      degree: true,
+      degree: '1',
       major: this.data?.education?.major,
       institute: education.institution,
       degreename: this.data?.education?.degreeName,
@@ -148,6 +151,17 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
 
   save() {
     this.dialogRef.close({ otherreason: this.form.getRawValue() });
+    console.log( this.form.getRawValue() )
+  }
+
+  onClickCheckBox(event : any)
+  {
+    if( event.target.value === "true")
+    {
+      event.target.value = "false"
+    }else{
+      event.target.value = "true"
+    }
   }
 
   getInstitute(insdata: string)
