@@ -11,7 +11,14 @@ export class EducationDetailService {
 
   getBureau(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/kspmasterdata/bureau`).pipe(
-      map((data: any) => data.datareturn),
+      map((data: any) => { return data.datareturn }),
+      shareReplay()
+    );
+  }
+
+  getBureauJSON(): Observable<any> {
+    return this.http.get(`/assets/json/bureau.json`).pipe(
+      map((data: any) => { return data.datareturn }),
       shareReplay()
     );
   }
