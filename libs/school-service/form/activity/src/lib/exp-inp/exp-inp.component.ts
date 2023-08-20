@@ -38,6 +38,16 @@ export class ExperienceInputComponent extends KspFormBaseComponent implements On
     });
 
     override set value(value: any) {
+      // Add Exp Info data ------------------------------------
+      if( Array.isArray(value) )
+      {
+        value.map( (exp : any, count : number) => {
+          if(count > 0) this.addFormArray(this.workInfo)
+          this.workInfo.controls[count].setValue(exp) 
+        })
+      }
+      // Legacy -----------------------------------------------
+      
         Object.keys(value).forEach((key) => {
           if (this.form.get(key) instanceof FormArray) {
             const control = this.form.get(key) as FormArray;
@@ -75,7 +85,7 @@ export class ExperienceInputComponent extends KspFormBaseComponent implements On
 
     // Interface ----------------------------------------
     ngOnInit(): void {
-        this.addFormArray(this.workInfo);
+      this.addFormArray(this.workInfo)
     }
 
     // Method ---------------------------------------------

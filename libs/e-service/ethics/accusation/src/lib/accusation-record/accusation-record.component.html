@@ -252,15 +252,39 @@
       />
     </div>
     <div class="col">
-      <label class="form-label required">ประพฤติผิดจรรยาบรรณต่อ</label>
-      <select class="form-select" formControlName="accusationtype">
+      
+    </div>
+      <!-- <select class="form-select" formControlName="accusationtype">
         <option value="null" disabled hidden selected>กรุณาเลือก</option>
         <option value="1">ต่อตนเอง</option>
         <option value="2">ต่อวิชาชีพ</option>
         <option value="3">ต่อผู้รับบริการ</option>
         <option value="4">ต่อผู้ร่วมประกอบวิชาชีพ</option>
         <option value="5">ต่อสังคม</option>
-      </select>
+      </select> -->
+    <!-- </div> -->
+  </div>
+  <div class="row mb-2">
+    <div class="col">
+      <label class="form-label required">ประพฤติผิดจรรยาบรรณต่อ</label>
+      <div formGroupName="accusationaction" class="d-flex flex-column">
+        <ng-container *ngFor="let item of accusationtypeList ; index as j">
+          <div class="d-flex flex-row align-items-center mb-2">
+            <input #accusationaction
+              type="checkbox"
+              id="actionbox-{{j+1}}"
+              class="form-check-input"
+              value="{{ item.value }}"
+              name="{{item.name}}"
+              formControlName="{{ item.name }}"
+              (click)="checkAction(item.name)"
+              [checked]="item.value"
+            />
+            <label class="form-label ms-2">{{ item.label }}</label>
+          </div>
+  
+        </ng-container>
+      </div>
     </div>
   </div>
 

@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { KspFormBaseComponent, University } from '@ksp/shared/interface';
 import { SchoolLicenseService } from '@ksp/shared/service';
-
+import { zutils } from '@ksp/shared/utility'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -60,6 +60,9 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
     edu4_degreename: [],
     reason1: [],
     reason2: [],
+    reason2_1: [],
+    reason2_2: [],
+    reason2_3: [],
   });
 
   @Input() set otherReason(value: any) {
@@ -86,11 +89,13 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
   }
 
   ngOnInit(): void {
+    console.log( this.data )
     const education     = this.data.education;
     const mode          = this.data.mode;
+    const otherreason   = this.data?.otherreason || { degree: '1', reason1: null , reason2_1: null, reason2_2: null, reason2_3: null   }
 
     const eduData: any  = {
-      degree: true,
+      degree: otherreason.degree,
       major: this.data?.education?.major,
       institute: education.institution,
       degreename: this.data?.education?.degreeName,
@@ -106,6 +111,11 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
       edu4_major : this.data?.educations?.edu4.major,
       edu4_institute : this.data?.educations?.edu4.institution,
       edu4_degreename : this.data?.educations?.edu4.degreeName,
+
+      reason1 : otherreason.reason1,
+      reason2_1 : otherreason.reason2_1,
+      reason2_2 : otherreason.reason2_2,
+      reason2_3 : otherreason.reason2_3
     };
 
     this.edu2_degreename = eduData.edu2_degreename || null
@@ -119,6 +129,7 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
         this.form.disable();
       }, 0);
     } else {
+      //this.form.controls.degree.disable();
       this.form.controls.degreename.disable();
       this.form.controls.major.disable();
       this.form.controls.institute.disable();
@@ -134,6 +145,11 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
       this.form.controls.edu4_major.disable();
       this.form.controls.edu4_institute.disable();
       this.form.controls.edu4_degreename.disable();
+
+      // this.form.controls.reason1.disable();
+      // this.form.controls.reason2_1.disable();
+      // this.form.controls.reason2_2.disable();
+      // this.form.controls.reason2_3.disable();
     }
 
     this.degreeLevelName =
@@ -148,6 +164,17 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
 
   save() {
     this.dialogRef.close({ otherreason: this.form.getRawValue() });
+    console.log( this.form.getRawValue() )
+  }
+
+  onClickCheckBox(event : any)
+  {
+    if( event.target.value === "true")
+    {
+      event.target.value = "false"
+    }else{
+      event.target.value = "true"
+    }
   }
 
   getInstitute(insdata: string)

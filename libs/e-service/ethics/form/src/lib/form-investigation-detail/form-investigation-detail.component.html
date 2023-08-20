@@ -159,6 +159,49 @@
   <div class="bg-white">
     <div class="row mb-2">
       <div class="col">
+        <label class="form-label">วันที่ผู้ถูกกล่าวหารับทราบ </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker2"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationaccusedinformeddate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </div>
+      </div>
+      <div class="col">
+        <label class="form-label"
+          >วันที่ผู้ถูกกล่าวหาชี้แจ้งข้อเท็จจริง
+        </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker3"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationaccusedclarifieddate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker3"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col">
         <label class="form-label">วันที่ดำเนินการสืบสวนข้อเท็จจริง </label>
         <div class="d-flex align-items-center">
           <input
@@ -220,14 +263,93 @@
     <div formGroupName="investigationresult" class="d-flex flex-column">
       <ng-container *ngFor="let item of decisions">
         <div class="d-flex flex-row align-items-center mb-2">
-          <input
+          <input #decisionsType
             type="radio"
             class="form-check-input"
             value="{{ item.value }}"
             formControlName="{{ item.name }}"
+            [(ngModel)]="selecteddecisions"
           />
           <label class="form-label ms-2">{{ item.label }}</label>
         </div>
+
+      </ng-container>
+
+      <ng-container *ngIf="selecteddecisions != 0 && selecteddecisions != 3">
+        <div class="row mb-2">
+          <div class="col">
+            <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษ </label>
+            <div class="d-flex align-items-center">
+              <input
+                matInput
+                [matDatepicker]="picker2"
+                autocomplete="off"
+                class="form-control form-date"
+                formControlName="informaccused"
+                placeholder="วว/ดด/ปปปป"
+                [disabled]=false
+                />
+              <mat-datepicker-toggle
+                class="button-date"
+                matSuffix
+                [for]="picker2"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label"
+              >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+            </label>
+            <div class="d-flex align-items-center">
+              <input
+                matInput
+                [matDatepicker]="picker3"
+                autocomplete="off"
+                class="form-control form-date"
+                formControlName="confirminformaccused"
+                placeholder="วว/ดด/ปปปป"
+                [disabled]="false"
+                />
+              <mat-datepicker-toggle
+                class="button-date"
+                matSuffix
+                [for]="picker3"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </div>
+          </div>
+
+          <ng-container *ngIf="selecteddecisions >= 4">
+            <div class="col">
+                <label class="form-label"
+                  >วันที่จดหมายถูกตีกลับ
+                </label>
+              <div class="d-flex align-items-center">
+                  <input
+                    matInput
+                    [matDatepicker]="picker3"
+                    autocomplete="off"
+                    class="form-control form-date"
+                    formControlName="rejectinformaccused"
+                    placeholder="วว/ดด/ปปปป"
+                    [disabled]="false"
+                    />
+                  <mat-datepicker-toggle
+                    class="button-date"
+                    matSuffix
+                    [for]="picker3"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker3></mat-datepicker>
+                </div>
+              </div>
+            
+            </ng-container>
+
+        </div>
+
+
+        
       </ng-container>
 
       <div class="row">

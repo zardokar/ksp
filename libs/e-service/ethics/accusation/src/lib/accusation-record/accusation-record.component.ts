@@ -28,10 +28,14 @@ import {
   defaultEhicsMember,
   defaultCondemnation,
   defaultAccused,
+  defaultAccusationaction,
   EhicsMember,
   EhicsCondemnation,
   Ehicsaccused,
+  EhicsAccusationaction,
   KspFormBaseComponent,
+  decisionsSelector,
+  accusationtypeList
 } from '@ksp/shared/interface';
 import { providerFactory, thaiDate } from '@ksp/shared/utility';
 import { v4 as uuidv4 } from 'uuid';
@@ -67,6 +71,7 @@ export class AccusationRecordComponent
   implements OnInit
 {
   decisions = decisionsSelector;
+  accusationtypeList = accusationtypeList;
   today = thaiDate(new Date());
   requestNumber = '';
   accusationFiles: any[] = structuredClone(ACCUSATION_FILES);
@@ -78,6 +83,7 @@ export class AccusationRecordComponent
   accusedInfo: any;
   prefixList$!: Observable<any>;
   sellictypetab: any;
+  isActionBox= false;
 
   override form = this.fb.group({
     accusationblackno: [null, Validators.required],
@@ -85,6 +91,13 @@ export class AccusationRecordComponent
     accusationincidentdate: [null, Validators.required],
     accusationincidentplace: [null, Validators.required],
     accusationcondemnationtype: 0,
+    accusationaction: this.fb.group({
+                                      self: [],
+                                      profession: [],
+                                      service: [],
+                                      coworkers: [],
+                                      society: [],
+                                    }),
     accusationcondemnation: this.fb.array([] as FormGroup[]), //[null, Validators.required],
     accusationissuedate: [],
     accusationdetail: [],
@@ -134,6 +147,10 @@ export class AccusationRecordComponent
   get accusationcondemnations() {
     return this.form.controls.accusationcondemnation as FormArray;
   }
+
+  // get accusationactions() {
+  //   return this.form.controls.accusationaction as FormArray;
+  // }
 
   addRow(data: EhicsMember = defaultEhicsMember) {
     const rewardForm = this.fb.group({
@@ -220,11 +237,29 @@ export class AccusationRecordComponent
     });
   }
 
+  setAccusationaction(data: EhicsAccusationaction = defaultAccusationaction)
+  {
+    // console.log(data);
+    let getdata = this.form.controls.accusationaction.value as any;
+    
+
+  }
+
+  checkAction(name:any){
+    let getdata = this.form.controls.accusationaction.value as any;
+    if(getdata[name] == null){
+      getdata[name] = true 
+    }else if( !isNaN( getdata[name]) ){
+      getdata[name] = false 
+    }
+    // console.log(getdata);
+  }
+
   // ------------------------------------------------------
   setAccusedInfo(accused_data: any)
   {
-    this.personinfo.assignPersonInfo( accused_data )
-    this.addressinfo.queryAddressInfo( accused_data )
+    this.personinfo?.assignPersonInfo( accused_data )
+    this.addressinfo?.queryAddressInfo( accused_data )
   }
 
   setAddressInfo(accused_data: any)
@@ -253,34 +288,34 @@ export class AccusationRecordComponent
 }
 
 
-export const decisionsSelector = [
-  {
-    label: 'รับเรื่องพิจารณา และดำเนินการขั้นต่อไป',
-    value: 1,
-  },
-  {
-    label: 'ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี',
-    value: 2,
-  },
-  {
-    label: 'ยุติเรื่องกรณีไม่มีหนังสืออนุญาต',
-    value: 3,
-  },
-  {
-    label: 'บัตรสนเทห์',
-    value: 4,
-  },
-  {
-    label: 'หนังสือร้องเรียนขาดสาระสำคัญ',
-    value: 5,
-  },
-  {
-    label:
-      'เหตุเกิดก่อนข้อบังคับคุรุสภาว่าด้วยมาตรฐานวิชาชีพและจรรยาบรรณวิชาชีพ พ.ศ.2548',
-    value: 6,
-  },
-  {
-    label: 'อื่นๆ (ระบุด้วยตนเอง)',
-    value: 7,
-  },
-];
+// export const decisionsSelector = [
+//   {
+//     label: 'รับเรื่องพิจารณา และดำเนินการขั้นต่อไป',
+//     value: 1,
+//   },
+//   {
+//     label: 'ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี',
+//     value: 2,
+//   },
+//   {
+//     label: 'ยุติเรื่องกรณีไม่มีหนังสืออนุญาต',
+//     value: 3,
+//   },
+//   {
+//     label: 'บัตรสนเทห์',
+//     value: 4,
+//   },
+//   {
+//     label: 'หนังสือร้องเรียนขาดสาระสำคัญ',
+//     value: 5,
+//   },
+//   {
+//     label:
+//       'เหตุเกิดก่อนข้อบังคับคุรุสภาว่าด้วยมาตรฐานวิชาชีพและจรรยาบรรณวิชาชีพ พ.ศ.2548',
+//     value: 6,
+//   },
+//   {
+//     label: 'อื่นๆ (ระบุด้วยตนเอง)',
+//     value: 7,
+//   },
+// ];

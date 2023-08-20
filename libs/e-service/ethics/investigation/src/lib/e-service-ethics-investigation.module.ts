@@ -10,7 +10,7 @@ import { AccusationRecordComponent } from '@ksp/e-service/ethics/accusation';
 import { TopNavComponent } from '@ksp/shared/menu';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InvestigationListComponent } from './investigation-list/investigation-list.component';
-import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
+import { FormInvestigationDetailComponent , FormInvestigationAllegationComponent } from '@ksp/e-service/ethics/form';
 
 export const routes: Routes = [
   {
@@ -49,6 +49,7 @@ export const routes: Routes = [
     TopNavComponent,
     ReactiveFormsModule,
     FormInvestigationDetailComponent,
+    FormInvestigationAllegationComponent
   ],
   declarations: [InvestigationDetailComponent],
 })

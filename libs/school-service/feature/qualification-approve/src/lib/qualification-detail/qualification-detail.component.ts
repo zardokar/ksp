@@ -70,7 +70,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
     exp1: [],
     exp2: [],
     exp3: [],
-    exp4: [],
+    exp4: []
   });
 
   uniqueNo!: string;
@@ -107,9 +107,10 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   showEdu3 = false;
   showEdu4 = false;
   formData: any = null;
-  experienceSelected: number[] = [];
+  experienceSelected: any[] = [];
   selectedTabIndex = 0;
   universityList$!: Observable<University[]>;
+  exps_active : any = { exp1: false, exp2: false, exp3: false, exp4: false };
 
   constructor(
     public dialog: MatDialog,
@@ -128,7 +129,6 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   ) {}
 
   ngOnInit(): void {
-    //7396307202241
     this.form.valueChanges.subscribe((res) => {
       //console.log('formData', this.form.getRawValue());
       //console.log('edu1 = ', this.form.controls.edu1.valid);
@@ -244,6 +244,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
         req.isforeign = req.isforeign ? '1' : '0';
 
         //console.log('xx = ', req);
+        this.patchExp(req.experienceinfo)
         this.patchUserInfo(req);
         this.patchAddress(parseJson(req.addressinfo));
         this.patchEdu(parseJson(req.eduinfo));
@@ -260,7 +261,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
           : null;
 
         req.otherreason
-          ? (req.otherreason = JSON.parse(atob(req.otherreason)))
+          ? (req.otherreason = JSON.parse( zutils.convertBase64toJSONStr(req.otherreason)) )
           : null;
 
         this.refperson = req.refperson;
@@ -303,6 +304,28 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
+  // ----------------------------------------------------------------------
+  patchExp(exps : any)
+  {
+    const expsconverted = JSON.parse( zutils.convertBase64toJSONStr(exps) ) 
+    Object.keys(expsconverted).map( ( expkey: string, count : number) => {
+        if( expsconverted[expkey] !== null && expsconverted[expkey].workInfo.length > 0){
+            this.exps_active[expkey]  = true
+            this.experienceSelected[count+1]   = 2;
+            
+            if( expkey === 'exp1')
+              this.form.controls.exp1.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp2')
+              this.form.controls.exp2.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp3')
+              this.form.controls.exp3.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp4')
+              this.form.controls.exp4.setValue( expsconverted[expkey].workInfo )
+        }
+    })
+  }
+
+  // ----------------------------------------------------------------------
   eduSelected(type: number, evt: any) {
     const checked = evt.target.checked;
     if (type === 2) {
@@ -349,7 +372,8 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
           res.amphurname
         } จังหวัด ${res.provincename} รหัสไปรษณีย์ ${res.zipcode}`;
       });
-    this.bureau$ = this.educationDetailService.getBureau();
+    
+    this.bureau$ = this.educationDetailService.getBureauJSON();
   }
 
   cancel() {
