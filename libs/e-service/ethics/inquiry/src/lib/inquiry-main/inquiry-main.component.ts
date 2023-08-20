@@ -18,6 +18,7 @@ import {
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
 import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
+import _, { isArray } from 'lodash';
 @Component({
   selector: 'e-service-inquiry-main',
   templateUrl: './inquiry-main.component.html',
@@ -169,8 +170,17 @@ export class InquiryMainComponent implements OnInit {
             res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
             res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )
             // ----------------------------------------------- Fill Accused Info
-            if(res?.licenseinfo){
-              this.accusation.setAccusedInfo(res?.licenseinfo)
+            // if(res?.licenseinfo){
+            //   this.accusation.setAccusedInfo(res?.licenseinfo)
+            // }
+            if( typeof res?.licenseinfo == "string"){
+              res.licenseinfo = jsonParse(res.licenseinfo)
+            } 
+            console.log(this.accusation);
+            if( isArray( res?.licenseinfo )){
+              for(let accused of res?.licenseinfo){
+                this.accusation.addAccusedRow()
+              }
             }
             // ----------------------------------------------- Fill Files Upload
             this.accusation.accusationFiles.forEach((element, index) => {
@@ -190,6 +200,21 @@ export class InquiryMainComponent implements OnInit {
               }
               res.accuserinfo = dataobj
             }
+            if( typeof res?.accusationcondemnation == "string"){
+              res.accusationcondemnation = jsonParse(res.accusationcondemnation)
+            }  
+            if( typeof res?.accusationaction == "string"){
+              res.accusationaction = jsonParse(res.accusationaction)
+            }  
+            if( isArray( res?.accusationcondemnation )){
+              for(let condemnation of res?.accusationcondemnation){
+                this.accusation.addCondemnationRow()
+              }
+            }
+            // ----------------------------------------------- Accusation consideration
+            if( typeof res?.accusationconsideration == "string"){
+              res.accusationconsideration = jsonParse(res.accusationconsideration)
+            }  
             // -----------------------------------------------
             if (res?.investigationresult) {
               res.investigationresult = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult;

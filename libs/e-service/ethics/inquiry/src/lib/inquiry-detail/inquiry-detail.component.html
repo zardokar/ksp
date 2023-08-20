@@ -55,13 +55,13 @@
       <thead>
         <tr>
           <th scope="col">ลำดับ</th>
-          <th scope="col">หมายเลขบัตรประชาชน</th>
-          <th scope="col">เลขที่หนังสืออนุญาต</th>
           <th scope="col">ตำแหน่งกรรมการ</th>
+          <th scope="col">หมายเลขบัตรประชาชน</th>
           <th scope="col"></th>
           <th scope="col">ชื่อ</th>
           <th scope="col">นามสกุล</th>
           <th scope="col">ตำแหน่ง</th>
+          <th scope="col">วิทยฐานะ</th>
           <th scope="col">สังกัด - หน่วยงาน/สถานศึกษา</th>
           <!-- <th scope="col">แก้ไข</th> -->
           <th scope="col">ลบ</th>
@@ -73,20 +73,6 @@
             <tr [formGroupName]="i">
               <td class="text-center">{{ i + 1 }}</td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idcardno"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idnumber"
-                />
-              </td>
-              <td>
                 <select class="form-select" formControlName="positioncommittee">
                   <option disabled selected hidden value="null">
                     กรุณาเลือก
@@ -96,6 +82,13 @@
                   <option value="3">อนุกรรมการและเลขานุการ</option>
                   <option value="4">ผู้ช่วยเลขานุการ</option>
                 </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idcardno"
+                />
               </td>
               <td>
                 <select class="form-select" formControlName="prefix">
@@ -128,6 +121,16 @@
                   class="form-control"
                   formControlName="position"
                 />
+              </td>
+              <td>
+                <select class="form-select" formControlName="academicStanding">
+                  <option value="null" selected hidden disabled>กรุณาเลือก</option>
+                  <option value="1">ไม่มี</option>
+                  <option value="2">ชํานาญการ</option>
+                  <option value="3">ชํานาญการพิเศษ</option>
+                  <option value="4">เชี่ยวชาญ</option>
+                  <option value="5">เชี่ยวชาญพิเศษ</option>
+                </select>
               </td>
               <td>
                 <input
@@ -194,6 +197,80 @@
       </tbody>
     </table>
   </div> -->
+  <div class="my-3 box-header">การพักใช้ใบอนุญาตประกอบวิชาชีพ</div>
+  <div class="row mb-2">
+    <div class="col-6">
+      <div formGroupName="licensesuspension" class="d-flex flex-column">
+        <div class="d-flex flex-row align-items-center mb-2">
+          <input 
+                type="radio"
+                id=""
+                class="form-check-input"
+                value="0"
+                name="suspension"
+                formControlName="licensesuspension"
+              />
+          <label class="form-label ms-2">พักใช้ใบอนุญาตประกอบวิชาชีพไว้ก่อน</label>
+        </div>
+        <div class="d-flex flex-row align-items-center mb-2">
+          <input 
+                type="radio"
+                id=""
+                class="form-check-input"
+                value="1"
+                name="suspension"
+                formControlName="licensesuspension"
+              />
+          <label class="form-label ms-2">ไม่ต้องพักใช้ใบอนุญาตประกอบวิชาชีพไว้ก่อน</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col">
+      <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษ </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker2"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="licensesuspensioninform"
+          placeholder="วว/ดด/ปปปป"
+          [disabled]=false
+          />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </div>
+    </div>
+    <div class="col">
+      <label class="form-label"
+        >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+      </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker3"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="licensesuspensionconfirm"
+          placeholder="วว/ดด/ปปปป"
+          [disabled]="false"
+          />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker3"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+      </div>
+    </div>
+
+  </div>
 
   <div class="my-3 box-header">จัดทำรายงานการสอบสวน (จ.บ.6)</div>
   <div class="row mb-2">
@@ -236,7 +313,101 @@
       คณะกรรมการวินิจฉัยระดับความผิดจรรยาบรรณของวิชาชีพ
       ตามมติคณะกรรมการมาตรฐานวิชาชีพในการประชุม
     </div>
-    <div class="row mb-2">
+
+    <div class="d-flex justify-content-end">
+      <label
+        class="text-primary"
+        role="button"
+        (click)="openCondiserRecordDialog()"
+        *ngIf="meetings.length < 5"
+        >+ เพิ่มรายการ</label
+      >
+    </div>
+
+
+    <div class="mb-3">
+      <div class="table-responsive mb-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ลำดับ</th>
+              <th scope="col">มติครั้งที่</th>
+              <th scope="col">วันที่</th>
+              <th scope="col">มติที่ประชุม</th>
+              <th scope="col">เอกสารแนบ</th>
+              <th scope="col">ดู</th>
+              <!-- <th scope="col">แก้ไข</th> -->
+              <th scope="col">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container formArrayName="inquerymeetinghistory">
+              <ng-container *ngFor="let row of meetings.controls; let i = index">
+                <tr [formGroupName]="i">
+                  <th class="text-center">{{ i + 1 }}</th>
+                  <td>
+                    {{row.value.meetingtimes}}
+                  </td>      
+                  <td >
+                    {{row.value.meetingdate}}
+                  </td>
+                  <td>
+                    {{row.value.meetingreason}}
+                  </td>
+                  <td>
+                    {{row.value.meetingfile}}
+                  </td>
+                  <td>
+                    <i
+                      role="button"
+                      class="bi bi-trash fs-5 text-danger"
+                      (click)="deleteConsiderRow(i)"
+                    ></i>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <br />
+  
+      <!-- <mat-tab-group class="tab-group" animationDuration="0ms">
+          <mat-tab label="ข้อมูลผู้ได้รับหนังสืออนุญาต" class="tab-content">
+                <e-service-person-info
+                    [personalInfo] = "selectId"
+                    [changeUpdate] = "updateStatus"
+                ></e-service-person-info>
+          </mat-tab>
+        
+  
+        <mat-tab label="ข้อมูลหนังสืออนุญาต">
+          <div class="box-header">
+            ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
+          </div>
+          <ksp-license-type-button-group 
+              [selecttab]="this.currentlictab" 
+              (clickLicenseTab)="onChangeLicTab($event)" 
+          ></ksp-license-type-button-group>
+          <ksp-license-info-card 
+              [selectedata]="selectId" 
+              [changeTab]="this.currentlictab"
+              (selectTab)="onChangeLicTab($event)" 
+          ></ksp-license-info-card>
+        </mat-tab>
+  
+        <mat-tab label="ที่อยู่">
+          <e-service-address-info
+            [addressInfo] = "addressId"
+          ></e-service-address-info>
+        </mat-tab>
+  
+        <mat-tab label="สถานที่ทำงาน">
+          <e-service-workplace-info></e-service-workplace-info>
+        </mat-tab>
+      </mat-tab-group> -->
+    </div>
+    <!-- <div class="row mb-2">
       <div class="col">
         <label class="form-label">ครั้งที่ </label>
         <input
@@ -278,7 +449,7 @@
         </textarea>
       </div>
     </div>
-    <ksp-file-upload></ksp-file-upload>
+    <ksp-file-upload></ksp-file-upload> -->
 
     <div class="my-3">
       <div class="d-flex align-items-center mb-2">
@@ -324,7 +495,23 @@
         <input
           class="form-control"
           style="width: 8rem"
-          type="number"
+          type="text"
+          min="0"
+          formControlName="considerday"
+        />
+        <label class="form-label mx-3">ปี</label>
+        <input
+          class="form-control"
+          style="width: 8rem"
+          type="text"
+          min="0"
+          formControlName="considerday"
+        />
+        <label class="form-label mx-3">เดือน</label>
+        <input
+          class="form-control"
+          style="width: 8rem"
+          type="text"
           min="0"
           formControlName="considerday"
         />
