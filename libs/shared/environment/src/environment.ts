@@ -7,9 +7,9 @@ const domainzdk = 'https://ksp-api.zdklabs.io'
 const fileurl  = 'https://ksp-api.zdklabs.io/app/files'
 
 export const environment = {
-  production: false,
-  shortApiUrl: domain,
-  apiUrl: domain + '/ksp',
-  zdklabs: domainzdk,
-  fileUrl: fileurl
+   production : false,
+  shortApiUrl : domain,
+       apiUrl : domain + '/ksp',
+      zdklabs : domainzdk,
+      fileUrl : fileurl
 };
