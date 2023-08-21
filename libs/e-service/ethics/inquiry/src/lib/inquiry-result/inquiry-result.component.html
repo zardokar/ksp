@@ -3,11 +3,219 @@
     [requestLabel2]="'เลขที่รายการ'"
     [requestNumber]="requestNumber"
   ></ksp-request-header-info>
+  <!-- <hr />
+  <div class="bg-light px-3 py-2 mt-3" formGroupName="inquiryresult">
+    <div class="box-header">การพิจารณาดำเนินการ</div>
+    <div class="form-label">
+      คณะกรรมการวินิจฉัยระดับความผิดจรรยาบรรณของวิชาชีพ
+      ตามมติคณะกรรมการมาตรฐานวิชาชีพในการประชุม
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <label
+        class="text-primary"
+        role="button"
+        (click)="openCondiserRecordDialog()"
+        *ngIf="meetings.length < 5"
+        >+ เพิ่มรายการ</label
+      >
+    </div>
+
+
+    <div class="mb-3">
+      <div class="table-responsive mb-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ลำดับ</th>
+              <th scope="col">มติครั้งที่</th>
+              <th scope="col">วันที่</th>
+              <th scope="col">มติที่ประชุม</th>
+              <th scope="col">เอกสารแนบ</th>
+              <th scope="col">ดู</th>
+              <th scope="col">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container formArrayName="inquerymeetinghistory">
+              <ng-container *ngFor="let row of meetings.controls; let i = index">
+                <tr [formGroupName]="i">
+                  <th class="text-center">{{ i + 1 }}</th>
+                  <td>
+                    {{row.value.meetingtimes}}
+                  </td>      
+                  <td >
+                    {{row.value.meetingdate}}
+                  </td>
+                  <td>
+                    {{row.value.meetingreason}}
+                  </td>
+                  <td>
+                    {{row.value.meetingfile}}
+                  </td>
+                  <td>
+                    <i
+                      role="button"
+                      class="bi bi-trash fs-5 text-danger"
+                      (click)="deleteConsiderRow(i)"
+                    ></i>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <br />
+    </div>
+
+    <div class="my-3">
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="1"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">ยกข้อกล่าวหา/กล่าวโทษ</label>
+      </div>
+
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="2"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">ตักเตือน</label>
+      </div>
+
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="3"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">ภาคทัณฑ์</label>
+      </div>
+
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="4"
+          formControlName="consider"
+        />
+
+        <label class="form-label ms-2">พักใช้</label>
+        <label class="form-label mx-3">ระยะเวลา</label>
+        <input
+          class="form-control"
+          style="width: 8rem"
+          type="text"
+          min="0"
+          formControlName="considerday"
+        />
+        <label class="form-label mx-3">ปี</label>
+        <input
+          class="form-control"
+          style="width: 8rem"
+          type="text"
+          min="0"
+          formControlName="considerday"
+        />
+        <label class="form-label mx-3">เดือน</label>
+        <input
+          class="form-control"
+          style="width: 8rem"
+          type="text"
+          min="0"
+          formControlName="considerday"
+        />
+        <label class="form-label mx-3">วัน</label>
+      </div>
+
+      <div class="d-flex align-items-center mb-2">
+        <label class="form-label ms-4"
+          >ระยะเวลาเริ่มต้นและสิ้นสุดการพักใช้ (วัน / เดือน / ปี)</label
+        >
+        <label class="form-label mx-3">วันที่</label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker5"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="considerdatefrom"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker5"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker5></mat-datepicker>
+        </div>
+        <label class="form-label mx-3">ถึง วันที่</label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker6"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="considerdateto"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker6"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker6></mat-datepicker>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="5"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">เพิกถอนหนังสืออนุญาตประกอบวิชาชีพ</label>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="6"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">มติคณะกรรมการอื่นๆ </label>
+      </div>
+
+      <div class="mx-4">
+        <textarea
+          class="form-control"
+          type="text"
+          rows="3"
+          formControlName="otherreason"
+        ></textarea>
+      </div>
+    </div>
+  </div> -->
   <hr />
+
   <div class="row">
     <div class="col-3 mb-3">
       <label class="form-label">หมายเลขแดง </label>
       <input class="form-control" type="text" formControlName="resultredno" />
+    </div>
+    <div class="col-3 mb-3">
+      <label class="form-label">หมายเลขดำ </label>
+      <input class="form-control" type="text" formControlName="resultblackno" />
     </div>
   </div>
 
@@ -49,10 +257,66 @@
     </div>
   </div>
 
-  <div class="form-label">แจ้งผู้กล่าวหา/กล่าวโทษทราบ</div>
+  <div class="form-label">คำวินิจฉัยชี้ขาด</div>
+  <div class="row">
+    <div class="mx-2">
+      <textarea
+        class="form-control"
+        type="text"
+        rows="3"
+        formControlName="resultdetail"
+      ></textarea>
+    </div>
+  </div>
+
+  <br />
+  <div class="row">
+    <div class="form-label">การพักใช้ใบอนุญาตประกอบวิชาชีพ</div>
+    <div class="col-3 mb-3">
+      <label class="form-label">วันที่เริ่มต้นการพักใช้ </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker2"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="resultstartsuspendlicensedate"
+          placeholder="วว/ดด/ปปปป"
+        />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </div>
+    </div>
+    <div class="col-3 mb-3">
+      <label class="form-label">วันที่สิ้นสุดการพักใช้ </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker2"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="resultendsuspendlicensedate"
+          placeholder="วว/ดด/ปปปป"
+        />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- <div class="form-label">แจ้งผู้กล่าวหา/กล่าวโทษทราบ</div> -->
   <div class="row">
     <div class="col-3 mb-3">
-      <label class="form-label">วันที่ </label>
+      <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษทราบ </label>
       <div class="d-flex align-items-center">
         <input
           matInput
@@ -60,6 +324,26 @@
           autocomplete="off"
           class="form-control form-date"
           formControlName="resulttoaccuserdate"
+          placeholder="วว/ดด/ปปปป"
+        />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker2"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </div>
+    </div>
+
+    <div class="col-3 mb-3">
+      <label class="form-label">วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบคำวินิจฉัย </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker2"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="resulttoaccusednotificationdate"
           placeholder="วว/ดด/ปปปป"
         />
         <mat-datepicker-toggle
@@ -79,10 +363,30 @@
     </div>
   </div>
 
-  <div class="form-label">แจ้งต้นสังกัดทราบ</div>
+  <div class="form-label">การแจ้งต้นสังกัดทราบ</div>
   <div class="row">
     <div class="col-3 mb-3">
-      <label class="form-label">วันที่ </label>
+      <label class="form-label">สังกัด</label>
+      <div class="d-flex align-items-center">
+        <input class="form-control" type="text" formControlName="resultaffiliationname" />
+      </div>
+    </div>
+    <div class="col-3 mb-3">
+      <label class="form-label">โรงเรียน / สถานศึกษา</label>
+      <div class="d-flex align-items-center">
+        <input class="form-control" type="text" formControlName="resultacademicname" />
+      </div>
+    </div>
+    <div class="col mb-3">
+      <label class="form-label"><br /> </label>
+      <div class="d-flex">
+        <ksp-file-upload></ksp-file-upload>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-3 mb-3">
+      <label class="form-label">วันที่แจ้งต้นสังกัดทราบ</label>
       <div class="d-flex align-items-center">
         <input
           matInput
@@ -90,6 +394,25 @@
           autocomplete="off"
           class="form-control form-date"
           formControlName="resulttoschooldate"
+          placeholder="วว/ดด/ปปปป"
+        />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker3"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+      </div>
+    </div>
+    <div class="col-3 mb-3">
+      <label class="form-label">วันที่ต้นสังกัดรับทราบ</label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker3"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="resulttoschoolnotificationdate"
           placeholder="วว/ดด/ปปปป"
         />
         <mat-datepicker-toggle
@@ -108,7 +431,7 @@
     </div>
   </div>
 
-  <div class="form-label">แจ้งผู้ถูกกล่าวหา/กล่าวโทษทราบ</div>
+  <!-- <div class="form-label">แจ้งผู้ถูกกล่าวหา/กล่าวโทษทราบ</div>
   <div class="row">
     <div class="col-3 mb-3">
       <label class="form-label">วันที่ </label>
@@ -136,5 +459,5 @@
         <ksp-file-upload></ksp-file-upload>
       </div>
     </div>
-  </div>
+  </div> -->
 </form>
