@@ -58,6 +58,10 @@ export class InquiryDetailComponent
   implements OnInit
 {
   override form = this.fb.group({
+    licensesuspension: [],
+    inquerylicensestatus: [],
+    inquerylicensestatusnotificationdate:[],
+    inquerylicensestatusaccusedrecognizedate:[],
     inquiryorderno: [],
     inquiryorderdate: [],
     inquirysubcommittee: this.fb.array([] as FormGroup[]),
@@ -66,6 +70,9 @@ export class InquiryDetailComponent
     inquiryreport: [],
     inquiryfile: [],
     inquerymeetinghistory: this.fb.array([] as FormGroup[]),
+    inquerylicensesuspendnotificationdate:[],
+    inquerylicensesuspendrecognizedate:[],
+    inquerynotificationdate:[],
     inquiryresult: this.fb.group({
       considertimes: [],
       considerdate: [],
@@ -80,6 +87,7 @@ export class InquiryDetailComponent
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
+  selectedlicensesuspension = false
   
   constructor(
     public dialog: MatDialog,

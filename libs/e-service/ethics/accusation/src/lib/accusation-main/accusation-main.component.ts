@@ -82,7 +82,12 @@ export class AccusationMainComponent implements OnInit {
             }
           }
 
+          if( typeof res?.accusationcondemnation == "string"){
+            res.accusationcondemnation = jsonParse(res.accusationcondemnation)
+          } 
+          
           if( isArray( res?.accusationcondemnation )){
+
             for(let condemnation of res?.accusationcondemnation){
               this.accusation.addCondemnationRow()
             }

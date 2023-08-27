@@ -65,8 +65,10 @@ export class FormInvestigationDetailComponent
   disabled = false;
 
   override form = this.fb.group({
-    investigationaccusedinformeddate: [],
-    investigationaccusedclarifieddate: [],
+    investigationnotificationdetail:[],
+    investigationrecognizedate:[],
+    investigationexplaindate:[],
+
     investigationorderno: [],
     investigationorderdate: [],
     investigationsubcommittee: this.fb.array([] as FormGroup[]),

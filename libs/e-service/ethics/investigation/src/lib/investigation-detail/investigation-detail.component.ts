@@ -61,11 +61,48 @@ export class InvestigationDetailComponent implements OnInit {
         switchMap((res) => {
           if (res) {
             const payload = this.form.value.investigation as any;
+            const allegationValue = this.form.value.allegation as any
+            const accusationValue = this.form.value.accusation as any
+            console.log(payload);
             payload.investigationresult = JSON.stringify(
               payload.investigationresult
             );
             payload.investigationsubcommittee = JSON.stringify(
               payload.investigationsubcommittee
+            );
+            payload.investigationnotificationdate = JSON.stringify(
+              allegationValue.investigationnotificationdate
+            );
+            payload.investigationaccusedrecognizedate = JSON.stringify(
+              allegationValue.investigationaccusedrecognizedate
+            );
+            payload.investigationnotificationdetail = JSON.stringify(
+              allegationValue.investigationnotificationdetail
+            );
+            payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
+            payload.investigationaction = JSON.stringify(
+              allegationValue.investigationaction
+            );
+            payload.investigationdetail = JSON.stringify(
+              allegationValue.investigationdetail
+            );
+            payload.accusationaction  = JSON.stringify(
+              accusationValue.accusationaction
+            );
+            payload.accusationcondemnation  = JSON.stringify(
+              accusationValue.accusationcondemnation
+            );
+            payload.accusationconsideration  = JSON.stringify(
+              accusationValue.accusationconsideration
+            );
+            payload.accusationfile  = JSON.stringify(
+              accusationValue.accusationfile
+            );
+            payload.accuserinfo  = JSON.stringify(
+              accusationValue.accuserinfo
+            );
+            payload.licenseinfo  = JSON.stringify(
+              accusationValue.licenseinfo
             );
             payload.id = this.ethicsId;
             return this.service.updateEthicsAccusation( replaceEmptyWithNull(payload) )
@@ -138,11 +175,17 @@ export class InvestigationDetailComponent implements OnInit {
             if( typeof res?.accusationcondemnation == "string"){
               res.accusationcondemnation = jsonParse(res.accusationcondemnation)
             }  
+
             if( isArray( res?.accusationcondemnation )){
               for(let condemnation of res?.accusationcondemnation){
-                this.accusation.addCondemnationRow()
+                this.accusation.addCondemnationRow(res.accusationcondemnation)
               }
             }
+
+            // if( typeof res?.accusationaction == "string"){
+            //   res.accusationaction = jsonParse(res.accusationaction)
+            // } 
+
             // ----------------------------------------------- Accusation consideration
             if( typeof res?.accusationconsideration == "string"){
               res.accusationconsideration = jsonParse(res.accusationconsideration)
@@ -164,7 +207,7 @@ export class InvestigationDetailComponent implements OnInit {
             }
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
-              this.allegation.setAccusationAction(res.accusationaction)
+              // this.allegation.setAccusationAction(res.accusationaction)
             }  
             // -----------------------------------------------
             

@@ -74,8 +74,7 @@ export class FormInvestigationAllegationComponent
   override form = this.fb.group({
     accusationcondemnation:[],
     accusationaction:[],
-    investigationaccusedinformeddate: [],
-    investigationaccusedclarifieddate: [],
+
     investigationorderno: [],
     investigationorderdate: [],
     investigationsubcommittee: this.fb.array([] as FormGroup[]),

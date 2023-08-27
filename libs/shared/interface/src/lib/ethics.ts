@@ -67,6 +67,7 @@ export class Ethics {
   investigationnotificationdate: string | null = null;
   investigationaccusedrecognizedate: string | null = null;
   investigationaction: string | null = null;
+  investigationnotificationdetail: string | null = null;
   investigationdetail: string | null = null;
   investigationevidencefile: string | null = null;
 
@@ -80,6 +81,7 @@ export class Ethics {
   // allegationinformdate: string | null = null;
   // allegationaccusedinformdate: string | null = null;
 
+  licensesuspension: string | null = null;
   inquiryorderno: string | null = null;
   inquiryorderdate: string | null = null;
   inquirysubcommittee: string | null = null;
@@ -92,6 +94,9 @@ export class Ethics {
   inquerylicensestatus: string | null = null;
   inquerylicensestatusnotificationdate: string | null = null;
   inquerylicensestatusaccusedrecognizedate: string | null = null;
+  inquerylicensesuspendnotificationdate: string | null = null;
+  inquerylicensesuspendrecognizedate: string | null = null;
+  inquerynotificationdate: string | null = null;
 
   resultredno: string | null = null;
   resultblackno: string | null = null;
@@ -284,22 +289,22 @@ export const decisions: ListData[] = [
     value: 3,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน ตามข้อ 60/5',
     name: 'decisions',
     value: 4,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์ ตามข้อ 60/5',
     name: 'decisions',
     value: 5,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษตักเตือน',
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษพักใช้ ตามข้อ 60/5',
     name: 'decisions',
     value: 6,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษภาคทัณฑ์',
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษเพิกถอน ตามข้อ 60/6',
     name: 'decisions',
     value: 7,
   },

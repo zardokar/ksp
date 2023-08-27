@@ -194,7 +194,7 @@ export class AccusationRecordComponent
 
   addCondemnationRow(data: EhicsCondemnation = defaultCondemnation) {
     // this.accusedInfo = accusedData
-    // console.log(accusedData)
+    console.log(data)
     const accusationcondemnationForm = this.fb.group({
       condemnationtype : [data.condemnationtype],
       condemnationdetail : [data.condemnationdetail]

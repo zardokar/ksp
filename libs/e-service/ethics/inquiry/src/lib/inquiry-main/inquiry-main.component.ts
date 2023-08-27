@@ -203,9 +203,6 @@ export class InquiryMainComponent implements OnInit {
             if( typeof res?.accusationcondemnation == "string"){
               res.accusationcondemnation = jsonParse(res.accusationcondemnation)
             }  
-            if( typeof res?.accusationaction == "string"){
-              res.accusationaction = jsonParse(res.accusationaction)
-            }  
             if( isArray( res?.accusationcondemnation )){
               for(let condemnation of res?.accusationcondemnation){
                 this.accusation.addCondemnationRow()
@@ -243,6 +240,9 @@ export class InquiryMainComponent implements OnInit {
               }
               res.inquirysubcommittee = dataobj;
             }
+            if( typeof res?.accusationaction == "string"){
+              res.accusationaction = jsonParse(res.accusationaction)
+            }  
             
             this.form.controls.accusation.patchValue(res);
             this.form.controls.inquiryresult.patchValue(res);

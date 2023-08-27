@@ -111,7 +111,9 @@ export class EthicsService {
       'accusationincidentdate',
       'accusationissuedate',
       'accusationassigndate',
-      'investigationorderdate',
+
+      'investigationrecognizedate',
+      'investigationexplaindate',
       'investigationdate',
       'investigationreportdate',
       'inquiryorderdate',
