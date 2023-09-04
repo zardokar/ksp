@@ -95,7 +95,7 @@
 
     <div class="bg-light p-3 mt-3">
       <label class="form-label">การพิจารณาดำเนินการ</label>
-      <div formControlName="investigationaction" class="d-flex flex-column">
+      <div formGroupName="investigationaction" class="d-flex flex-column">
       <ng-container *ngFor="let item of allegationList">
         <div class="d-flex flex-row align-items-center mb-2">
           <input 

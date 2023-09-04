@@ -63,6 +63,7 @@ export class InvestigationDetailComponent implements OnInit {
             const payload = this.form.value.investigation as any;
             const allegationValue = this.form.value.allegation as any
             const accusationValue = this.form.value.accusation as any
+            console.log(allegationValue);
             console.log(payload);
             payload.investigationresult = JSON.stringify(
               payload.investigationresult
@@ -70,22 +71,19 @@ export class InvestigationDetailComponent implements OnInit {
             payload.investigationsubcommittee = JSON.stringify(
               payload.investigationsubcommittee
             );
-            payload.investigationnotificationdate = JSON.stringify(
-              allegationValue.investigationnotificationdate
-            );
-            payload.investigationaccusedrecognizedate = JSON.stringify(
-              allegationValue.investigationaccusedrecognizedate
-            );
-            payload.investigationnotificationdetail = JSON.stringify(
-              allegationValue.investigationnotificationdetail
-            );
+            payload.investigationnotificationdate = allegationValue.investigationnotificationdate
+
+            payload.investigationaccusedrecognizedate = allegationValue.investigationaccusedrecognizedate
+
+            // payload.investigationnotificationdetail = JSON.stringify(
+            //   allegationValue.investigationnotificationdetail
+            // );
             payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
             payload.investigationaction = JSON.stringify(
               allegationValue.investigationaction
             );
-            payload.investigationdetail = JSON.stringify(
-              allegationValue.investigationdetail
-            );
+            payload.investigationdetail = allegationValue.investigationdetail
+
             payload.accusationaction  = JSON.stringify(
               accusationValue.accusationaction
             );
@@ -207,7 +205,7 @@ export class InvestigationDetailComponent implements OnInit {
             }
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
-              // this.allegation.setAccusationAction(res.accusationaction)
+              this.allegation.setAccusationAction(res.accusationaction)
             }  
             // -----------------------------------------------
             

@@ -90,6 +90,7 @@ export class FormInvestigationAllegationComponent
                                         society: [],
                                       }),
     investigationnotificationdate:[],
+    investigationnotificationdetail:[],
     investigationaccusedrecognizedate:[],
     investigationdetail:[],
     investigationevidencefile:[],

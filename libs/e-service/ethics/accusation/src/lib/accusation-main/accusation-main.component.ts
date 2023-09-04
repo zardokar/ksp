@@ -3,12 +3,17 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Ethics , accusationtypeList } from '@ksp/shared/interface';
+import {
+  CompleteDialogComponent,
+  ConfirmDialogComponent,
+} from '@ksp/shared/dialog';
 import { EthicsService } from '@ksp/shared/service';
 import {
   jsonParse,
   mapFileInfo,
   replaceEmptyWithNull,
 } from '@ksp/shared/utility';
+import { EMPTY, switchMap } from 'rxjs';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import _, { isArray } from 'lodash';
 import { AccusationRecordComponent } from '../accusation-record/accusation-record.component';
@@ -41,6 +46,21 @@ export class AccusationMainComponent implements OnInit {
     this.form.valueChanges.subscribe((res) => {
       // console.log(res);
       // console.log('form value = ', this.form.controls.accusation.value);
+    });
+  }
+
+  onCompleted() {
+    const completeDialog = this.dialog.open(CompleteDialogComponent, {
+      width: '375px',
+      data: {
+        header: `บันทึกข้อมูลสำเร็จ`,
+      },
+    });
+
+    completeDialog.componentInstance.completed.subscribe((res) => {
+      if (res) {
+        this.router.navigate(['/accusation']);
+      }
     });
   }
 
@@ -118,6 +138,17 @@ export class AccusationMainComponent implements OnInit {
   }
 
   saveEthics() {
+    const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        title: `คุณยืนยันการบันทึกข้อมูลใช่หรือไม่? `,
+        btnLabel: 'ยืนยัน',
+      },
+    });
+
+    confirmDialog.componentInstance.confirmed.subscribe((res) => {
+      // .pipe(
+        // switchMap((res) => {
     const ethics = new Ethics();
     const allowKey = Object.keys(ethics);
     const data = this.form.controls.accusation.value as any;
@@ -180,6 +211,8 @@ export class AccusationMainComponent implements OnInit {
       console.log("Log payload update" , selectData);
       this.service.updateEthicsAccusation(selectData).subscribe((res) => {
         console.log('save = ', res);
+        this.onCompleted()
+
       });
     } else {
       
@@ -188,10 +221,14 @@ export class AccusationMainComponent implements OnInit {
         console.log("Response insert ::",res);
         const id = res.datareturn.id;
         if (id) {
-          this.router.navigate(['/accusation', 'detail', id]);
+          this.onCompleted()
+          // this.router.navigate(['/accusation', 'detail', id]);
         }
       });
     }
+    })
+    // )
+
   }
 
   next() {
