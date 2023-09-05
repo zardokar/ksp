@@ -346,6 +346,7 @@
                                 type="text"
                                 placeholder="กรอกปีการศึกษา"
                                 formControlName="year"
+                                readonly
                               />
                             </div>
                           </td>
@@ -356,6 +357,7 @@
                                 type="text"
                                 placeholder="จำนวนนักศึกษา"
                                 formControlName="student1"
+                                readonly
                               />
                             </div>
                           </td>
@@ -366,6 +368,7 @@
                                 type="text"
                                 placeholder="จำนวนนักศึกษา"
                                 formControlName="student2"
+                                readonly
                               />
                             </div>
                           </td>
@@ -376,6 +379,7 @@
                                 type="text"
                                 placeholder="จำนวนนักศึกษา"
                                 formControlName="student3"
+                                readonly
                               />
                             </div>
                           </td>
@@ -441,18 +445,25 @@
                               <input
                                 type="checkbox"
                                 formControlName="consider"
+                                (input)="setCheckedData($event, j)"
                               />
                             </div>
                           </td>
 
                           <td>
                             <div>
-                              <input
+                              <!-- <input
                                 class="form-control text-center"
                                 type="text"
                                 placeholder="กรอกปีการศึกษา"
                                 formControlName="year"
-                              />
+                              /> -->
+                              <select class="form-select" formControlName="year" [disabled]="mode === 'view'">
+                                <option value="null" selected disabled hidden>
+                                  กรุณาเลือกปีการศึกษา
+                                </option>
+                                <option *ngFor="let year of calendaryearList" [value]="year.value">{{ year.label }}</option>
+                              </select>
                             </div>
                           </td>
                           <td>
