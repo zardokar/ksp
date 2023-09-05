@@ -54,6 +54,12 @@ export class StaffService {
       .pipe(map((data: any) => data.datareturn));
   }
 
+  searchKSPXStafffromIDCard(payload: any) {
+    return this.http
+      .post(`${environment.shortApiUrl}/kspx/ethic/selfmyinfosearch.php`, payload )
+      .pipe(map((data: any) => data.datareturn));
+  }
+
   getStaffTypes(): Observable<any> {
     return this.http
       .get(`${environment.apiUrl}/kspmasterdata/schoolstafftype`)

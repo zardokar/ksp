@@ -15,6 +15,8 @@ import { FileUploadComponent } from '@ksp/shared/form/file-upload';
 import { SharedFormOthersModule } from '@ksp/shared/form/others';
 import {
   defaultSubcommittee,
+  defaultMeeting,
+  EhicsMeeting,
   EhicsSubcommittee,
   KspFormBaseComponent,
 } from '@ksp/shared/interface';
@@ -27,6 +29,8 @@ import {
 } from '@ksp/shared/ui';
 import { providerFactory, thaiDate } from '@ksp/shared/utility';
 import { Observable } from 'rxjs';
+import { InquiryConsiderRecordComponent } from '@ksp/e-service/dialog/inquiry-consider-record';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'e-service-inquiry-detail',
@@ -61,6 +65,7 @@ export class InquiryDetailComponent
     inquiryjbdate: [],
     inquiryreport: [],
     inquiryfile: [],
+    inquerymeetinghistory: this.fb.array([] as FormGroup[]),
     inquiryresult: this.fb.group({
       considertimes: [],
       considerdate: [],
@@ -75,7 +80,9 @@ export class InquiryDetailComponent
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
+  
   constructor(
+    public dialog: MatDialog,
     private router: Router,
     private fb: FormBuilder,
     private generalInfoService: GeneralInfoService
@@ -91,6 +98,9 @@ export class InquiryDetailComponent
   }
   ngOnInit(): void {
     this.getListData();
+  }
+  get meetings() {
+    return this.form.controls.inquerymeetinghistory as FormArray;
   }
   get members() {
     return this.form.controls.inquirysubcommittee as FormArray;
@@ -122,4 +132,38 @@ export class InquiryDetailComponent
   getListData() {
     this.prefixList$ = this.generalInfoService.getPrefix();
   }
+  addConsiderRow(data: EhicsMeeting = defaultMeeting) {
+    let getdate = new Date( data?.meetingdate || '')
+    const rewardForm = this.fb.group({
+      meetingtimes: data.meetingtimes,
+      meetingdate: thaiDate(new Date(getdate )) ,
+      meetingreason: data.meetingreason,
+      meetingfile: data.meetingfile
+    });
+    this.meetings.push(rewardForm);
+  }
+  deleteConsiderRow(index: number) {
+    this.meetings.removeAt(index);
+  }
+
+  openCondiserRecordDialog() {
+    const dialogRef = this.dialog.open(InquiryConsiderRecordComponent, {
+      height: '50vh',
+      width: '50vw',
+      position: {
+        top: '25vh',
+        right: '25vw',
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("after Close ::: ",result);
+      if(result !== ""){
+      this.addConsiderRow(result)
+      }
+      // this.selectId = result
+      // this.addressId = result
+      // this.updateStatus = true
+    });
+  }
+
 }

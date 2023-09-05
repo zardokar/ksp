@@ -15,7 +15,7 @@ import {
   getCookie,
   parseJson,
   replaceEmptyWithNull,
-  replaceUndefinedWithNull,
+  replaceUndefinedWithNull
 } from '@ksp/shared/utility';
 import {
   CompleteDialogComponent,
@@ -51,7 +51,7 @@ import localForage from 'localforage';
 })
 export class AddStaffComponent implements OnInit {
   isLoading: Subject<boolean> = this.loaderService.isLoading;
-  staffId!: number;
+  staffId!: any;
   countries$!: Observable<Country[]>;
   nationList$!: Observable<Nationality[]>;
   visaTypeList!: Observable<VisaType[]>;
@@ -108,6 +108,7 @@ export class AddStaffComponent implements OnInit {
   }
 
   searchLicense(staffId: any) {
+    console.log(`searchLicense`)
     this.notFound = false;
 
     const payload = {
@@ -173,11 +174,12 @@ export class AddStaffComponent implements OnInit {
   }
 
   checkStaffId() {
+    console.log(`checkStaffId`)
     this.activatedroute.paramMap
       .pipe(untilDestroyed(this))
       .subscribe((params) => {
         //console.log('param = ', params);
-        this.staffId = Number(params.get('id'));
+        this.staffId = isNaN(Number(params.get('id'))) === false ? Number(params.get('id')) : null ;
         //console.log('staff id = ', this.staffId);
         if (this.staffId) {
           this.searchStaffDone = true;
@@ -222,20 +224,38 @@ export class AddStaffComponent implements OnInit {
     this.staffService
       .searchStaffFromIdCard(payload)
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res && res.returncode !== '98') {
-          // found staff
-          this.router.navigate(['/staff-management', 'edit-staff', res.id]);
-        } else {
-          // not found then reset form and set idcard again
-          this.router.navigate([
-            '/staff-management',
-            'add-staff-thai',
-            idcardno,
-          ]);
+      .subscribe((ocnres) => {
+        if( ocnres.returncode === '98' )
+        {
+          this.staffService
+          .searchKSPXStafffromIDCard(payload)
+          .subscribe((res) => {
+            console.log(`searchIdCard`, res)
+            // Convert Data from self
+            res = res[0]
+            res = this.convertSelfData(res)
+            idcardno = res.idcardno 
+    
+            this.patchAll(res)
+    
+            if (res && res.returncode !== '98') {
+              // found staff
+              this.router.navigate(['/staff-management', 'edit-staff', res.id]);
+            } else {
+              // not found then reset form and set idcard again
+              this.router.navigate([
+                '/staff-management',
+                'add-staff-thai',
+                idcardno,
+              ]);
+            }
+            this.searchStaffDone = true;
+          });
+        }else{
+          this.router.navigate(['/staff-management', 'edit-staff', ocnres.id]);
         }
-        this.searchStaffDone = true;
-      });
+      })
+
   }
 
   searchKuruspaNo(kspno: string) {
@@ -332,10 +352,12 @@ export class AddStaffComponent implements OnInit {
   }
 
   loadStaffData(staffId: number) {
+    console.log(`loadStaffData`)
     this.staffService
       .loadStaffFromId(staffId)
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
+
         this.patchAll(res);
         if (res && res.kuruspano) {
           this.userInfoType = UserInfoFormType.foreign;
@@ -359,9 +381,9 @@ export class AddStaffComponent implements OnInit {
   patchAll(res: any) {
     //console.log('patchAll = ', res);
     this.pathUserInfo(res);
-    this.patchAddress(parseJson(res.addresses));
-    this.patchEdu(parseJson(res.educations));
-    this.pathTeachingInfo(parseJson(res.teachinginfo));
+    try{ this.patchAddress(parseJson(res.addresses)); }catch(excp){ console.log(excp)}
+    try{ this.patchEdu(parseJson(res.educations)); }catch(excp){ console.log(excp)}
+    try{ this.pathTeachingInfo(parseJson(res.teachinginfo)); }catch(excp){ console.log(excp)}
     this.form.controls.hiringInfo.patchValue(parseJson(res.hiringinfo));
   }
 
@@ -440,6 +462,7 @@ export class AddStaffComponent implements OnInit {
   }
 
   pathUserInfo(data: any) {
+    console.log(data,`pathUserInfo`)
     data.birthdate = data.birthdate.split('T')[0];
     this.form.controls.userInfo.patchValue(data);
   }
@@ -560,5 +583,42 @@ export class AddStaffComponent implements OnInit {
     } else {
       this.selectedTabIndex--;
     }
+  }
+
+  convertSelfData(respdata : any)
+  {
+    const address =     {
+                          "houseNo": respdata.addressno,
+                          "province": respdata.addressprovinceid,
+                          "addressType": 2,
+                          "road": respdata.addressroad,
+                          "location": null,
+                          "moo": respdata.addressmoo,
+                          "alley": respdata.addressalley,
+                          "id": null,
+                          "postcode": respdata.addresszipcode,
+                          "amphur": respdata.amphur,
+                          "tumbol": respdata.addresssubdistrictid
+    } 
+    respdata.schoolid       = '1091560154'
+
+    respdata.sex            = respdata.genderid
+    respdata.contactphone   = respdata.phonenumber
+
+    respdata.idcardno       = respdata.identitynumber 
+    respdata.prefixth       = respdata.titlethid
+    respdata.firstnameth    = respdata.nameth
+
+    respdata.prefixen       = respdata.titleenid
+    respdata.firstnameen    = respdata.nameen
+    respdata.middlenameen   = respdata.middlename
+
+    respdata.nationality    = respdata.nationalityid || 'TH'
+
+    respdata.iaddresses      = []
+    respdata.iaddresses.push(address)
+    respdata.iaddresses.push(address)
+
+    return respdata
   }
 }

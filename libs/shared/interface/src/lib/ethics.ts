@@ -88,8 +88,13 @@ export class Ethics {
   inquiryreport: string | null = null;
   inquiryfile: string | null = null;
   inquiryresult: string | null = null;
+  inquerymeetinghistory: string | null = null;
+  inquerylicensestatus: string | null = null;
+  inquerylicensestatusnotificationdate: string | null = null;
+  inquerylicensestatusaccusedrecognizedate: string | null = null;
 
   resultredno: string | null = null;
+  resultblackno: string | null = null;
   resultcomitteeno: string | null = null;
   resultcomitteedate: string | null = null;
   resultcomitteefile: string | null = null;
@@ -99,6 +104,13 @@ export class Ethics {
   resulttoschoolfile: string | null = null;
   resulttoaccuseddate: string | null = null;
   resulttoaccusedfile: string | null = null;
+  resultdetail: string | null = null;
+  resultstartsuspendlicensedate: string | null = null;
+  resultendsuspendlicensedate: string | null = null;
+  resulttoaccusednotificationdate: string | null = null;
+  resultacademicname: string | null = null;
+  resultaffiliationname: string | null = null;
+  resulttoschoolnotificationdate: string | null = null;
 
   publishstatus: string | null = null;
   publishdate: string | null = null;
@@ -154,6 +166,13 @@ export const defaultAccusationaction: EhicsAccusationaction = {
   society: null,
 }
 
+export const defaultMeeting:EhicsMeeting = {
+  meetingtimes:  null,
+  meetingdate: null,
+  meetingreason:  null,
+  meetingfile: null,
+}
+
 export interface EhicsMember {
   idcardno: string | null;
   accusertype: string | null;
@@ -201,6 +220,13 @@ export interface EhicsAccusationaction {
   service: Boolean | null;
   coworkers: Boolean | null;
   society: Boolean | null;
+}
+
+export interface EhicsMeeting {
+  meetingtimes: string | null;
+  meetingdate: string | null;
+  meetingreason: string | null;
+  meetingfile: string | null;
 }
 
 export const ACCUSATION_FILES: FileGroup[] = [

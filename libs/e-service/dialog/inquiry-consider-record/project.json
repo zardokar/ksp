@@ -1,0 +1,17 @@
+{
+  "projectType": "library",
+  "sourceRoot": "libs/e-service/dialog/inquiry-consider-record/src",
+  "prefix": "ksp",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/e-service/dialog/inquiry-consider-record/**/*.ts",
+          "libs/e-service/dialog/inquiry-consider-record/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

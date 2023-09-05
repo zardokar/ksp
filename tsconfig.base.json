@@ -16,6 +16,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@ksp/e-service/dialog/inquiry-consider-record": [
+        "libs/e-service/dialog/inquiry-consider-record/src/index.ts"
+      ],
       "@ksp/e-service/dialog/accusation-search": [
         "libs/e-service/dialog/accusation-search/src/index.ts"
       ],
