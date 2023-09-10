@@ -28,6 +28,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'e-service-form-investigation-detail',
@@ -63,6 +64,7 @@ export class FormInvestigationDetailComponent
   decisions = decisions;
   selecteddecisions : any;
   disabled = false;
+  uniqueTimestamp: any;
 
   override form = this.fb.group({
     investigationnotificationdetail:[],
@@ -86,6 +88,7 @@ export class FormInvestigationDetailComponent
   });
 
   ngOnInit(): void {
+    this.uniqueTimestamp = uuidv4();
     this.getListData();
   }
 
