@@ -368,13 +368,15 @@
     <div class="col-3 mb-3">
       <label class="form-label">สังกัด</label>
       <div class="d-flex align-items-center">
-        <input class="form-control" type="text" formControlName="resultaffiliationname" />
+        <input type="text" class="form-control" formControlName="resultaffiliationname" (click)="searchSchool($event.target)"  />
+        <!-- <input class="form-control" type="text" formControlName="resultaffiliationname" /> -->
       </div>
     </div>
     <div class="col-3 mb-3">
       <label class="form-label">โรงเรียน / สถานศึกษา</label>
       <div class="d-flex align-items-center">
-        <input class="form-control" type="text" formControlName="resultacademicname" />
+        <input type="text" class="form-control" formControlName="resultacademicname" (click)="searchSchool($event.target)"  />
+        <!-- <input class="form-control" type="text" formControlName="resultacademicname" /> -->
       </div>
     </div>
     <div class="col mb-3">
