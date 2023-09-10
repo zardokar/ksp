@@ -133,11 +133,9 @@
                 </select>
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="bureau"
-                />
+
+                <input type="text" class="form-control" formControlName="bureauname" (click)="searchSchool($event.target)" [attr.grpind]="i" />
+                
               </td>
               <td>
                 <i

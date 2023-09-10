@@ -142,6 +142,7 @@ export const defaultSubcommittee: EhicsSubcommittee = {
   lastname: null,
   position: null,
   bureau: null,
+  bureauname: null,
 };
 
 export const defaultAccused: Ehicsaccused = {
@@ -198,6 +199,7 @@ export interface EhicsSubcommittee {
   lastname: string | null;
   position: string | null;
   bureau: string | null;
+  bureauname: string | null;
 }
 
 export interface Ehicsaccused {

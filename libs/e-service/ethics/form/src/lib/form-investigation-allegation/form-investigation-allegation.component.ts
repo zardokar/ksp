@@ -73,8 +73,8 @@ export class FormInvestigationAllegationComponent
 
   override form = this.fb.group({
     accusationcondemnation:[],
-    accusationaction:[],
-
+    // accusationaction:[],
+    investigationnote:[],
     investigationorderno: [],
     investigationorderdate: [],
     investigationsubcommittee: this.fb.array([] as FormGroup[]),
@@ -82,13 +82,14 @@ export class FormInvestigationAllegationComponent
     investigationreportdate: [],
     investigationreport: [],
     investigationfile: [],
-    investigationaction: this.fb.group({
-                                        self: [],
-                                        profession: [],
-                                        service: [],
-                                        coworkers: [],
-                                        society: [],
-                                      }),
+    // investigationaction: this.fb.group({
+    //                                     self: [],
+    //                                     profession: [],
+    //                                     service: [],
+    //                                     coworkers: [],
+    //                                     society: [],
+    //                                   }),
+    investigationaction: [],
     investigationnotificationdate:[],
     investigationnotificationdetail:[],
     investigationaccusedrecognizedate:[],

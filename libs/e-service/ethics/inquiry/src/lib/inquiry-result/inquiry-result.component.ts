@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component , ViewChild } from '@angular/core';
+import { Component , ViewChild , Input } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { EServiceUiAccusationInfoModule } from '@ksp/e-service/ui/accusation-info';
@@ -22,6 +22,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InquiryConsiderRecordComponent } from '@ksp/e-service/dialog/inquiry-consider-record';
+import { UniversitySearchComponent } from '@ksp/shared/search';
 
 @Component({
   selector: 'e-service-inquiry-result',
@@ -44,6 +45,8 @@ import { InquiryConsiderRecordComponent } from '@ksp/e-service/dialog/inquiry-co
   providers: providerFactory(InquiryResultComponent),
 })
 export class InquiryResultComponent extends KspFormBaseComponent {
+  @Input() searchType = '';
+  @Input() bureaus: any[] = [];
   override form = this.fb.group({
     resultredno: [],
     resultblackno:[],
@@ -118,4 +121,40 @@ export class InquiryResultComponent extends KspFormBaseComponent {
       // this.updateStatus = true
     });
   }
+
+  searchSchool(target:any) {
+    const dialog = this.dialog.open(UniversitySearchComponent, {
+      width: '1200px',
+      height: '100vh',
+      position: {
+        top: '0px',
+        right: '0px',
+      },
+      data: {
+        searchType: this.searchType,
+        subHeader: 'กรุณาเลือกหน่วยงาน/สถานศึกษาที่ท่านสังกัด'
+      },
+    });
+    dialog.afterClosed().subscribe((res: any) => {
+      console.log(res);
+      // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
+      // if(bureau === undefined)
+      // {
+      //   this.bureaus.push({
+      //     bureauId : res.bureauid,
+      //     bureauName : res.bureauname
+      //   })
+      // }
+
+      // const grpind =  parseInt( target.getAttribute('grpind') )
+
+      // Assign to element
+      // target.value = res.bureauname;
+      // target.value = res.schoolname;
+      // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
+      this.form.controls.resultaffiliationname.patchValue(res.bureauname);
+      this.form.controls.resultacademicname.patchValue(res.schoolname);
+    });
+  }
+
 }
