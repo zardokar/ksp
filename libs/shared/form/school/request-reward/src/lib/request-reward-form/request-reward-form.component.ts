@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AddRowButtonComponent,
@@ -53,24 +53,26 @@ export class RequestRewardFormComponent extends KspFormBaseComponent {
     }
   }
 
+  // ------------------------------------------------
+
   override form = this.fb.group({
     rewardname: [null, Validators.required],
     rewardtype: [null, Validators.required],
     submitbefore: [null, Validators.required],
 
-    idcardno: [null, [Validators.required, Validators.pattern(idCardPattern)]],
+    idcardno: [null, [Validators.required]],
     prefixth: [null, Validators.required],
     firstnameth: [
       null,
-      [Validators.required, Validators.pattern(nameThPattern)],
+      [Validators.required],
     ],
     lastnameth: [
       null,
-      [Validators.required, Validators.pattern(nameThPattern)],
+      [Validators.required],
     ],
     contactphone: [
       null,
-      [Validators.required, Validators.pattern(phonePattern)],
+      [Validators.required],
     ],
     email: [null, [Validators.required, Validators.email]],
     position: [null, Validators.required],
@@ -88,7 +90,9 @@ export class RequestRewardFormComponent extends KspFormBaseComponent {
 
   rewards = rewards;
 
-  constructor(public dialog: MatDialog, private fb: FormBuilder) {
+  constructor(public dialog: MatDialog,
+              private cdref: ChangeDetectorRef,
+              private fb: FormBuilder) {
     super();
     this.subscriptions.push(
       this.form?.valueChanges.subscribe((value) => {
@@ -97,6 +101,16 @@ export class RequestRewardFormComponent extends KspFormBaseComponent {
       })
     );
   }
+
+  ngAfterContentChecked() {
+    this.cdref.detectChanges();
+  }
+
+  override ngOnChanges(event: any): void {
+    console.log( `ngOnChanges`,event )
+  }
+
+  // --------------------------------------------------
 
   get members() {
     return this.form.controls.osoimember as FormArray;
@@ -127,20 +141,20 @@ export class RequestRewardFormComponent extends KspFormBaseComponent {
       membertype: [data.membertype, Validators.required],
       idcardno: [
         data.idcardno,
-        [Validators.required, Validators.pattern(idCardPattern)],
+        [Validators.required],
       ],
       prefix: [data.prefix, Validators.required],
       firstname: [
         data.firstname,
-        [Validators.required, Validators.pattern(nameThPattern)],
+        [Validators.required],
       ],
       lastname: [
         data.lastname,
-        [Validators.required, Validators.pattern(nameThPattern)],
+        [Validators.required],
       ],
       phone: [
         data.phone,
-        [Validators.required, Validators.pattern(phonePattern)],
+        [Validators.required],
       ],
       email: [data.email, [Validators.required, Validators.email]],
       academicstanding: [data.academicstanding, Validators.required],
