@@ -221,6 +221,8 @@ export class AddStaffComponent implements OnInit {
       idcardno,
       schoolid: this.schoolId,
     };
+
+
     this.staffService
       .searchStaffFromIdCard(payload)
       .pipe(untilDestroyed(this))
@@ -230,15 +232,23 @@ export class AddStaffComponent implements OnInit {
           this.staffService
           .searchKSPXStafffromIDCard(payload)
           .subscribe((res) => {
+
             console.log(`searchIdCard`, res)
+
+            const reslen = res.length
             // Convert Data from self
-            res = res[0]
-            res = this.convertSelfData(res)
-            idcardno = res.idcardno 
-    
-            this.patchAll(res)
-    
-            if (res && res.returncode !== '98') {
+            if(reslen > 0)
+            {
+              res = res[0]
+              res = this.convertSelfData(res)
+              idcardno = res.idcardno 
+      
+              this.patchAll(res)
+            }
+
+            console.log( reslen, res.returncode, `Heyyyyyyyyyyyy` , (res && res.returncode !== '98'), ( reslen > 0 ) )
+
+            if ( reslen > 0 ) {
               // found staff
               this.router.navigate(['/staff-management', 'edit-staff', res.id]);
             } else {
