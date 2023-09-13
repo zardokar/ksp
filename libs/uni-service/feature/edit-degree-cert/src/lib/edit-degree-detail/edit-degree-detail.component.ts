@@ -148,6 +148,7 @@ export class EditDegreeDetailComponent {
     this.requestId = res?.requestid;
     const { formchange } =
       res.checkresult != null ? parseJson(res.checkresult) : ({} as any);
+      console.log(formchange, res)
     this.step1Form.setValue({
       step1: {
         institutionsCode: res?.unicode,
@@ -210,6 +211,13 @@ export class EditDegreeDetailComponent {
       advisor: {
         advisors: parseCourseAdvisor,
       },
+      section1: formchange?.step2?.section1 ?? false,
+      section2: formchange?.step2?.section2 ?? false,
+      section3: formchange?.step2?.section3 ?? false,
+      section4: formchange?.step2?.section4 ?? false,
+      section5: formchange?.step2?.section5 ?? false,
+      plan1: {},
+      plan2: {},
     };
     if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
       this.step2Form.setValue({

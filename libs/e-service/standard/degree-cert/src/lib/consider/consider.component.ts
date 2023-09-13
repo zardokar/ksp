@@ -267,6 +267,7 @@ export class ConsiderComponent implements OnInit {
             } else {
               this.degreeType = 'b';
             }
+            console.log(this.degreeType)
             this.allowEdit =
               res?.requestprocess === '3' && res?.requeststatus === '1';
             return this.uniInfoService.mappingUniverSitySelectByIdWithForm(

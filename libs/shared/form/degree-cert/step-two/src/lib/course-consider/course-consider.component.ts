@@ -55,8 +55,8 @@ export class CourseConsiderComponent
         label: (currYear - index + 543).toString(),
       });
     }
-    console.log(this.form.value);
-    if (this.degreeType == 'a') {
+    console.log(this.form.value, this.degreeType);
+    if (this.degreeType && this.degreeType == 'a') {
       this.addData();
     } else {
       this.addDataTypeB();
