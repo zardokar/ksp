@@ -96,10 +96,9 @@
 
     <div class="col-6 mb-2" *ngIf="isqualification">
       <label class="form-label required" >{{lbl_lettertype}}</label>
-      <select formControlName="isforeign" class="form-select">
-        <option value="null" selected hidden disabled>กรุณาเลือก</option>
-        <option value="0">ชาวไทย</option>
-        <option value="1">ชาวต่างชาติ</option>
+      <select formControlName="isforeign" class="form-select" [(ngModel)]="DEFAULT_ISFOREIGN" >
+        <option [value]="0" selected default>ชาวไทย</option>
+        <option [value]="1">ชาวต่างชาติ</option>
       </select>
     </div>
 
