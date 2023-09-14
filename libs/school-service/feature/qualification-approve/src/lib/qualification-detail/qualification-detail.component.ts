@@ -521,8 +521,14 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
             const formatedData = formatDatePayload(data);
             
             zutils.convertBase64toJSONStr( formatedData , ['hiringinfo', 'teachinginfo'])
-            
-            return this.requestService.schCreateRequest(formatedData);
+
+            // --------------------------------------------------------------------------
+            if( data.requestno === undefined && data.requestdate === undefined)
+            {
+              return this.requestService.schCreateRequest(formatedData);
+            }else{
+              return this.requestService.schUpdateRequest(formatedData);
+            }
           }
           return EMPTY;
         })
