@@ -214,7 +214,7 @@ export class AccusationRecordComponent
   }
 
   getListData() {
-    this.prefixList$ = this.generalInfoService.getPrefix();
+    this.prefixList$ = this.generalInfoService.getPrefixJSON();
   }
 
   openSearchDialog() {

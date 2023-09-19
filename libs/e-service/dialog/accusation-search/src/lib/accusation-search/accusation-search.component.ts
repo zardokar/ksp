@@ -59,7 +59,7 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog
   ) {}
   ngOnInit(): void {
-    this.prefixList$ = this.generalInfoService.getPrefix();
+    this.prefixList$ = this.generalInfoService.getPrefixJSON();
     this.bureaus$ = this.generalInfoService.getBureau();
     this.provinces$ = this.addressService.getProvinces();
   }

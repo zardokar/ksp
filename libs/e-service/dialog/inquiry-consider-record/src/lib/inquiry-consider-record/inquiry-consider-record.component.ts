@@ -54,7 +54,7 @@ export class InquiryConsiderRecordComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.prefixList$ = this.generalInfoService.getPrefix();
+    this.prefixList$ = this.generalInfoService.getPrefixJSON();
     this.bureaus$ = this.generalInfoService.getBureau();
     this.provinces$ = this.addressService.getProvinces();
     this.uniqueTimestamp = uuidv4();

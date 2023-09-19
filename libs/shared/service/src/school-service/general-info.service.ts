@@ -17,6 +17,13 @@ export class GeneralInfoService {
     );
   }
 
+  getPrefixJSON(): Observable<any> {
+    return this.http.get(`assets/json/prefix.json`).pipe(
+      map((data: any) => data.datareturn),
+      shareReplay()
+    );
+  }
+
   getPrefix(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/kspmasterdata/nameprefix`).pipe(
       map((data: any) => data.datareturn),
