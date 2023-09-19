@@ -67,6 +67,7 @@ export class InquiryMainComponent implements OnInit {
           if (res) {
             const payload = this.form.value.inquiry as any;
             if (payload) {
+              payload.processid = '3'
               payload.id = this.ethicsId;
               payload.inquerylicensestatus                      = payload.inquerylicensestatus;
               payload.inquerylicensestatusnotificationdate      = cleanUpDate( payload.inquerylicensestatusnotificationdate );

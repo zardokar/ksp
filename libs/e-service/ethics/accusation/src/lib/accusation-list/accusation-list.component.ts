@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,7 @@ import { Subject } from 'rxjs';
     MatProgressSpinnerModule
   ],
 })
-export class AccusationListComponent {
+export class AccusationListComponent implements AfterViewInit{
   //mode!: EthicsMode;
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   dataSource = new MatTableDataSource<AccusationList>();
@@ -41,8 +41,13 @@ export class AccusationListComponent {
   constructor(
     public router: Router,
     private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
     private loaderService: LoaderService
   ) {}
+
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges()
+  }
 
   onSubmit(id: any) {
     this.router.navigate(['accusation', 'detail', id]);

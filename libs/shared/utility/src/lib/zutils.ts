@@ -61,3 +61,25 @@ export function b64DecodeUnicode( str : string) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
     }).join(''))
 }
+
+// ----------------------------------------------------------------------------------------------
+export function exist(value : any, key : string = '')
+{
+    let pass = true
+
+    if(value === '')        pass = false
+    if(value === null)      pass = false
+    if(value === undefined) pass = false
+
+    if(key !== '' && pass === true){
+        try{ 
+            
+                if(value[key] === '')        pass = false
+                if(value[key] === null)      pass = false
+                if(value[key] === undefined) pass = false
+            
+        }catch(excp){                        pass = false }
+    }
+
+    return pass
+}

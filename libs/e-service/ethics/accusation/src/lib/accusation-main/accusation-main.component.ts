@@ -173,6 +173,9 @@ export class AccusationMainComponent implements OnInit {
     // }
     
     // console.log("data form accusation :: " , objPerson);
+
+    data.processid = '1'  // Set default first process
+
     if (data?.licenseinfo) {
       data.licenseinfo = JSON.stringify(data?.licenseinfo);
     }
@@ -185,8 +188,8 @@ export class AccusationMainComponent implements OnInit {
 
     if (data?.accusationaction) {
       
-      let getKeyAction  = Object.keys( data?.accusationaction )
-      for(let actionType of getKeyAction){
+      const getKeyAction  = Object.keys( data?.accusationaction )
+      for(const actionType of getKeyAction){
         data.accusationaction[actionType]  = data?.accusationaction[actionType] !== null ? true : false
       }
       

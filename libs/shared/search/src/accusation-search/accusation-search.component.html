@@ -49,6 +49,19 @@
           <mat-datepicker #picker2></mat-datepicker>
         </div>
       </div>
+
+      <div class="col">
+        <label class="form-label">ขั้นตอน</label>
+        <select class="form-control" formControlName="ethicProcess">
+          <option value="" disabled selected>กรุณาเลือก</option>
+          <option value="1">บันทึกการกล่าวหา/กล่าวโทษ</option>
+          <option value="2">บันทึกสืบสวนข้อเท็จจริง</option>
+          <option value="3">บันทึกการสอบสวน</option>
+          <option value="4">ยืนยันการกล่าวหา/กล่าวโทษ</option>
+          <option value="5">เผยแพร่การกล่าวหา/กล่าวโทษ</option>
+        </select>
+      </div>
+
     </div>
 
     <div class="row mb-2">
@@ -237,12 +250,12 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="status">
+      <!-- <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>สถานะ</th>
         <td mat-cell *matCellDef="let element">
           {{ element.status }}
         </td>
-      </ng-container>
+      </ng-container> -->
 
       <ng-container matColumnDef="lastUpdate">
         <th mat-header-cell *matHeaderCellDef>วันที่ทำรายการล่าสุด</th>

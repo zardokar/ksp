@@ -17,6 +17,9 @@ export interface EthicsCustomRoute extends Route {
 export class Ethics {
   id?: string | null = null;
   ethicsno: string | null = null;
+
+  processid: string | null = '1';
+
   accuserinfo: string | null = null;
   licenseinfo: string | null = null;
   licenseno: string | null = null;
@@ -250,7 +253,7 @@ export const columns = [
   'personId',
   'name',
   'process',
-  'status',
+  // 'status',
   'lastUpdate',
   'edit',
   'view',
@@ -264,7 +267,7 @@ export interface AccusationList {
   personId: string;
   name: string;
   process: string;
-  status: string;
+  // status: string;
   lastUpdate: string;
   edit: string;
   view: string;
@@ -327,5 +330,28 @@ export const decisions: ListData[] = [
   // },
 
 ];
+
+export const EthicsProcesses: ListData[] = [
+  {
+    value: 1,
+    label: 'บันทึกการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 2,
+    label: 'บันทึกสืบสวนข้อเท็จจริง'
+  },
+  {
+    value: 3,
+    label: 'บันทึกการสอบสวน'
+  },
+  {
+    value: 4,
+    label: 'ยืนยันการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 5,
+    label: 'เผยแพร่การกล่าวหา/กล่าวโทษ'
+  }
+]
 
 export type EthicsKey = keyof Ethics;

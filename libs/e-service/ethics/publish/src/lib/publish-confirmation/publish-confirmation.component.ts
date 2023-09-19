@@ -64,6 +64,7 @@ export class PublishConfirmationComponent implements OnInit {
             const confirmstatus = this.form.controls.confirmstatus.value;
             const payload = {
               id: this.ethicsId,
+              processid : '4',
               confirmstatus,
               confirmdate: new Date().toISOString().split('T')[0],
             };
@@ -84,9 +85,8 @@ export class PublishConfirmationComponent implements OnInit {
       width: '375px',
       data: {
         header: `บันทึกข้อมูลสำเร็จ`,
-        content: `เลขที่รายการ : 640120000123
-        วันที่ : 10 ตุลาคม 2656`,
-        subContent: 'ผู้บันทึกข้อมูล : นางสาวปาเจรา ใกล้คุก',
+        content: ``,
+        subContent: '',
       },
     });
 

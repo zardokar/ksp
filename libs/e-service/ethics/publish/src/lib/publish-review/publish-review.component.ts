@@ -10,7 +10,7 @@ import {
   ConfirmDialogComponent,
 } from '@ksp/shared/dialog';
 import { EthicsService } from '@ksp/shared/service';
-import { jsonParse, thaiDate } from '@ksp/shared/utility';
+import { jsonParse, thaiDate, replaceEmptyWithNull } from '@ksp/shared/utility';
 import { EMPTY, switchMap } from 'rxjs';
 @Component({
   selector: 'e-service-publish-review',
@@ -62,18 +62,18 @@ export class PublishReviewComponent implements OnInit {
             const publishstatus = this.form.controls.publishstatus.value;
             const payload = {
               id: this.ethicsId,
+              processid: '5',
               publishstatus,
               publishdate: new Date().toISOString().split('T')[0],
             };
-            return this.service.updateEthicsPublish(payload);
+            return this.service.updateEthicsAccusation(replaceEmptyWithNull (payload));
           }
           return EMPTY;
         })
       )
       .subscribe((res) => {
-        if (res) {
+        console.log( 'public', res)
           this.onCompleted();
-        }
       });
   }
 
@@ -82,9 +82,8 @@ export class PublishReviewComponent implements OnInit {
       width: '375px',
       data: {
         header: `บันทึกข้อมูลสำเร็จ`,
-        content: `เลขที่รายการ : 640120000123
-        วันที่ : 10 ตุลาคม 2656`,
-        subContent: 'ผู้บันทึกข้อมูล : นางสาวปาเจรา ใกล้คุก',
+        content: ``,
+        subContent: '',
       },
     });
 

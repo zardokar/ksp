@@ -65,13 +65,14 @@ export class InvestigationDetailComponent implements OnInit {
             const accusationValue = this.form.value.accusation as any
             console.log(allegationValue);
             console.log(payload);
+            payload.processid = '2'
             payload.investigationresult = JSON.stringify(
               payload.investigationresult
             );
             payload.investigationsubcommittee = JSON.stringify(
               payload.investigationsubcommittee
             );
-            payload.investigationnotificationdate = allegationValue.investigationnotificationdate
+            payload.investigationnotificationdate = allegationValue.investigationnotificationdate || null
 
             payload.investigationaccusedrecognizedate = allegationValue.investigationaccusedrecognizedate
 
@@ -80,7 +81,7 @@ export class InvestigationDetailComponent implements OnInit {
             // );
             payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
             payload.investigationnote = allegationValue.investigationnote
-            payload.investigationaction = allegationValue.investigationaction
+            payload.investigationaction = allegationValue.investigationaction || null
             // payload.investigationaction = JSON.stringify(
             //   allegationValue.investigationaction
             // );
@@ -88,8 +89,8 @@ export class InvestigationDetailComponent implements OnInit {
 
             if (payload?.accusationaction) {
       
-              let getKeyAction  = Object.keys( accusationValue?.accusationaction )
-              for(let actionType of getKeyAction){
+              const getKeyAction  = Object.keys( accusationValue?.accusationaction )
+              for(const actionType of getKeyAction){
                 payload.accusationaction[actionType]  = accusationValue?.accusationaction[actionType] !== null ? true : false
               }
               
