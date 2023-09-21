@@ -539,6 +539,8 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
               fileinfo: JSON.stringify({ file }),
             };
 
+            delete payload['detail']
+
             const data = replaceEmptyWithNull(payload);
             const formatedData = formatDatePayload(data);
             
