@@ -31,6 +31,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class QualificationApproveDetailComponent extends KspFormBaseComponent implements OnInit, AfterViewInit
 {
+  es_tab4_comment  = ''
+  es_tab5_comment  = ''
+
   edu2_degreename  = ''
   edu3_degreename  = ''
   edu4_degreename  = ''
@@ -89,7 +92,7 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
   }
 
   ngOnInit(): void {
-    console.log( this.data )
+    // console.log( this.data )
     const education     = this.data.education;
     const mode          = this.data.mode;
     const otherreason   = this.data?.otherreason || { degree: '1', reason1: null , reason2_1: null, reason2_2: null, reason2_3: null   }
@@ -117,6 +120,9 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
       reason2_2 : otherreason.reason2_2,
       reason2_3 : otherreason.reason2_3
     };
+
+    this.es_tab4_comment = this.data?.officer_comment.es_tab4 
+    this.es_tab5_comment = this.data?.officer_comment.es_tab5 
 
     this.edu2_degreename = eduData.edu2_degreename || null
     this.edu3_degreename = eduData.edu3_degreename || null
@@ -163,8 +169,8 @@ export class QualificationApproveDetailComponent extends KspFormBaseComponent im
   }
 
   save() {
-    this.dialogRef.close({ otherreason: this.form.getRawValue() });
-    console.log( this.form.getRawValue() )
+    const senddata = { otherreason: this.form.getRawValue() }
+    this.dialogRef.close(senddata);
   }
 
   onClickCheckBox(event : any)

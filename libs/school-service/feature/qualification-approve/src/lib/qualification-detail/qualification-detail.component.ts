@@ -92,6 +92,7 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   careerType = '';
   requestId!: number;
   requestData = new KspRequest();
+  detail: any;
   otherreason: any;
   refperson: any;
   evidenceFiles: FileGroup[] = files;
@@ -256,6 +257,10 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
           );
         }
 
+        req.detail
+          ? (req.detail = JSON.parse(zutils.convertBase64toJSONStr(req.detail)) )
+          : null;
+
         req.refperson
           ? (req.refperson = JSON.parse(atob(req.refperson)))
           : null;
@@ -264,8 +269,12 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
           ? (req.otherreason = JSON.parse( zutils.convertBase64toJSONStr(req.otherreason)) )
           : null;
 
-        this.refperson = req.refperson;
-        this.otherreason = req.otherreason;
+        this.detail       = req.detail
+        this.refperson    = req.refperson;
+        this.otherreason  = req.otherreason;
+
+        console.log( `xxx = `, req )
+
       }
     });
   }
@@ -409,6 +418,8 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   // ---------------------------------------------------------------------
   onSave() {
 
+    const hascomment = zutils.exist(this.detail,'checkdetail')
+
     const confirmDialog = this.dialog.open(
       QualificationApproveDetailComponent,
       {
@@ -421,6 +432,10 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
                         edu2: this.form.get('edu2')?.value,
                         edu3: this.form.get('edu3')?.value,
                         edu4: this.form.get('edu4')?.value
+          },
+          officer_comment : {
+            es_tab4: hascomment ? this.detail.checkdetail[3].detail : undefined ,
+            es_tab5: hascomment ? this.detail.checkdetail[4].detail : undefined
           },
           education: this.form.get('edu1')?.value,
           mode: this.mode,
@@ -437,11 +452,18 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   }
 
   saved(reasonForm: any) {
+    const hascomment     = zutils.exist(this.detail,'checkdetail')
     const completeDialog = this.dialog.open(
       QualificationApprovePersonComponent,
       {
         width: '850px',
-        data: { mode: this.mode, refperson: this.refperson },
+        data: { 
+          mode: this.mode, 
+          refperson: this.refperson,
+          officer_comment : {
+            es_tab5: hascomment ? this.detail.checkdetail[4].detail : undefined
+          }
+        },
       }
     );
 
