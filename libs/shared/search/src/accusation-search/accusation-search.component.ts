@@ -116,12 +116,22 @@ export class AccusationSearchComponent
         const process   = EthicsProcesses[ parseInt(item.processid) - 1 ]
         if( zutils.exist(process) !== false && parseInt(process.value) === parseInt(filterprocess) )
         {
-          if(json?.nameth !== undefined){
-            const splitname = json?.nameth.split(' ')
-            item.firstnameth      = splitname[0]
-            item.lastnameth       = splitname[1]
+          for(let accused of json){
+            console.log(accused)
+            if(item.name == undefined){
+              item.name             = accused?.nameth + " " + accused?.lastnameth
+              item.idcardno         = accused?.identitynumber 
+            }else{
+              item.name             = item?.name + ", " + accused?.nameth + " " + accused?.lastnameth
+              item.idcardno         = item?.idcardno + ", "  + accused?.identitynumber 
+            }
+            // if(accused?.nameth !== undefined){
+            //   const splitname = json?.nameth.split(' ')
+            //   item.firstnameth      = splitname[0]
+            //   item.lastnameth       = splitname[1]
+            // }
+
           }
-          item.idcardno         = json?.identitynumber
           item.createdate       = thaiDate(new Date(`${item.createdate}`));
           item.updatedate       = thaiDate(new Date(`${item.updatedate}`));
           item.process          = `${ process.label }`

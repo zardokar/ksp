@@ -110,6 +110,8 @@
                   type="text"
                   class="form-control"
                   formControlName="phone"
+                  maxlength="10"
+                  (keyup)="onChangeIDcardno($event)"
                 />
               </td>
               <td>

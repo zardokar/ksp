@@ -129,8 +129,11 @@ export class EthicsService {
       'accuserinfo',
       'accusationfile',
       'accusationconsideration',
+      'accusationcondemnation',
+      'accusationaction',
       'investigationresult',
       'investigationsubcommittee',
+      'inquerymeetinghistory',
       'inquiryresult',
       'inquirysubcommittee',
     ];

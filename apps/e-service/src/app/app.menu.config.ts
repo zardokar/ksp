@@ -303,7 +303,7 @@ export const ethicsMenu: MenuConfig[] = [
       },
       {
         path: '/inquiry',
-        label: 'บันทีกการสอบสวน',
+        label: 'บันทีกการสอบสวน/ผลการพิจารณา',
       },
     ],
   },
