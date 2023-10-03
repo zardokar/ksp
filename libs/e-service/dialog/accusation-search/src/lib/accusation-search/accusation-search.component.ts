@@ -9,8 +9,10 @@ import {
   GeneralInfoService,
 } from '@ksp/shared/service';
 
-import { replaceEmptyWithNull } from '@ksp/shared/utility';
+import { replaceEmptyWithNull, zutils } from '@ksp/shared/utility';
 import { Observable } from 'rxjs';
+
+import { SelfLicense } from '@ksp/shared/interface';
 
 @Component({
   selector: 'e-service-ethic-ui-accusation-list',
@@ -46,6 +48,8 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
   addressInfo : any;
   identityNo: any;
   licenseId: any;
+  licenseInfo: SelfLicense| null | any = null;
+  selectLicTab = '';
   currentPage = 1;
   prefixList$!: Observable<any>;
   bureaus$!: Observable<any>;
@@ -87,9 +91,6 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
       this.dataSource.data = res;
     });
 
-
-
-
   }
   goNext() {
     this.currentPage += 1;
@@ -100,6 +101,10 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     const payload2 = { "id" : form.id }
     this.service.searchSelfLicense(payload2).subscribe((res) => {
       console.log(res);
+
+      this.licenseInfo = selectLicense(res)
+      console.log(  this.licenseInfo )
+
       form.licenseno  = res[0].licenseno as string;
       form.usertype   = res[0].usertype as string;
       form.certificatestartdate   = res[0].certificatestartdate as string;
@@ -108,28 +113,49 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     this.selectedIdCard = form;
   }
   onClickGetInfo(form: any) {
-    // this.service
-      // .searchSelfMyInfo({ identitynumber: form.identitynumber , licenseno: form.licenseno })
-      // .subscribe((res) => {
-      //   console.log(res)
-      //   // if(this.personinfo){
-        
-      //   // }
-      //   this.personalInfo  = res as any
-
-      //   this.identityNo = form.id
-      //   this.personSelected = true;
-      //   // this.personinfo.assignPersonInfo( this.personalInfo )
-      // });
-
+      this.onClickRadio( form )
       
       console.log(form);
       this.personalInfo  = form as any
       this.identityNo = form.identitynumber
       this.personSelected = true;
+  }
 
+  onClickTabLicenseType(data : any){
+    this.selectLicTab = data
   }
 }
+
+// ----------------------------------------------------
+function selectLicense(dataarray : any[any])
+{
+  const result : SelfLicense  = {}
+  const now                   = new Date()
+
+  dataarray.map( (license : any) => {
+    const cert_end = zutils.exist(license.certificateenddate) ? new Date( license.certificateenddate ) : undefined
+    if( cert_end !== undefined && (cert_end >= now) )
+    {
+      result.userid           = license.userid
+      result.idcardno         = license.identitynumber
+      result.careertype       = license.usertype
+      result.licensetype      = license.usertype
+      result.licenseno        = license.certificateno
+      result.licensestartdate = license.certificatestartdate
+      result.licenseenddate   = license.certificateenddate
+      result.firstnameth      = license.nameth
+      result.lastnameth       = license.lastnameth
+      result.firstnameen      = license.nameen
+      result.lastnameen       = license.lastnameen
+      result.passportno       = license.passportno
+      result.sex              = license.genderid
+    }
+  })
+
+  return result 
+}
+
+// ----------------------------------------------------
 
 export const column = [
   'order',
