@@ -217,13 +217,13 @@ export class InvestigationDetailComponent implements OnInit {
             }  
             // -----------------------------------------------
             
-            res.investigationorderdate = cleanUpDate( res.investigationorderdate )
-            res.investigationrecognizedate = cleanUpDate( res.investigationrecognizedate )
-            res.investigationreportdate = cleanUpDate( res.investigationreportdate )
-            res.investigationnotificationdate = cleanUpDate( res.investigationnotificationdate )
-            res.investigationexplaindate = cleanUpDate( res.investigationexplaindate )
-            res.investigationdate = cleanUpDate( res.investigationdate )
-            res.investigationaccusedrecognizedate = cleanUpDate( res.investigationaccusedrecognizedate )
+            // res.investigationorderdate = cleanUpDate( res.investigationorderdate )
+            // res.investigationrecognizedate = cleanUpDate( res.investigationrecognizedate )
+            // res.investigationreportdate = cleanUpDate( res.investigationreportdate )
+            // res.investigationnotificationdate = cleanUpDate( res.investigationnotificationdate )
+            // res.investigationexplaindate = cleanUpDate( res.investigationexplaindate )
+            // res.investigationdate = cleanUpDate( res.investigationdate )
+            // res.investigationaccusedrecognizedate = cleanUpDate( res.investigationaccusedrecognizedate )
             //------------------------------------------------
             
             this.form.controls.investigation.patchValue(res);

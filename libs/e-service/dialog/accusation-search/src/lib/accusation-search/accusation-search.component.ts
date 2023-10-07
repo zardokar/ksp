@@ -99,11 +99,12 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     // this.selectedIdCard = form.identitynumber;
     const payload2 = { "id" : form.id }
     this.service.searchSelfLicense(payload2).subscribe((res) => {
-      console.log(res);
-      form.licenseno  = res[0].licenseno as string;
-      form.usertype   = res[0].usertype as string;
-      form.certificatestartdate   = res[0].certificatestartdate as string;
-      form.certificateenddate   = res[0].certificateenddate as string;
+      // console.log(form);
+      
+      form.licenseno  = res[0].licenseno;
+      form.usertype   = res[0].usertype;
+      form.certificatestartdate   = res[0].certificatestartdate;
+      form.certificateenddate   = res[0].certificateenddate;
     });
     this.selectedIdCard = form;
   }

@@ -111,7 +111,8 @@ export class EthicsService {
       'accusationincidentdate',
       'accusationissuedate',
       'accusationassigndate',
-
+      'investigationaccusedrecognizedate',
+      'investigationnotificationdate',
       'investigationrecognizedate',
       'investigationexplaindate',
       'investigationdate',
@@ -123,6 +124,8 @@ export class EthicsService {
       'resulttoaccuserdate',
       'resulttoschooldate',
       'resulttoaccuseddate',
+      'confirmdate',
+      'updatedate'
     ];
     const jsonColumn = [
       'licenseinfo',

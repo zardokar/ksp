@@ -168,10 +168,8 @@ export class AccusationRecordComponent
     this.members.removeAt(index);
   }
 
-  addAccusedRow(accusedData: Ehicsaccused = defaultAccused){//(data: EhicsSubcommittee = defaultSubcommittee) {
-    // this.accusedInfo = accusedData
-    console.log(accusedData)
-    console.log(accusedData.licenseno)
+  addAccusedRow(accusedData: Ehicsaccused = defaultAccused){//(data: EhicsSubcommittee = defaultSubcommittee) { // accusedData: Ehicsaccused = defaultAccused
+    this.accusedInfo = accusedData
     const accusedForm = this.fb.group({
       id: [accusedData.id],
       licenseno: [accusedData.licenseno],
@@ -185,7 +183,6 @@ export class AccusationRecordComponent
       certificateenddate: [accusedData.certificateenddate],
       bureau: [accusedData.bureau]
     });
-    console.log(accusedForm)
     this.accuseds.push(accusedForm);
   }
   deleteAccusedRow(index: number) {

@@ -20,6 +20,7 @@ import {
   KspFormBaseComponent,
 } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
+import { MatDialog } from '@angular/material/dialog';
 import { jsonParse, providerFactory, thaiDate, zutils } from '@ksp/shared/utility';
 // import localForage from 'localforage';
 
@@ -71,6 +72,7 @@ export class AccusationSearchComponent
   dataSource = new MatTableDataSource<AccusationList>();
   displayedColumns: string[] = columns;
   constructor(
+    public dialog: MatDialog,
     private fb: FormBuilder,
     private service: EthicsService,
     private cdr: ChangeDetectorRef,
@@ -112,12 +114,18 @@ export class AccusationSearchComponent
       const filterprocess : string = this.form.controls.ethicProcess.value || ''
       const dataresult : any = []
       res.forEach((item: any) => {
-        const json: any = jsonParse(item?.licenseinfo)
+        // const json: any = jsonParse(item?.licenseinfo)
+        item.licenseinfo = jsonParse(item?.licenseinfo)
         const process   = EthicsProcesses[ parseInt(item.processid) - 1 ]
         if( zutils.exist(process) !== false && parseInt(process.value) === parseInt(filterprocess) )
         {
-          for(let accused of json){
-            console.log(accused)
+          if( typeof item.licenseinfo == "string"){
+            item.licenseinfo = jsonParse(item.licenseinfo)
+          }  
+
+          console.log(item.licenseinfo)
+          for(let accused of item.licenseinfo){
+            // console.log(accused)
             if(item.name == undefined){
               item.name             = accused?.nameth + " " + accused?.lastnameth
               item.idcardno         = accused?.identitynumber 
@@ -152,4 +160,28 @@ export class AccusationSearchComponent
     this.form.reset();
     this.dataSource.data = [];
   }
+
+  // Modal log 
+  
+  // openUpdateLogDialog() {
+  //   const dialogRef = this.dialog.open(InquiryConsiderRecordComponent, {
+  //     height: '50vh',
+  //     width: '50vw',
+  //     position: {
+  //       top: '25vh',
+  //       right: '25vw',
+  //     },
+  //   });
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     console.log("after Close ::: ",result);
+  //     if(result !== ""){
+  //     // this.addConsiderRow(result)
+  //     }
+  //     // this.selectId = result
+  //     // this.addressId = result
+  //     // this.updateStatus = true
+  //   });
+  // }
+
+
 }

@@ -108,11 +108,13 @@ export class InquiryMainComponent implements OnInit {
               payload.resultaffiliationname           = payload2.resultaffiliationname 
               payload.resulttoschoolnotificationdate  =  cleanUpDate( payload2.resulttoschoolnotificationdate )
             }
-
-            this.collectFormData(payload) 
-            console.log( `payload`, replaceEmptyWithNull(payload))
-            console.log( `payload2`, payload2)
+            this.collectFormData(payload)
             
+            const payload3= this.form.value.accusation as any;
+
+            payload.accusationcondemnation        = JSON.stringify(payload3.accusationcondemnation)
+            payload.accusationconsideration       = JSON.stringify(payload3.accusationconsideration)
+            payload.accusationaction              = JSON.stringify(payload3.accusationaction)
 
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
@@ -143,9 +145,9 @@ export class InquiryMainComponent implements OnInit {
     payload.investigationresult       = JSON.stringify(investigation.investigationresult)
     payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
 
-    payload.accusationfile            = JSON.stringify(payload.accusationfile)
-    payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
-    payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
+    // payload.accusationfile            = JSON.stringify(payload.accusationfile)
+    // payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
+    // payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
 
     return payload
   }
@@ -165,20 +167,25 @@ export class InquiryMainComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    // this.checkRequestId();
+  }
+
+  ngAfterViewInit( ) : void{
     this.checkRequestId();
   }
+
   // ------------------------------------------------------------------------
   checkRequestId() {
 
     this.route.paramMap.subscribe( (params) => {
       this.ethicsId = Number(params.get('id'));
+
       if (this.ethicsId) {
-        
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
 
-            console.log( res )
             // ----------------------------------------------- Cleaning Data
             res.createdate                = cleanUpDate( res.createdate )
+            // res.licenseinfo               = jsonParse(res.licenseinfo)
             res.accusationassigndate      = cleanUpDate( res.accusationassigndate )
             res.accusationincidentdate    = cleanUpDate( res.accusationincidentdate )
             res.accusationissuedate       = cleanUpDate( res.accusationissuedate )
@@ -222,10 +229,9 @@ export class InquiryMainComponent implements OnInit {
             // }
             if( typeof res?.licenseinfo == "string"){
               res.licenseinfo = jsonParse(res.licenseinfo)
-            } 
-            console.log(this.accusation);
+            }        
             if( isArray( res?.licenseinfo )){
-              for(let accused of res?.licenseinfo){
+              for(let accused of res.licenseinfo){
                 this.accusation.addAccusedRow()
               }
             }
@@ -298,12 +304,12 @@ export class InquiryMainComponent implements OnInit {
             }
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
-            }  
-            
-            this.form.controls.accusation.patchValue(res);
-            this.form.controls.inquiryResult.patchValue(res);
-            this.form.controls.investigation.patchValue(res);
+            }              
+
             this.form.controls.inquiry.patchValue(res);
+            this.form.controls.inquiryResult.patchValue(res);
+            this.form.controls.accusation.patchValue(res);
+            this.form.controls.investigation.patchValue(res);
           });
       }
     });
