@@ -127,6 +127,9 @@ export class FormInvestigationDetailComponent
       bureauname: data.bureauname,
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);

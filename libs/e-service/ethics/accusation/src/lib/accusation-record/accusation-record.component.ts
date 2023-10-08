@@ -163,6 +163,9 @@ export class AccusationRecordComponent
       phone: [data.phone],
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);
@@ -184,6 +187,9 @@ export class AccusationRecordComponent
       bureau: [accusedData.bureau]
     });
     this.accuseds.push(accusedForm);
+    if(this.mode === 'view'){
+      this.accuseds.disable()
+    }
   }
   deleteAccusedRow(index: number) {
     this.accuseds.removeAt(index);
@@ -196,7 +202,11 @@ export class AccusationRecordComponent
       condemnationtype : [data.condemnationtype],
       condemnationdetail : [data.condemnationdetail]
     });
+
     this.accusationcondemnations.push(accusationcondemnationForm);
+    if(this.mode === 'view'){
+      this.accusationcondemnations.disable()
+    }
   }
   deleteCondemnationRow(index: number) {
     this.accusationcondemnations.removeAt(index);

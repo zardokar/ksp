@@ -137,6 +137,9 @@ export class InquiryDetailComponent
       bureauname: data.bureauname,
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);
@@ -153,6 +156,9 @@ export class InquiryDetailComponent
       meetingfile: data.meetingfile
     });
     this.meetings.push(rewardForm);
+    if(this.mode === 'view'){
+      this.meetings.disable()
+    }
   }
   deleteConsiderRow(index: number) {
     this.meetings.removeAt(index);

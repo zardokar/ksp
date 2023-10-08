@@ -111,6 +111,11 @@ export class EthicsService {
       'accusationincidentdate',
       'accusationissuedate',
       'accusationassigndate',
+      'inquerylicensesuspendrecognizedate',
+      'inquerylicensesuspendnotificationdate',
+      'inquerylicensestatusaccusedrecognizedate',
+      'inquerylicensestatusnotificationdate',
+      'inquerynotificationdate',
       'investigationaccusedrecognizedate',
       'investigationnotificationdate',
       'investigationrecognizedate',
@@ -124,7 +129,12 @@ export class EthicsService {
       'resulttoaccuserdate',
       'resulttoschooldate',
       'resulttoaccuseddate',
+      'resultendsuspendlicensedate',
+      'resultstartsuspendlicensedate',
+      'resulttoaccusednotificationdate',
+      'resulttoschoolnotificationdate',
       'confirmdate',
+      'createdate',
       'updatedate'
     ];
     const jsonColumn = [
@@ -136,9 +146,9 @@ export class EthicsService {
       'accusationaction',
       'investigationresult',
       'investigationsubcommittee',
-      'inquerymeetinghistory',
-      'inquiryresult',
-      'inquirysubcommittee',
+      // 'inquerymeetinghistory',
+      // 'inquiryresult',
+      // 'inquirysubcommittee',
     ];
     for (const key in info) {
       const ethicsKey = key as EthicsKey;

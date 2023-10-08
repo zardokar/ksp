@@ -41,7 +41,7 @@
 
   <div class="d-flex justify-content-between">
     <div class="form-label">คณะอนุกรรมการสืบสวนข้อเท็จจริง</div>
-    <div role="button" class="text-primary" (click)="addRow()">
+    <div role="button" class="text-primary" (click)="addRow()" *ngIf="mode !== 'view'">
       + เพิ่มรายการ
     </div>
   </div>
@@ -59,7 +59,7 @@
           <th scope="col">ตำแหน่ง</th>
           <th scope="col">สังกัด - หน่วยงาน/สถานศึกษา</th>
           <!-- <th scope="col">แก้ไข</th> -->
-          <th scope="col">ลบ</th>
+          <th scope="col" *ngIf="mode !== 'view'">ลบ</th>
         </tr>
       </thead>
       <tbody>
@@ -138,7 +138,7 @@
                   class="bi bi-pencil-square fs-5 text-primary"
                 ></i>
               </td> -->
-              <td>
+              <td *ngIf="mode !== 'view'">
                 <i
                   (click)="deleteRow(i)"
                   role="button"
