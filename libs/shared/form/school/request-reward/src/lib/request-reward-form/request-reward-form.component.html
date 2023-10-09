@@ -127,6 +127,7 @@
       <thead>
         <tr>
           <th scope="col">ลำดับ</th>
+          <th scope="col">ผู้ประสานงาน</th>
           <th scope="col">ประเภทผู้ร่วมพัฒนา <span class="txt-req">*</span> </th>
           <th scope="col">เลขบัตรประจำตัวประชาชน <span class="txt-req">*</span></th>
           <th scope="col" colspan="3" class="text-center">
@@ -135,8 +136,6 @@
           </th>
           <th scope="col">เบอร์โทรศัพท์มือถือ <span class="txt-req">*</span></th>
           <th scope="col">อีเมล <span class="txt-req">*</span></th>
-          <th scope="col">วิทยฐานะ <span class="txt-req">*</span></th>
-          <th scope="col">ผู้ประสานงาน</th>
         </tr>
       </thead>
       <tbody>
@@ -144,6 +143,9 @@
           <ng-container *ngFor="let row of members.controls; let i = index">
             <tr [formGroupName]="i">
               <th class="text-center">{{ i + 1 }}</th>
+              <td class="text-center align-items-center">
+                <input type="checkbox" formControlName="isCoordinator" />
+              </td>
               <td>
                 <select
                   class="form-select"
@@ -212,17 +214,6 @@
                   style="min-width: 150px"
                 />
               </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="academicstanding"
-                  style="min-width: 150px"
-                />
-              </td>
-              <td class="text-center align-items-center">
-                <input type="checkbox" formControlName="isCoordinator" />
-              </td>
             </tr>
           </ng-container>
         </ng-container>
@@ -245,9 +236,8 @@
       title="กรุณาแนบหลักฐาน "
       [groups]="rewardFiles"
       [uniqueTimestamp]="uniqueTimeStamp"
-      [titleNote]="
-        '* กรุณาอัพโหลดไฟล์ .pdf และขนาดไม่เกิน 10 MB สามารถอัพโหลดไฟล์ได้มากกว่า 1 ไฟล์ต่อรายการ'
-      "
+      [titleNote]="'* กรุณาอัพโหลดไฟล์ .pdf และขนาดไม่เกิน 10 MB สามารถอัพโหลดไฟล์ได้มากกว่า 1 ไฟล์ต่อรายการ'"
+      (uploadComplete)="onUploadComplete($event)"
     ></ksp-form-multi-attachment>
   </div>
 

@@ -32,6 +32,7 @@
           [memberList]="memberData"
           [uniqueTimeStamp]="uniqueTimeStamp"
           formControlName="reward"
+          (uploadFile)="getUploadFileatParent($event)"
         ></ksp-request-reward-form>
       </div>
     </div>

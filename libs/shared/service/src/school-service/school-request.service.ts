@@ -60,6 +60,13 @@ export class SchoolRequestService {
     );
   }
 
+  schKSPXCreateRequest(payload: Partial<KspRequest>): Observable<any> {
+    return this.http.post(
+      `${environment.shortApiUrl}/kspx/kspreq_insert.php`,
+      payload
+    );
+  }
+
   schGetRequestById(id: number): Observable<KspRequest> {
     const payload = {
       id: `${id}`,
