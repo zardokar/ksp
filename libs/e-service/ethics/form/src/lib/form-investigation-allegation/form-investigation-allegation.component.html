@@ -49,6 +49,18 @@
           <mat-datepicker #picker3></mat-datepicker>
         </div>
       </div>
+
+      <div class="row mb-2">
+        <div class="col">
+          <label class="form-label">หมายเหตุ </label>
+          <textarea
+            class="form-control"
+            type="text"
+            rows="3"
+            formControlName="investigationnote"
+          >
+          </textarea>
+      </div>
     </div>
 
     <div class="row mb-2">
@@ -83,14 +95,14 @@
 
     <div class="bg-light p-3 mt-3">
       <label class="form-label">การพิจารณาดำเนินการ</label>
-      <div formControlName="investigationaction" class="d-flex flex-column">
+      <div formGroupName="investigationaction" class="d-flex flex-column">
       <ng-container *ngFor="let item of allegationList">
         <div class="d-flex flex-row align-items-center mb-2">
           <input 
             type="radio"
             class="form-check-input"
             value="{{ item.value }}"
-            
+            formControlName="{{ item.name }}"
           />
           <label class="form-label ms-2">{{ item.label }}</label>
         </div>
@@ -111,5 +123,6 @@
       </div>
     </div>
 
+   </div>
   </div>
 </form>

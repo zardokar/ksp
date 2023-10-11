@@ -17,6 +17,9 @@ export interface EthicsCustomRoute extends Route {
 export class Ethics {
   id?: string | null = null;
   ethicsno: string | null = null;
+
+  processid: string | null = '1';
+
   accuserinfo: string | null = null;
   licenseinfo: string | null = null;
   licenseno: string | null = null;
@@ -67,6 +70,7 @@ export class Ethics {
   investigationnotificationdate: string | null = null;
   investigationaccusedrecognizedate: string | null = null;
   investigationaction: string | null = null;
+  investigationnotificationdetail: string | null = null;
   investigationdetail: string | null = null;
   investigationevidencefile: string | null = null;
 
@@ -80,6 +84,7 @@ export class Ethics {
   // allegationinformdate: string | null = null;
   // allegationaccusedinformdate: string | null = null;
 
+  licensesuspension: string | null = null;
   inquiryorderno: string | null = null;
   inquiryorderdate: string | null = null;
   inquirysubcommittee: string | null = null;
@@ -92,6 +97,9 @@ export class Ethics {
   inquerylicensestatus: string | null = null;
   inquerylicensestatusnotificationdate: string | null = null;
   inquerylicensestatusaccusedrecognizedate: string | null = null;
+  inquerylicensesuspendnotificationdate: string | null = null;
+  inquerylicensesuspendrecognizedate: string | null = null;
+  inquerynotificationdate: string | null = null;
 
   resultredno: string | null = null;
   resultblackno: string | null = null;
@@ -137,6 +145,7 @@ export const defaultSubcommittee: EhicsSubcommittee = {
   lastname: null,
   position: null,
   bureau: null,
+  bureauname: null,
 };
 
 export const defaultAccused: Ehicsaccused = {
@@ -193,6 +202,7 @@ export interface EhicsSubcommittee {
   lastname: string | null;
   position: string | null;
   bureau: string | null;
+  bureauname: string | null;
 }
 
 export interface Ehicsaccused {
@@ -243,7 +253,7 @@ export const columns = [
   'personId',
   'name',
   'process',
-  'status',
+  // 'status',
   'lastUpdate',
   'edit',
   'view',
@@ -257,7 +267,7 @@ export interface AccusationList {
   personId: string;
   name: string;
   process: string;
-  status: string;
+  // status: string;
   lastUpdate: string;
   edit: string;
   view: string;
@@ -284,22 +294,22 @@ export const decisions: ListData[] = [
     value: 3,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน ตามข้อ 60/5',
     name: 'decisions',
     value: 4,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์ ตามข้อ 60/5',
     name: 'decisions',
     value: 5,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษตักเตือน',
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษพักใช้ ตามข้อ 60/5',
     name: 'decisions',
     value: 6,
   },
   {
-    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษภาคทัณฑ์',
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษเพิกถอน ตามข้อ 60/6',
     name: 'decisions',
     value: 7,
   },
@@ -320,5 +330,28 @@ export const decisions: ListData[] = [
   // },
 
 ];
+
+export const EthicsProcesses: ListData[] = [
+  {
+    value: 1,
+    label: 'บันทึกการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 2,
+    label: 'บันทึกสืบสวนข้อเท็จจริง'
+  },
+  {
+    value: 3,
+    label: 'บันทึกการสอบสวน'
+  },
+  {
+    value: 4,
+    label: 'ยืนยันการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 5,
+    label: 'เผยแพร่การกล่าวหา/กล่าวโทษ'
+  }
+]
 
 export type EthicsKey = keyof Ethics;

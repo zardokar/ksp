@@ -3,14 +3,19 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccusationRecordComponent } from '@ksp/e-service/ethics/accusation';
-import { InquiryDetailComponent } from '@ksp/e-service/ethics/inquiry';
+import { InquiryDetailComponent ,InquiryResultComponent } from '@ksp/e-service/ethics/inquiry';
 import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
 import {
   CompleteDialogComponent,
   ConfirmDialogComponent,
 } from '@ksp/shared/dialog';
 import { EthicsService } from '@ksp/shared/service';
-import { jsonParse, thaiDate } from '@ksp/shared/utility';
+import { jsonParse,
+  thaiDate,
+  jsonStringify,
+  replaceEmptyWithNull,
+  mapMultiFileInfo,
+  zdtform } from '@ksp/shared/utility';
 import { EMPTY, switchMap } from 'rxjs';
 import _, { isArray } from 'lodash';
 import moment from 'moment';
@@ -23,7 +28,7 @@ export class PublishConfirmationComponent implements OnInit {
   form = this.fb.group({
     confirmstatus: [],
     inquiry: [],
-    inquiryresult: [],
+    inquiryResult: [],
     accusation: [],
     investigation: [],
   });
@@ -42,12 +47,19 @@ export class PublishConfirmationComponent implements OnInit {
   investigation!: FormInvestigationDetailComponent;
   @ViewChild(InquiryDetailComponent)
   inquiry!: InquiryDetailComponent;
+  @ViewChild(InquiryResultComponent)
+  inquiryResult!: InquiryResultComponent;
   cancel() {
     this.router.navigate(['/', 'publish', 'list']);
   }
   ngOnInit(): void {
+    // this.checkRequestId();
+  }
+
+  ngAfterViewInit(): void {
     this.checkRequestId();
   }
+
   save() {
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -64,6 +76,7 @@ export class PublishConfirmationComponent implements OnInit {
             const confirmstatus = this.form.controls.confirmstatus.value;
             const payload = {
               id: this.ethicsId,
+              processid : '4',
               confirmstatus,
               confirmdate: new Date().toISOString().split('T')[0],
             };
@@ -84,9 +97,8 @@ export class PublishConfirmationComponent implements OnInit {
       width: '375px',
       data: {
         header: `บันทึกข้อมูลสำเร็จ`,
-        content: `เลขที่รายการ : 640120000123
-        วันที่ : 10 ตุลาคม 2656`,
-        subContent: 'ผู้บันทึกข้อมูล : นางสาวปาเจรา ใกล้คุก',
+        content: ``,
+        subContent: '',
       },
     });
 
@@ -104,69 +116,163 @@ export class PublishConfirmationComponent implements OnInit {
           .getEthicsByID({ id: this.ethicsId })
           .subscribe((res: any) => {
             console.log(res);
-            this.accusation.accusationFiles.forEach(
-              (element: any, index: any) => {
-                if (res.accusationfile) {
-                  const json: any = res?.accusationfile;
-                  if (json) {
-                    element.fileid = json[index]?.fileid;
-                    element.filename = json[index]?.filename;
-                  }
+
+            res.createdate                = cleanUpDate( res.createdate )
+            // res.licenseinfo               = jsonParse(res.licenseinfo)
+            res.accusationassigndate      = cleanUpDate( res.accusationassigndate )
+            res.accusationincidentdate    = cleanUpDate( res.accusationincidentdate )
+            res.accusationissuedate       = cleanUpDate( res.accusationissuedate )
+            res.inquiryjbdate             = cleanUpDate( res.inquiryjbdate )
+            res.inquiryorderdate          = cleanUpDate( res.inquiryorderdate )
+            res.investigationdate         = cleanUpDate( res.investigationdate )
+            res.investigationreportdate   = cleanUpDate( res.investigationreportdate)
+            res.investigationorderdate    = cleanUpDate( res.investigationorderdate)
+            res.inquerylicensestatus                      = res.inquerylicensestatus;
+            res.inquerylicensestatusnotificationdate      = cleanUpDate( res.inquerylicensestatusnotificationdate );
+            res.inquerylicensestatusaccusedrecognizedate  = cleanUpDate(res.inquerylicensestatusaccusedrecognizedate);
+            res.inquiryorderno                            = res.inquiryorderno;
+            res.inquiryexplaindate                        = cleanUpDate(res.inquiryexplaindate);
+            res.inquiryreport                             = res.inquiryreport;
+            res.inquiryfile                               = jsonParse(res.inquiryfile);
+            res.inquerylicensesuspendnotificationdate     = cleanUpDate(res.inquerylicensesuspendnotificationdate);
+            res.inquerylicensesuspendrecognizedate        = cleanUpDate(res.inquerylicensesuspendrecognizedate);
+            res.inquerynotificationdate                   = cleanUpDate(res.inquerynotificationdate);
+
+            res.resultredno               = res.resultredno
+            res.resultblackno             = res.resultblackno
+            res.resultcomitteeno          = res.resultcomitteeno
+            res.resultcomitteefile        = res.resultcomitteefile 
+            res.resulttoaccuserfile       = res.resulttoaccuserfile 
+            res.resulttoschoolfile        = res.resulttoschoolfile 
+            res.resulttoaccusedfile       = res.resulttoaccusedfile 
+            res.resultcomitteedate        = cleanUpDate( res.resultcomitteedate )
+            res.resulttoaccuserdate       = cleanUpDate( res.resulttoaccuserdate )
+            res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
+            res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )              
+            res.resultdetail              = res.resultdetail 
+            res.resultstartsuspendlicensedate   = cleanUpDate( res.resultstartsuspendlicensedate ) 
+            res.resultendsuspendlicensedate     = cleanUpDate( res.resultendsuspendlicensedate )
+            res.resulttoaccusednotificationdate = cleanUpDate( res.resulttoaccusednotificationdate )
+            res.resultacademicname              = res.resultacademicname 
+            res.resultaffiliationname           = res.resultaffiliationname 
+            res.resulttoschoolnotificationdate  = cleanUpDate( res.resulttoschoolnotificationdate )
+
+            if( typeof res?.licenseinfo == "string"){
+              res.licenseinfo = jsonParse(res.licenseinfo)
+            }        
+            if( isArray( res?.licenseinfo )){
+              for(let accused of res.licenseinfo){
+                this.accusation.addAccusedRow()
+              }
+            }
+            // ----------------------------------------------- Fill Files Upload
+            this.accusation.accusationFiles.forEach((element, index) => {
+              if (res.accusationfile && res.accusationfile.length > 0) {
+                  const dataobj: any = res.accusationfile;
+                    element.fileid = dataobj[index]?.fileid;
+                  element.filename = dataobj[index]?.filename;
+              }
+            });
+            // ----------------------------------------------- Fill Accusation user info
+            if (res?.accuserinfo) {
+              const dataobj = typeof res?.accuserinfo !== "object" ? jsonParse(res?.accuserinfo) : res?.accuserinfo
+              if (dataobj && dataobj.length) {
+                for (let i = 0; i < dataobj.length; i++) {
+                  this.accusation.addRow();
                 }
               }
-            );
-            if( typeof res?.accuserinfo == "string"){
-              res.accuserinfo = jsonParse(res.accuserinfo)
+              res.accuserinfo = dataobj
+            }
+            if( typeof res?.accusationcondemnation == "string"){
+              res.accusationcondemnation = jsonParse(res.accusationcondemnation)
             }  
-            if( isArray( res?.accuserinfo ) ){
-              for(let accuser of res?.accuserinfo){
-                this.accusation.addRow()
+            if( isArray( res?.accusationcondemnation )){
+              for(let condemnation of res?.accusationcondemnation){
+                this.accusation.addCondemnationRow()
               }
             }
-            this.accusation.setAccusedInfo(res?.licenseinfo)
-            // this.accusation.setAddressInfo(res?.addressinfo ? res.addressinfo : {})
-            this.accusation.getAddressInfo(res?.licenseinfo)
+            // ----------------------------------------------- Accusation consideration
+            if( typeof res?.accusationconsideration == "string"){
+              res.accusationconsideration = jsonParse(res.accusationconsideration)
+            }  
+            // -----------------------------------------------
             if (res?.investigationresult) {
-              const json = jsonParse(res?.investigationresult);
-              res.investigationresult = json;
+              res.investigationresult = typeof res?.investigationresult !== "object" ? jsonParse(res?.investigationresult) : res?.investigationresult;
             }
-            res.accusationincidentdate = moment(res?.accusationincidentdate).toISOString()
-            res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
-            res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
-
-            if (res?.investigationresult) {
-              const json = jsonParse(res?.investigationresult);
-              res.investigationresult = json;
-            }
+            // -----------------------------------------------
             if (res?.investigationsubcommittee) {
-              const json = jsonParse(res?.investigationsubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.investigationsubcommittee !== "object" ? jsonParse(res?.investigationsubcommittee) : res?.investigationsubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.investigation.addRow();
                 }
               }
-              res.investigationsubcommittee = json;
+              res.investigationsubcommittee = dataobj;
             }
+            // -----------------------------------------------
             if (res?.inquiryresult) {
-              const json = jsonParse(res?.inquiryresult);
-              res.inquiryresult = json;
+              res.inquiryresult = typeof res?.inquiryresult !== "object" ? jsonParse(res?.inquiryresult) : res?.inquiryresult;
             }
+            // -----------------------------------------------
             if (res.inquirysubcommittee) {
-              const json = jsonParse(res?.inquirysubcommittee);
-              if (json?.length) {
-                for (let i = 0; i < json.length; i++) {
+              const dataobj = typeof res?.inquirysubcommittee !== "object" ? jsonParse(res?.inquirysubcommittee) : res?.inquirysubcommittee
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
                   this.inquiry.addRow();
                 }
               }
-              res.inquirysubcommittee = json;
+              res.inquirysubcommittee = dataobj;
             }
-            this.form.controls.accusation.patchValue(res);
-            this.form.controls.inquiryresult.patchValue(res);
-            this.form.controls.investigation.patchValue(res);
+            if(res.inquerymeetinghistory){
+              const dataobj = typeof res?.inquerymeetinghistory !== "object" ? jsonParse(res?.inquerymeetinghistory) : res?.inquerymeetinghistory
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
+                  this.inquiry.addConsiderRow();
+                }
+              }
+              res.inquerymeetinghistory = dataobj;
+            }
+            if( typeof res?.accusationaction == "string"){
+              res.accusationaction = jsonParse(res.accusationaction)
+            }              
+
             this.form.controls.inquiry.patchValue(res);
+            this.form.controls.inquiryResult.patchValue(res);
+            this.form.controls.accusation.patchValue(res);
+            this.form.controls.investigation.patchValue(res);
             this.form.controls.confirmstatus.patchValue(res.confirmstatus);
           });
       }
     });
   }
+}
+
+function cleanUpDate(data: string)
+{
+  let convertSTRpass      = true
+  let convertFormSTRpass  = true
+  let convertSTR : any
+  let convertFormSTR : any
+
+  try{
+      convertSTR          = zdtform.from(data , 'UTC_MS',0)
+      const result        =  new Date( convertSTR ) 
+      convertSTRpass      = isFinite(result.getTime())
+  }catch(excp){
+      convertSTRpass      = false
+  }
+  try{
+      convertFormSTR      = zdtform.convertDateStrtoDTStr(data , 'DD-MMM-YY')
+      const result        = new Date( convertFormSTR ) 
+      convertFormSTRpass  = isFinite(result.getTime())
+  }catch(excp){
+      convertFormSTRpass  = false
+  }
+
+  if( convertSTRpass ) 
+      return convertSTR
+  else if( convertFormSTRpass ) 
+      return convertFormSTR
+  else 
+      return ""
 }

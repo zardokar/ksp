@@ -6,6 +6,7 @@ import {
   Input,
   Output,
   ViewChild,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -14,11 +15,13 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import {
   AccusationList,
+  EthicsProcesses,
   columns,
   KspFormBaseComponent,
 } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
-import { jsonParse, providerFactory, thaiDate } from '@ksp/shared/utility';
+import { MatDialog } from '@angular/material/dialog';
+import { jsonParse, providerFactory, thaiDate, zutils } from '@ksp/shared/utility';
 // import localForage from 'localforage';
 
 @Component({
@@ -58,17 +61,25 @@ export class AccusationSearchComponent
     accuserFirstname: [],
     accuserLastname: [],
 
+    ethicProcess: []
+
   });
+
   @Input() showAddButton = false;
+  @Input() current_process = "";
+
   @Output() submited = new EventEmitter<boolean>();
   dataSource = new MatTableDataSource<AccusationList>();
   displayedColumns: string[] = columns;
   constructor(
+    public dialog: MatDialog,
     private fb: FormBuilder,
     private service: EthicsService,
+    private cdr: ChangeDetectorRef,
     public router: Router
   ) {
     super();
+
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
       this.form?.valueChanges.subscribe((value) => {
@@ -78,7 +89,9 @@ export class AccusationSearchComponent
     );
   }
   ngAfterViewInit(): void {
+    this.cdr.detectChanges()
     this.dataSource.paginator = this.paginator;
+    this.form.controls.ethicProcess.setValue(this.current_process as any)
   }
   onClickSearch() {
 
@@ -98,18 +111,42 @@ export class AccusationSearchComponent
     };
 
     this.service.searchEthicssearch(payload).subscribe((res: any) => {
+      const filterprocess : string = this.form.controls.ethicProcess.value || ''
+      const dataresult : any = []
       res.forEach((item: any) => {
-        const json: any = jsonParse(item?.licenseinfo)
-        if(json?.nameth !== undefined){
-          const splitname = json?.nameth.split(' ')
-          item.firstnameth      = splitname[0]
-          item.lastnameth       = splitname[1]
+        // const json: any = jsonParse(item?.licenseinfo)
+        item.licenseinfo = jsonParse(item?.licenseinfo)
+        const process   = EthicsProcesses[ parseInt(item.processid) - 1 ]
+        if( zutils.exist(process) !== false && parseInt(process.value) === parseInt(filterprocess) )
+        {
+          if( typeof item.licenseinfo == "string"){
+            item.licenseinfo = jsonParse(item.licenseinfo)
+          }  
+
+          console.log(item.licenseinfo)
+          for(let accused of item.licenseinfo){
+            // console.log(accused)
+            if(item.name == undefined){
+              item.name             = accused?.nameth + " " + accused?.lastnameth
+              item.idcardno         = accused?.identitynumber 
+            }else{
+              item.name             = item?.name + ", " + accused?.nameth + " " + accused?.lastnameth
+              item.idcardno         = item?.idcardno + ", "  + accused?.identitynumber 
+            }
+            // if(accused?.nameth !== undefined){
+            //   const splitname = json?.nameth.split(' ')
+            //   item.firstnameth      = splitname[0]
+            //   item.lastnameth       = splitname[1]
+            // }
+
+          }
+          item.createdate       = thaiDate(new Date(`${item.createdate}`));
+          item.updatedate       = thaiDate(new Date(`${item.updatedate}`));
+          item.process          = `${ process.label }`
+          dataresult.push(item)
         }
-        item.idcardno         = json?.identitynumber
-        item.createdate       = thaiDate(new Date(`${item.createdate}`));
-        item.updatedate       = thaiDate(new Date(`${item.updatedate}`));
       });
-      this.dataSource.data = res;
+      this.dataSource.data = dataresult;
     });
   }
   createNew() {
@@ -123,4 +160,28 @@ export class AccusationSearchComponent
     this.form.reset();
     this.dataSource.data = [];
   }
+
+  // Modal log 
+  
+  // openUpdateLogDialog() {
+  //   const dialogRef = this.dialog.open(InquiryConsiderRecordComponent, {
+  //     height: '50vh',
+  //     width: '50vw',
+  //     position: {
+  //       top: '25vh',
+  //       right: '25vw',
+  //     },
+  //   });
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     console.log("after Close ::: ",result);
+  //     if(result !== ""){
+  //     // this.addConsiderRow(result)
+  //     }
+  //     // this.selectId = result
+  //     // this.addressId = result
+  //     // this.updateStatus = true
+  //   });
+  // }
+
+
 }

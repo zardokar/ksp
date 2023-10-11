@@ -1,5 +1,10 @@
 <div class="box-header">ผู้รับรองข้อมูล</div>
 <hr />
+
+<div *ngIf="es_tab5_comment !== '' " class="comment-officer">
+  {{es_tab5_comment}}
+</div>
+
 <form [formGroup]="form">
   <div class="fs-5 text-black">ผู้ที่หน่วยงานขอรับรองคุณวุฒิ</div>
   <div class="row mb-2">

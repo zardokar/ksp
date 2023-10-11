@@ -6,6 +6,14 @@ export enum SelfServiceRequestSubType {
   'อื่นๆ' = 5,
 }
 
+export const SelfServiceRequestSubTypeSTR: any = 
+{
+  'TEACHER' : "ครู",
+  'SCHOOL_ADMIN' : 'ผู้บริหารสถานศึกษา',
+  'EDUCATION_ADMIN': 'ผู้บริหารการศึกษา',
+  'SUPERVISOR' : 'ศึกษานิเทศก์'
+}
+
 export const DEFAULT_REQUEST_TYPE_LIST = [
   {
     order: 1,

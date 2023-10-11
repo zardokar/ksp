@@ -41,7 +41,7 @@
 
   <div class="d-flex justify-content-between">
     <div class="form-label">คณะอนุกรรมการสืบสวนข้อเท็จจริง</div>
-    <div role="button" class="text-primary" (click)="addRow()">
+    <div role="button" class="text-primary" (click)="addRow()" *ngIf="mode !== 'view'">
       + เพิ่มรายการ
     </div>
   </div>
@@ -59,7 +59,7 @@
           <th scope="col">ตำแหน่ง</th>
           <th scope="col">สังกัด - หน่วยงาน/สถานศึกษา</th>
           <!-- <th scope="col">แก้ไข</th> -->
-          <th scope="col">ลบ</th>
+          <th scope="col" *ngIf="mode !== 'view'">ลบ</th>
         </tr>
       </thead>
       <tbody>
@@ -130,11 +130,7 @@
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="bureau"
-                />
+                <input type="text" class="form-control" formControlName="bureauname" (click)="searchSchool($event.target)" [attr.grpind]="i" />
               </td>
               <!-- <td>
                 <i
@@ -142,7 +138,7 @@
                   class="bi bi-pencil-square fs-5 text-primary"
                 ></i>
               </td> -->
-              <td>
+              <td *ngIf="mode !== 'view'">
                 <i
                   (click)="deleteRow(i)"
                   role="button"
@@ -166,7 +162,7 @@
             [matDatepicker]="picker2"
             autocomplete="off"
             class="form-control form-date"
-            formControlName="investigationaccusedinformeddate"
+            formControlName="investigationrecognizedate"
             placeholder="วว/ดด/ปปปป"
           />
           <mat-datepicker-toggle
@@ -187,7 +183,7 @@
             [matDatepicker]="picker3"
             autocomplete="off"
             class="form-control form-date"
-            formControlName="investigationaccusedclarifieddate"
+            formControlName="investigationexplaindate"
             placeholder="วว/ดด/ปปปป"
           />
           <mat-datepicker-toggle
@@ -206,7 +202,7 @@
         <div class="d-flex align-items-center">
           <input
             matInput
-            [matDatepicker]="picker2"
+            [matDatepicker]="picker4"
             autocomplete="off"
             class="form-control form-date"
             formControlName="investigationdate"
@@ -215,9 +211,9 @@
           <mat-datepicker-toggle
             class="button-date"
             matSuffix
-            [for]="picker2"
+            [for]="picker4"
           ></mat-datepicker-toggle>
-          <mat-datepicker #picker2></mat-datepicker>
+          <mat-datepicker #picker4></mat-datepicker>
         </div>
       </div>
       <div class="col">
@@ -227,7 +223,7 @@
         <div class="d-flex align-items-center">
           <input
             matInput
-            [matDatepicker]="picker3"
+            [matDatepicker]="picker5"
             autocomplete="off"
             class="form-control form-date"
             formControlName="investigationreportdate"
@@ -236,9 +232,9 @@
           <mat-datepicker-toggle
             class="button-date"
             matSuffix
-            [for]="picker3"
+            [for]="picker5"
           ></mat-datepicker-toggle>
-          <mat-datepicker #picker3></mat-datepicker>
+          <mat-datepicker #picker5></mat-datepicker>
         </div>
       </div>
     </div>
@@ -282,7 +278,7 @@
             <div class="d-flex align-items-center">
               <input
                 matInput
-                [matDatepicker]="picker2"
+                [matDatepicker]="picker6"
                 autocomplete="off"
                 class="form-control form-date"
                 formControlName="informaccused"
@@ -292,9 +288,9 @@
               <mat-datepicker-toggle
                 class="button-date"
                 matSuffix
-                [for]="picker2"
+                [for]="picker6"
               ></mat-datepicker-toggle>
-              <mat-datepicker #picker2></mat-datepicker>
+              <mat-datepicker #picker6></mat-datepicker>
             </div>
           </div>
           <div class="col">
@@ -304,7 +300,7 @@
             <div class="d-flex align-items-center">
               <input
                 matInput
-                [matDatepicker]="picker3"
+                [matDatepicker]="picker7"
                 autocomplete="off"
                 class="form-control form-date"
                 formControlName="confirminformaccused"
@@ -314,9 +310,9 @@
               <mat-datepicker-toggle
                 class="button-date"
                 matSuffix
-                [for]="picker3"
+                [for]="picker7"
               ></mat-datepicker-toggle>
-              <mat-datepicker #picker3></mat-datepicker>
+              <mat-datepicker #picker7></mat-datepicker>
             </div>
           </div>
 
@@ -328,7 +324,7 @@
               <div class="d-flex align-items-center">
                   <input
                     matInput
-                    [matDatepicker]="picker3"
+                    [matDatepicker]="picker8"
                     autocomplete="off"
                     class="form-control form-date"
                     formControlName="rejectinformaccused"
@@ -338,9 +334,9 @@
                   <mat-datepicker-toggle
                     class="button-date"
                     matSuffix
-                    [for]="picker3"
+                    [for]="picker8"
                   ></mat-datepicker-toggle>
-                  <mat-datepicker #picker3></mat-datepicker>
+                  <mat-datepicker #picker8></mat-datepicker>
                 </div>
               </div>
             

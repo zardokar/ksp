@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , Input } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -31,6 +31,7 @@ import { providerFactory, thaiDate } from '@ksp/shared/utility';
 import { Observable } from 'rxjs';
 import { InquiryConsiderRecordComponent } from '@ksp/e-service/dialog/inquiry-consider-record';
 import { MatDialog } from '@angular/material/dialog';
+import { UniversitySearchComponent } from '@ksp/shared/search';
 
 @Component({
   selector: 'e-service-inquiry-detail',
@@ -57,7 +58,13 @@ export class InquiryDetailComponent
   extends KspFormBaseComponent
   implements OnInit
 {
+  @Input() searchType = '';
+  @Input() bureaus: any[] = [];
   override form = this.fb.group({
+    licensesuspension: [],
+    inquerylicensestatus: [],
+    inquerylicensestatusnotificationdate:[],
+    inquerylicensestatusaccusedrecognizedate:[],
     inquiryorderno: [],
     inquiryorderdate: [],
     inquirysubcommittee: this.fb.array([] as FormGroup[]),
@@ -66,6 +73,9 @@ export class InquiryDetailComponent
     inquiryreport: [],
     inquiryfile: [],
     inquerymeetinghistory: this.fb.array([] as FormGroup[]),
+    inquerylicensesuspendnotificationdate:[],
+    inquerylicensesuspendrecognizedate:[],
+    inquerynotificationdate:[],
     inquiryresult: this.fb.group({
       considertimes: [],
       considerdate: [],
@@ -80,6 +90,7 @@ export class InquiryDetailComponent
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
+  selectedlicensesuspension = false
   
   constructor(
     public dialog: MatDialog,
@@ -123,8 +134,12 @@ export class InquiryDetailComponent
       lastname: data.lastname,
       position: data.position,
       bureau: data.bureau,
+      bureauname: data.bureauname,
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);
@@ -141,6 +156,9 @@ export class InquiryDetailComponent
       meetingfile: data.meetingfile
     });
     this.meetings.push(rewardForm);
+    if(this.mode === 'view'){
+      this.meetings.disable()
+    }
   }
   deleteConsiderRow(index: number) {
     this.meetings.removeAt(index);
@@ -163,6 +181,39 @@ export class InquiryDetailComponent
       // this.selectId = result
       // this.addressId = result
       // this.updateStatus = true
+    });
+  }
+
+  searchSchool(target:any) {
+    const dialog = this.dialog.open(UniversitySearchComponent, {
+      width: '1200px',
+      height: '100vh',
+      position: {
+        top: '0px',
+        right: '0px',
+      },
+      data: {
+        searchType: this.searchType,
+        subHeader: 'กรุณาเลือกหน่วยงาน/สถานศึกษาที่ท่านสังกัด'
+      },
+    });
+    dialog.afterClosed().subscribe((res: any) => {
+      console.log(res);
+      // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
+      // if(bureau === undefined)
+      // {
+      //   this.bureaus.push({
+      //     bureauId : res.bureauid,
+      //     bureauName : res.bureauname
+      //   })
+      // }
+
+      const grpind =  parseInt( target.getAttribute('grpind') )
+
+      // Assign to element
+      target.value = res.bureauname;
+      // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
+      this.members.controls[grpind].get('bureauname')?.setValue(res.bureauname)
     });
   }
 

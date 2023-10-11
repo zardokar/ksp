@@ -17,7 +17,8 @@ import {
   zdtform
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
-import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
+import { InquiryDetailComponent} from '../inquiry-detail/inquiry-detail.component';
+import { InquiryResultComponent } from '../inquiry-result/inquiry-result.component';
 import _, { isArray } from 'lodash';
 @Component({
   selector: 'e-service-inquiry-main',
@@ -27,7 +28,7 @@ import _, { isArray } from 'lodash';
 export class InquiryMainComponent implements OnInit {
   form = this.fb.group({
     inquiry: [],
-    inquiryresult: [],
+    inquiryResult: [],
     accusation: [],
     investigation: [],
   });
@@ -45,6 +46,8 @@ export class InquiryMainComponent implements OnInit {
   investigation!: FormInvestigationDetailComponent;
   @ViewChild(InquiryDetailComponent)
   inquiry!: InquiryDetailComponent;
+  @ViewChild(InquiryResultComponent)
+  inquiryResult!: InquiryResultComponent;
   cancel() {
     this.router.navigate(['/inquiry']);
   }
@@ -64,15 +67,30 @@ export class InquiryMainComponent implements OnInit {
           if (res) {
             const payload = this.form.value.inquiry as any;
             if (payload) {
+              payload.processid = '3'
               payload.id = this.ethicsId;
-              payload.inquiryresult = JSON.stringify(payload.inquiryresult);
-              payload.inquirysubcommittee = JSON.stringify( payload.inquirysubcommittee );
+              payload.inquerylicensestatus                      = payload.inquerylicensestatus;
+              payload.inquerylicensestatusnotificationdate      = cleanUpDate( payload.inquerylicensestatusnotificationdate );
+              payload.inquerylicensestatusaccusedrecognizedate  = cleanUpDate(payload.inquerylicensestatusaccusedrecognizedate);
+              payload.inquiryorderno                            = payload.inquiryorderno;
+              payload.inquiryorderdate                          = cleanUpDate(payload.inquiryorderdate);
+              payload.inquiryexplaindate                        = cleanUpDate(payload.inquiryexplaindate);
+              payload.inquiryjbdate                             = cleanUpDate(payload.inquiryjbdate);
+              payload.inquiryreport                             = payload.inquiryreport;
+              payload.inquiryfile                               = JSON.stringify(payload.inquiryfile);
+              payload.inquerymeetinghistory                     = JSON.stringify(payload.inquerymeetinghistory);
+              payload.inquerylicensesuspendnotificationdate     = cleanUpDate(payload.inquerylicensesuspendnotificationdate);
+              payload.inquerylicensesuspendrecognizedate        = cleanUpDate(payload.inquerylicensesuspendrecognizedate);
+              payload.inquerynotificationdate                   = cleanUpDate(payload.inquerynotificationdate);
+              payload.inquiryresult                             = JSON.stringify(payload.inquiryresult);
+              payload.inquirysubcommittee                       = JSON.stringify( payload.inquirysubcommittee );
             }
-            const payload2                = this.form.value.inquiryresult as any;
+            const payload2                = this.form.value.inquiryResult as any;
             if (payload2) {
               payload2.id                 = this.ethicsId;
 
               payload.resultredno         = payload2.resultredno
+              payload.resultblackno       = payload2.resultblackno
               payload.resultcomitteeno    = payload2.resultcomitteeno
               payload.resultcomitteedate  = cleanUpDate( payload2.resultcomitteedate )
               payload.resultcomitteefile  = payload2.resultcomitteefile 
@@ -82,12 +100,21 @@ export class InquiryMainComponent implements OnInit {
               payload.resulttoschoolfile  = payload2.resulttoschoolfile 
               payload.resulttoaccuseddate = cleanUpDate( payload2.resulttoaccuseddate )
               payload.resulttoaccusedfile = payload2.resulttoaccusedfile 
+              payload.resultdetail        = payload2.resultdetail 
+              payload.resultstartsuspendlicensedate   = cleanUpDate( payload2.resultstartsuspendlicensedate ) 
+              payload.resultendsuspendlicensedate     = cleanUpDate( payload2.resultendsuspendlicensedate )
+              payload.resulttoaccusednotificationdate =  cleanUpDate( payload2.resulttoaccusednotificationdate )
+              payload.resultacademicname              = payload2.resultacademicname 
+              payload.resultaffiliationname           = payload2.resultaffiliationname 
+              payload.resulttoschoolnotificationdate  =  cleanUpDate( payload2.resulttoschoolnotificationdate )
             }
-
-            this.collectFormData(payload) 
-            console.log( `payload`, replaceEmptyWithNull(payload))
-            console.log( `payload2`, payload2)
+            this.collectFormData(payload)
             
+            const payload3= this.form.value.accusation as any;
+
+            payload.accusationcondemnation        = JSON.stringify(payload3.accusationcondemnation)
+            payload.accusationconsideration       = JSON.stringify(payload3.accusationconsideration)
+            payload.accusationaction              = JSON.stringify(payload3.accusationaction)
 
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
@@ -118,9 +145,9 @@ export class InquiryMainComponent implements OnInit {
     payload.investigationresult       = JSON.stringify(investigation.investigationresult)
     payload.investigationsubcommittee = JSON.stringify(investigation.investigationsubcommittee)
 
-    payload.accusationfile            = JSON.stringify(payload.accusationfile)
-    payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
-    payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
+    // payload.accusationfile            = JSON.stringify(payload.accusationfile)
+    // payload.accuserinfo               = JSON.stringify(payload.accuserinfo)
+    // payload.licenseinfo               = JSON.stringify(payload.licenseinfo)
 
     return payload
   }
@@ -130,9 +157,6 @@ export class InquiryMainComponent implements OnInit {
       width: '375px',
       data: {
         header: `บันทึกข้อมูลสำเร็จ`,
-        content: `เลขที่รายการ : 640120000123
-        วันที่ : 10 ตุลาคม 2656`,
-        subContent: 'ผู้บันทึกข้อมูล : นางสาวปาเจรา ใกล้คุก',
       },
     });
 
@@ -143,20 +167,25 @@ export class InquiryMainComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    // this.checkRequestId();
+  }
+
+  ngAfterViewInit( ) : void{
     this.checkRequestId();
   }
+
   // ------------------------------------------------------------------------
   checkRequestId() {
 
     this.route.paramMap.subscribe( (params) => {
       this.ethicsId = Number(params.get('id'));
+
       if (this.ethicsId) {
-        
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
 
-            console.log( res )
             // ----------------------------------------------- Cleaning Data
             res.createdate                = cleanUpDate( res.createdate )
+            // res.licenseinfo               = jsonParse(res.licenseinfo)
             res.accusationassigndate      = cleanUpDate( res.accusationassigndate )
             res.accusationincidentdate    = cleanUpDate( res.accusationincidentdate )
             res.accusationissuedate       = cleanUpDate( res.accusationissuedate )
@@ -165,20 +194,44 @@ export class InquiryMainComponent implements OnInit {
             res.investigationdate         = cleanUpDate( res.investigationdate )
             res.investigationreportdate   = cleanUpDate( res.investigationreportdate)
             res.investigationorderdate    = cleanUpDate( res.investigationorderdate)
+            res.inquerylicensestatus                      = res.inquerylicensestatus;
+            res.inquerylicensestatusnotificationdate      = cleanUpDate( res.inquerylicensestatusnotificationdate );
+            res.inquerylicensestatusaccusedrecognizedate  = cleanUpDate(res.inquerylicensestatusaccusedrecognizedate);
+            res.inquiryorderno                            = res.inquiryorderno;
+            res.inquiryexplaindate                        = cleanUpDate(res.inquiryexplaindate);
+            res.inquiryreport                             = res.inquiryreport;
+            res.inquiryfile                               = jsonParse(res.inquiryfile);
+            res.inquerylicensesuspendnotificationdate     = cleanUpDate(res.inquerylicensesuspendnotificationdate);
+            res.inquerylicensesuspendrecognizedate        = cleanUpDate(res.inquerylicensesuspendrecognizedate);
+            res.inquerynotificationdate                   = cleanUpDate(res.inquerynotificationdate);
+
+            res.resultredno               = res.resultredno
+            res.resultblackno             = res.resultblackno
+            res.resultcomitteeno          = res.resultcomitteeno
+            res.resultcomitteefile        = res.resultcomitteefile 
+            res.resulttoaccuserfile       = res.resulttoaccuserfile 
+            res.resulttoschoolfile        = res.resulttoschoolfile 
+            res.resulttoaccusedfile       = res.resulttoaccusedfile 
             res.resultcomitteedate        = cleanUpDate( res.resultcomitteedate )
             res.resulttoaccuserdate       = cleanUpDate( res.resulttoaccuserdate )
             res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
-            res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )
+            res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )              
+            res.resultdetail              = res.resultdetail 
+            res.resultstartsuspendlicensedate   = cleanUpDate( res.resultstartsuspendlicensedate ) 
+            res.resultendsuspendlicensedate     = cleanUpDate( res.resultendsuspendlicensedate )
+            res.resulttoaccusednotificationdate = cleanUpDate( res.resulttoaccusednotificationdate )
+            res.resultacademicname              = res.resultacademicname 
+            res.resultaffiliationname           = res.resultaffiliationname 
+            res.resulttoschoolnotificationdate  = cleanUpDate( res.resulttoschoolnotificationdate )
             // ----------------------------------------------- Fill Accused Info
             // if(res?.licenseinfo){
             //   this.accusation.setAccusedInfo(res?.licenseinfo)
             // }
             if( typeof res?.licenseinfo == "string"){
               res.licenseinfo = jsonParse(res.licenseinfo)
-            } 
-            console.log(this.accusation);
+            }        
             if( isArray( res?.licenseinfo )){
-              for(let accused of res?.licenseinfo){
+              for(let accused of res.licenseinfo){
                 this.accusation.addAccusedRow()
               }
             }
@@ -202,9 +255,6 @@ export class InquiryMainComponent implements OnInit {
             }
             if( typeof res?.accusationcondemnation == "string"){
               res.accusationcondemnation = jsonParse(res.accusationcondemnation)
-            }  
-            if( typeof res?.accusationaction == "string"){
-              res.accusationaction = jsonParse(res.accusationaction)
             }  
             if( isArray( res?.accusationcondemnation )){
               for(let condemnation of res?.accusationcondemnation){
@@ -243,11 +293,23 @@ export class InquiryMainComponent implements OnInit {
               }
               res.inquirysubcommittee = dataobj;
             }
-            
-            this.form.controls.accusation.patchValue(res);
-            this.form.controls.inquiryresult.patchValue(res);
-            this.form.controls.investigation.patchValue(res);
+            if(res.inquerymeetinghistory){
+              const dataobj = typeof res?.inquerymeetinghistory !== "object" ? jsonParse(res?.inquerymeetinghistory) : res?.inquerymeetinghistory
+              if (dataobj?.length) {
+                for (let i = 0; i < dataobj.length; i++) {
+                  this.inquiry.addConsiderRow();
+                }
+              }
+              res.inquerymeetinghistory = dataobj;
+            }
+            if( typeof res?.accusationaction == "string"){
+              res.accusationaction = jsonParse(res.accusationaction)
+            }              
+
             this.form.controls.inquiry.patchValue(res);
+            this.form.controls.inquiryResult.patchValue(res);
+            this.form.controls.accusation.patchValue(res);
+            this.form.controls.investigation.patchValue(res);
           });
       }
     });

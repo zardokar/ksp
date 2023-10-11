@@ -40,7 +40,7 @@ export class RequestRewardComponent implements OnInit {
 
   uniqueNo = '';
   requestData = new KspRequest();
-  rewards = rewards;
+ // rewards = rewards;
   schoolId = getCookie('schoolId');
   osoiTypes$!: Observable<any>;
   personTypes$!: Observable<PersonType[]>;
@@ -52,6 +52,7 @@ export class RequestRewardComponent implements OnInit {
   disableCancel = false;
   uniqueTimeStamp!: string;
   showCancelButton = true;
+  fileinfo  = [];
 
   constructor(
     private router: Router,
@@ -186,8 +187,10 @@ export class RequestRewardComponent implements OnInit {
         rewardtype: osoiInfo.rewardtype,
         submitbefore: osoiInfo.submitbefore,
         vdolink: osoiInfo.vdolink,
+        files: parseJson(res.fileinfo)
       };
 
+      console.log('fileinfo   = ', parseJson(res.fileinfo));
       console.log('osoi member   = ', osoiMember);
       this.form.controls.reward.patchValue(<any>rewardInfo);
       this.memberData = osoiMember;
@@ -211,7 +214,7 @@ export class RequestRewardComponent implements OnInit {
     form.osoimember = JSON.stringify(form.osoimember);
 
     const file = structuredClone(rewardFiles);
-    //console.log('file = ', file);
+    console.log('file = ', file);
     const files = mapFileInfo(file);
     form.fileinfo = JSON.stringify({ files });
 
@@ -246,8 +249,12 @@ export class RequestRewardComponent implements OnInit {
     form.process = currentProcess;
     form.status = requestStatus;
     form.careertype = '5';
+    form.fileinfo   = JSON.stringify(this.fileinfo);
+
     form.uniquetimestamp = this.uniqueTimeStamp;
     form.osoimember = JSON.stringify(form.osoimember);
+
+    console.log( form );
 
     const osoiInfo = {
       rewardname: form.rewardname,
@@ -261,16 +268,21 @@ export class RequestRewardComponent implements OnInit {
 
     const { id, ...payload } = baseForm.value;
     //console.log('current form = ', baseForm.value);
-    this.requestService.schCreateRequest(payload).subscribe(() => {
-      //console.log('request result = ', res);
-      this.completeDialog();
+    this.requestService.schKSPXCreateRequest(payload).subscribe((res) => {
+      if( parseInt(res.returncode) === 0){
+        this.completeDialog();
+      }else if(parseInt(res.returncode) === 409){
+        alert(`เกิดข้อผิดพลาด รหัส ${res.returncode} อันเนื่องมาจากมีการบันทึกคำขอแล้ว`)
+      }else{
+        alert(`เกิดข้อผิดพลาด`)
+      }
     });
   }
 
   getListData() {
-    this.osoiTypes$ = this.schoolInfoService.getOsoiTypes();
+    this.osoiTypes$   = this.schoolInfoService.getOsoiTypes();
     this.personTypes$ = this.schoolInfoService.getPersonTypes();
-    this.prefixList$ = this.generalInfoService.getPrefix();
+    this.prefixList$  = this.generalInfoService.getPrefix();
   }
 
   previousPage() {
@@ -309,23 +321,26 @@ export class RequestRewardComponent implements OnInit {
       }
     });
   }
+
+  getUploadFileatParent(filedata: any):void {
+    this.fileinfo   = filedata
+  }
+
 }
 
-export const rewards = [
-  { label: 'ไม่เคยส่งเข้ารับการคัดสรรกับคุรุสภา', value: 1 },
-  {
-    label: 'เคยส่งเข้ารับการคัดสรรกับคุรุสภา แต่ไม่ได้รับรางวัลของคุรุสภา',
-    value: 2,
-  },
-  {
-    label: 'ได้รับรางวัลของคุรุสภา แต่มีการพัฒนาต่อยอดนวัตกรรม',
-    value: 3,
-  },
-];
+// export const rewards = [
+//   { label: 'ผลงานนี้ไม่เคยส่งเข้ารับการคัดสรรกับคุรุสภา', value: 1 },
+//   {
+//     label: 'ผลงานนี้เคยส่งเข้ารับการคัดสรรกับคุรุสภา แต่ไม่ได้รับรางวัลของคุรุสภา',
+//     value: 2,
+//   },
+//   {
+//     label: 'ผลงานนี้ได้รับรางวัลของคุรุสภา แต่มีการพัฒนาต่อยอดนวัตกรรม',
+//     value: 3,
+//   },
+// ];
 
 const rewardFiles: FileGroup[] = [
   { name: 'แบบ นร. 1', files: [] },
-  { name: 'แบบ นร.2', files: [] },
-  { name: 'เอกสารอื่นๆ', files: [] },
   { name: 'บันทึกนำส่งจากสถานศึกษา', files: [] },
 ];

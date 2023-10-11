@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { setCookie } from '@ksp/shared/utility';
+import { setCookie,deleteCookie } from '@ksp/shared/utility';
 import { EServiceLoginService } from './e-service-login.service';
 
 @Component({
@@ -20,7 +20,9 @@ export class EServiceLoginComponent {
     private router: Router,
     private fb: FormBuilder,
     private loginService: EServiceLoginService
-  ) {}
+  ) {
+    deleteCookie('iframeToken');
+  }
 
   login() {
     this.loginFail = false;
@@ -37,6 +39,7 @@ export class EServiceLoginComponent {
       setCookie('lastNameTh', res.lastnameth, 1);
       setCookie('userId', res.id, 1);
       setCookie('permissionRight', res.permissionright, 1); //1 = ส่วนกลาง, 2 = ส่วนภูมิภาค
+      setCookie('iframeToken','FALSE',1);
 
       this.router.navigate(['/landing']);
     });

@@ -163,15 +163,16 @@ export class AccusationRecordComponent
       phone: [data.phone],
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);
   }
 
-  addAccusedRow(accusedData: Ehicsaccused = defaultAccused){//(data: EhicsSubcommittee = defaultSubcommittee) {
-    // this.accusedInfo = accusedData
-    console.log(accusedData)
-    console.log(accusedData.licenseno)
+  addAccusedRow(accusedData: Ehicsaccused = defaultAccused){//(data: EhicsSubcommittee = defaultSubcommittee) { // accusedData: Ehicsaccused = defaultAccused
+    this.accusedInfo = accusedData
     const accusedForm = this.fb.group({
       id: [accusedData.id],
       licenseno: [accusedData.licenseno],
@@ -185,8 +186,10 @@ export class AccusationRecordComponent
       certificateenddate: [accusedData.certificateenddate],
       bureau: [accusedData.bureau]
     });
-    console.log(accusedForm)
     this.accuseds.push(accusedForm);
+    if(this.mode === 'view'){
+      this.accuseds.disable()
+    }
   }
   deleteAccusedRow(index: number) {
     this.accuseds.removeAt(index);
@@ -194,12 +197,16 @@ export class AccusationRecordComponent
 
   addCondemnationRow(data: EhicsCondemnation = defaultCondemnation) {
     // this.accusedInfo = accusedData
-    // console.log(accusedData)
+    console.log(data)
     const accusationcondemnationForm = this.fb.group({
       condemnationtype : [data.condemnationtype],
       condemnationdetail : [data.condemnationdetail]
     });
+
     this.accusationcondemnations.push(accusationcondemnationForm);
+    if(this.mode === 'view'){
+      this.accusationcondemnations.disable()
+    }
   }
   deleteCondemnationRow(index: number) {
     this.accusationcondemnations.removeAt(index);
@@ -214,7 +221,7 @@ export class AccusationRecordComponent
   }
 
   getListData() {
-    this.prefixList$ = this.generalInfoService.getPrefix();
+    this.prefixList$ = this.generalInfoService.getPrefixJSON();
   }
 
   openSearchDialog() {

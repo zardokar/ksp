@@ -51,6 +51,10 @@
           selectedIndex="0"
         >
           <mat-tab label="ที่อยู่" class="tab-content">
+            <div *ngIf="detail!== undefined && detail.checkdetail !== undefined && detail.checkdetail[0].detail !== '' " class="comment-officer">
+              {{detail.checkdetail[0].detail}}
+            </div>
+
             <ksp-form-address
               formControlName="addr1"
               [isDarkMode]="false"
@@ -89,6 +93,10 @@
             <!-- <div class="d-flex align-items-center">
               <label class="box-header">วุฒิการศึกษาปริญญาตรี</label>
             </div> -->
+
+            <div *ngIf="detail!== undefined && detail.checkdetail !== undefined && detail.checkdetail[1].detail !== '' " class="comment-officer">
+              {{detail.checkdetail[1].detail}}
+            </div>
 
             <ksp-form-education-info
               mode="view"
@@ -180,6 +188,9 @@
           </mat-tab>
 
           <mat-tab label="เอกสารหลักฐานประกอบ">
+            <div *ngIf="detail!== undefined && detail.checkdetail !== undefined && detail.checkdetail[2].detail !== '' " class="comment-officer">
+              {{detail.checkdetail[2].detail}} 
+            </div>
             <ksp-form-multi-attachment
               [groups]="evidenceFiles"
               [uniqueTimestamp]="uniqueNo"
@@ -187,6 +198,9 @@
           </mat-tab>
 
           <mat-tab label="ประสบการณ์วิชาชีพทางการศึกษา">
+            <div *ngIf="detail!== undefined && detail.checkdetail !== undefined && detail.checkdetail[5].detail !== '' " class="comment-officer">
+              {{detail.checkdetail[5].detail}} 
+            </div>
             <div class="box-header">ประสบการณ์วิชาชีพทางการศึกษา</div>
             <hr />
             <div class="d-flex align-items-center">

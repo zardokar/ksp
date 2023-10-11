@@ -137,32 +137,32 @@ export const accusationcondemnationtypeList: ListData[] = [
   export const allegationList: ListData[] = [
     {
       label: 'กรณี 13/1 ไม่ร้ายแรง วินิจฉัยโทษตักเตือน',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 1,
     },
     {
       label: 'กรณี 13/1 ไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 2,
     },
     {
       label: 'กรณี 60/5 ไม่ร้ายแรง วินิจฉัยโทษตักเตือน',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 3,
     },
     {
       label: 'กรณี 60/5 ไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 4,
     },
     {
       label: 'กรณี 60/6 ร้ายแรง วินิจฉัยโทษพักใช้',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 5,
     },
     {
       label: 'กรณี 60/6 ร้ายแรง วินิจฉัยโทษเพิกถอน',
-      name: 'accusationaction',
+      // name: 'investigationaction',
       value: 6,
     },
   ];

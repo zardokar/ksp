@@ -1,4 +1,7 @@
 <div class="box-header text-center">จึงขอรับรองคุณวุฒิการศึกษา</div>
+<div *ngIf="es_tab4_comment !== '' " class="comment-officer">
+  {{es_tab4_comment}}
+</div>
 <form [formGroup]="form">
   <!-- <ng-container *ngIf="degreeLevelName"> -->
   <div class="mb-2" class="fs-5 mt-3">

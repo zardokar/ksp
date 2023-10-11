@@ -50,6 +50,8 @@ export class FormUserInfoComponent
   @Input() showSearchBtn = false;
   @Input() lbl_lettertype: string | null = 'ประเภทการยื่น';
 
+  public DEFAULT_ISFOREIGN : any = '0'
+
   public _displayMode = UserInfoFormType.thai;
   @Input()
   set displayMode(mode: number) {
@@ -113,6 +115,7 @@ export class FormUserInfoComponent
   ngOnInit(): void {
     this.checkValidators(this._displayMode);
 
+    // -----------------------------------------------------------
     this.form.controls.idcardno.valueChanges
       .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe((res) => {
@@ -131,7 +134,13 @@ export class FormUserInfoComponent
       });
   }
 
+  onIsforeignChange()
+  {
+    console.log(`isforeign `,this.form.controls.isforeign.value)
+  }
+
   override ngOnChanges(changes: SimpleChanges): void {
+
     if (changes['requiredIdCardNo']) {
       if (this.requiredIdCardNo === false) {
         this.idCardNo.clearValidators();
