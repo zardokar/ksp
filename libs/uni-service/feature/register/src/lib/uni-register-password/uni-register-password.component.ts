@@ -155,7 +155,8 @@ export class UniRegisterPasswordComponent implements OnInit {
           if (res) {
             this.savingData = replaceEmptyWithNull(this.savingData);
             const educationoccupy = {
-              permission: this.savingData.permission,
+              permission1: this.savingData.permission1,
+              permission2: this.savingData.permission2,
               other: this.savingData.other,
               ...this.uniData,
             };
@@ -185,7 +186,7 @@ export class UniRegisterPasswordComponent implements OnInit {
           return EMPTY;
         })
       )
-      .subscribe((res) => {
+      .subscribe((res: any) => {
         if (res) {
           this.submit = false;
           const requestNo = res?.requestno;

@@ -47,10 +47,12 @@ export class UserDetailComponent implements OnInit {
   pageTypeEnum = SchoolUserPageType;
   setPassword = '';
   mode: FormMode = 'view';
-  permissionRight = null;
+  permissionRight = '';
   requestType = 0;
 
   form = this.fb.group({
+    permission1: [{value: false, disabled: true }],
+    permission2: [{value: false, disabled: true }],
     userInfo: [],
     coordinatorInfo: [],
     retiredReason: [],
@@ -127,32 +129,37 @@ export class UserDetailComponent implements OnInit {
   }
 
   loadUniUserFromId(id: number) {
-    this.eUniService.getUserById({id: id}).subscribe((res) => {
+    this.eUniService.getUserById({ id: id }).subscribe((res) => {
       this.requestData = res as any;
       this.mode = 'edit';
       this.requestData.userid = this.requestData?.userid || null;
       this.requestData.uniid = this.requestData?.uniid || null;
       this.requestData.bureauname = this.requestData?.unitypename || '';
       this.requestData.schoolname = this.requestData?.uniname || '';
-      this.requestData.schooladdress = `${this.requestData?.address ? this.requestData?.address + ' ' : ''}` +
-                                      `หมู่ ${this.requestData.moo} ` +
-                                      `${this.requestData.road ? 'ถนน' + this.requestData.road + ' ' : ''}` +
-                                      `ตำบล${this.requestData.tumbon} อำเภอ${this.requestData.amphur} ` +
-                                      `จังหวัด${this.requestData.province} ${this.requestData.zipcode}`
+      this.requestData.schooladdress =
+        `${this.requestData?.address ? this.requestData?.address + ' ' : ''}` +
+        `หมู่ ${this.requestData.moo} ` +
+        `${this.requestData.road ? 'ถนน' + this.requestData.road + ' ' : ''}` +
+        `ตำบล${this.requestData.tumbon} อำเภอ${this.requestData.amphur} ` +
+        `จังหวัด${this.requestData.province} ${this.requestData.zipcode}`;
+      const splitPermission = res?.permissionright.split(",");
+      const findPermission1 = splitPermission.find((perm: string) => perm == '1');
+      if (findPermission1) this.form.controls.permission1.patchValue(true);
+      const findPermission2 = splitPermission.find((perm: string) => perm == '2');
+      if (findPermission2) this.form.controls.permission2.patchValue(true);
       this.form.controls.userInfo.patchValue(<any>res);
       const coordinator = parseJson(res.coordinatorinfo);
       this.form.controls.coordinatorInfo.patchValue(coordinator);
       const resultDetail = parseJson(res.approvestatus);
       this.verifyForm.controls.result.patchValue({
         result: this.requestData?.isuseractive === '1' ? '1' : '2',
-        reason: resultDetail.detail?.reason,
-        detail: resultDetail.detail?.detail,
+        reason: resultDetail?.detail?.reason,
+        detail: resultDetail?.detail?.detail,
       });
-    })
+    });
   }
 
   loadRequestFromId(id: number) {
-    console.log(id)
     this.eRequestService.getKspRequestByIdUni(id).subscribe((res) => {
       this.requestData = res as any;
       const fileInfo = parseJson(res.fileinfo);
@@ -165,13 +172,15 @@ export class UserDetailComponent implements OnInit {
         if (res.status != '1') {
           if (approvedetail && approvedetail.file) {
             this.uploadFileList.forEach(
-              (group, index) => (group.files = approvedetail.file[index].files,
-                group.checkresult = approvedetail.file[index].checkresult)
+              (group, index) => (
+                (group.files = approvedetail.file[index].files),
+                (group.checkresult = approvedetail.file[index].checkresult)
+              )
             );
           } else {
             this.uploadFileList.forEach(
               (group, index) => (group.files = fileInfo.fileUpload[index])
-            ); 
+            );
           }
         } else {
           this.uploadFileList.forEach(
@@ -184,13 +193,21 @@ export class UserDetailComponent implements OnInit {
       this.requestData.uniid = education?.uniid || null;
       this.requestData.bureauname = education?.affiliation || '';
       this.requestData.schoolname = education?.uniname || '';
-      this.requestData.schooladdress = `${this.requestData?.address} ` +
-                                      `หมู่ ${this.requestData.moo} ` +
-                                      `${this.requestData.road ? 'ถนน' + this.requestData.road + ' ' : ''}` +
-                                      `ตำบล${this.requestData.tumbon} อำเภอ${this.requestData.amphur} ` +
-                                      `จังหวัด${this.requestData.province} ${this.requestData.zipcode}`
+      this.requestData.schooladdress =
+        `${this.requestData?.address} ` +
+        `หมู่ ${this.requestData.moo} ` +
+        `${this.requestData.road ? 'ถนน' + this.requestData.road + ' ' : ''}` +
+        `ตำบล${this.requestData.tumbon} อำเภอ${this.requestData.amphur} ` +
+        `จังหวัด${this.requestData.province} ${this.requestData.zipcode}`;
       // this.requestData.schooladdress = education;
-      this.permissionRight = education?.permission || null;
+      this.permissionRight =
+        education?.permission1 && education.permission2
+          ? '1' + ',' + '2'
+          : education?.permission1 && !education.permission2
+          ? '1'
+          : '2';
+      this.form.controls.permission1.patchValue(education?.permission1);
+      this.form.controls.permission2.patchValue(education?.permission2);
       this.requestType = this.requestData.requesttype
         ? parseInt(this.requestData.requesttype)
         : 0;
@@ -227,7 +244,10 @@ export class UserDetailComponent implements OnInit {
       requestid: `${this.requestId}`,
       process: '1',
       status: '2',
-      detail: JSON.stringify({ reason: form.detail, file: this.uploadFileList }),
+      detail: JSON.stringify({
+        reason: form.detail,
+        file: this.uploadFileList,
+      }),
       systemtype: '3', // uni
       userid: null,
       paymentstatus: null,
@@ -286,7 +306,10 @@ export class UserDetailComponent implements OnInit {
       requestid: `${this.requestId}`,
       process: '1',
       status: '2',
-      detail: JSON.stringify({ reason: form.detail, file: this.uploadFileList }),
+      detail: JSON.stringify({
+        reason: form.detail,
+        file: this.uploadFileList,
+      }),
       systemtype: '3', // uni
       userid: getCookie('userId'),
       paymentstatus: null,
@@ -309,7 +332,10 @@ export class UserDetailComponent implements OnInit {
       requestid: `${this.requestId}`,
       process: '1',
       status: '3',
-      detail: JSON.stringify({ reason: form.detail, file: this.uploadFileList }),
+      detail: JSON.stringify({
+        reason: form.detail,
+        file: this.uploadFileList,
+      }),
       systemtype: '3', // uni
       userid: getCookie('userId'),
       paymentstatus: null,
@@ -339,8 +365,8 @@ export class UserDetailComponent implements OnInit {
 
   confirm() {
     const form: any = this.verifyForm.controls.result.value;
-      const result = +form.result;
-    console.log(result)
+    const result = +form.result;
+    console.log(result);
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: `คุณต้องการบันทึกข้อมูล
@@ -368,12 +394,12 @@ export class UserDetailComponent implements OnInit {
   }
 
   setActiveUser(form: any) {
-    const result = +form.result
+    const result = +form.result;
     const payload = {
       id: this.requestData.id,
       isuseractive: result == 1 ? 1 : 0,
-      approvestatus: JSON.stringify({ detail: form })
-    }
+      approvestatus: JSON.stringify({ detail: form }),
+    };
     this.eUniService.updateActiveUser(payload).subscribe(() => {
       this.completeDialog();
     });
