@@ -120,7 +120,7 @@ export class UniContainerPageComponent implements OnInit {
     this.menuConfig = this.menu.map((data) => {
       if (data.subMenu) {
         data.subMenu = data.subMenu.filter((data) => {
-          return data.permission == permissionright;
+          return data.permission?.indexOf(permissionright);
         });
       }
       return data;

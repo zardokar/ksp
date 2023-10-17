@@ -102,6 +102,10 @@ export class FormRegisterRequesterInfoComponent
     this.form.patchValue({ lastnameen: toUpperCaseName(event.target.value) });
   }
 
+  testChecked(event: any) {
+    console.log(this.form.value)
+  }
+
   get idCardNo() {
     return this.form.controls.idcardno;
   }
@@ -146,8 +150,12 @@ export class FormRegisterRequesterInfoComponent
     return this.form.controls.prefixen;
   }
 
-  get permission() {
-    return this.form.controls.permission;
+  get permission1() {
+    return this.form.controls.permission1;
+  }
+
+  get permission2() {
+    return this.form.controls.permission2;
   }
 
   get other() {
