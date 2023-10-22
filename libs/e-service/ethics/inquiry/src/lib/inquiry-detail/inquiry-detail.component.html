@@ -123,7 +123,7 @@
                 />
               </td>
               <td>
-                <select class="form-select" formControlName="academicStanding">
+                <select class="form-select" formControlName="bureau">
                   <option value="null" selected hidden disabled>กรุณาเลือก</option>
                   <option value="1">ไม่มี</option>
                   <option value="2">ชํานาญการ</option>
@@ -603,33 +603,34 @@
           value="4"
           formControlName="consider"
         />
-
-        <label class="form-label ms-2">พักใช้</label>
-        <label class="form-label mx-3">ระยะเวลา</label>
-        <input
-          class="form-control"
-          style="width: 8rem"
-          type="text"
-          min="0"
-          formControlName="considerday"
-        />
-        <label class="form-label mx-3">ปี</label>
-        <input
-          class="form-control"
-          style="width: 8rem"
-          type="text"
-          min="0"
-          formControlName="considerday"
-        />
-        <label class="form-label mx-3">เดือน</label>
-        <input
-          class="form-control"
-          style="width: 8rem"
-          type="text"
-          min="0"
-          formControlName="considerday"
-        />
-        <label class="form-label mx-3">วัน</label>
+        <div class="d-flex align-items-center mb-2" formGroupName="considerday">
+          <label class="form-label ms-2">พักใช้</label>
+          <label class="form-label mx-3">ระยะเวลา</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="year"
+          />
+          <label class="form-label mx-3">ปี</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="month"
+          />
+          <label class="form-label mx-3">เดือน</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="day"
+          />
+          <label class="form-label mx-3">วัน</label>
+        </div>
       </div>
 
       <div class="d-flex align-items-center mb-2">

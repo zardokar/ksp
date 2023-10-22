@@ -69,6 +69,7 @@ export class InquiryDetailComponent
     inquiryorderdate: [],
     inquirysubcommittee: this.fb.array([] as FormGroup[]),
     inquiryexplaindate: [],
+    inquiryexaminereport:[],
     inquiryjbdate: [],
     inquiryreport: [],
     inquiryfile: [],
@@ -80,7 +81,11 @@ export class InquiryDetailComponent
       considertimes: [],
       considerdate: [],
       considerreason: [],
-      considerday: [],
+      considerday: this.fb.group({
+        year : [],
+        month : [],
+        day : []
+      }),
       considerdatefrom: [],
       considerdateto: [],
       consider: [],
@@ -215,6 +220,17 @@ export class InquiryDetailComponent
       // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
       this.members.controls[grpind].get('bureauname')?.setValue(res.bureauname)
     });
+  }
+
+  checkConsiderDay(considerDay:any){
+    // let getdata = this.form.controls.considerday.value as any;
+    console.log(considerDay) 
+    // if(getdata[name] == null){
+    //   getdata[name] = true 
+    // }else if( !isNaN( getdata[name]) ){
+    //   getdata[name] = false 
+    // }
+    // console.log(getdata);
   }
 
 }
