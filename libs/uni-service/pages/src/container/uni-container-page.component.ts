@@ -70,28 +70,28 @@ export class UniContainerPageComponent implements OnInit {
       label: 'ทะเบียนข้อมูล',
       path: '/degree-cert-list',
       permission: '',
-      subMenu: [
-        {
-          path: '/xxx',
-          label: 'ทะเบียนข้อมูลหลักสูตรที่รับรองปริญญาและประกาศนียบัตร',
-          permission: '1,2',
-        },
-        {
-          path: '/xxx',
-          label: 'ข้อมูลรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา',
-          permission: '1,2',
-        },
-        {
-          path: '/xxx',
-          label: 'ข้อมูลผลการทดสอบ',
-          permission: '1,2',
-        },
-        {
-          path: '/xxx',
-          label: 'ข้อมูลผลการประเมินสมรรถนะ',
-          permission: '1,2',
-        },
-      ],
+      // subMenu: [
+      //   {
+      //     path: '/xxx',
+      //     label: 'ทะเบียนข้อมูลหลักสูตรที่รับรองปริญญาและประกาศนียบัตร',
+      //     permission: '1,2',
+      //   },
+      //   {
+      //     path: '/xxx',
+      //     label: 'ข้อมูลรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา',
+      //     permission: '1,2',
+      //   },
+      //   {
+      //     path: '/xxx',
+      //     label: 'ข้อมูลผลการทดสอบ',
+      //     permission: '1,2',
+      //   },
+      //   {
+      //     path: '/xxx',
+      //     label: 'ข้อมูลผลการประเมินสมรรถนะ',
+      //     permission: '1,2',
+      //   },
+      // ],
       subMenuName: 'data',
       isExpanded: false,
     },
@@ -120,7 +120,7 @@ export class UniContainerPageComponent implements OnInit {
     this.menuConfig = this.menu.map((data) => {
       if (data.subMenu) {
         data.subMenu = data.subMenu.filter((data) => {
-          return data.permission?.indexOf(permissionright);
+          return permissionright.indexOf(data?.permission || '');
         });
       }
       return data;
