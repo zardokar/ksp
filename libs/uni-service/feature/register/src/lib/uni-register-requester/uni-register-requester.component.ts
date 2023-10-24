@@ -14,7 +14,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['./uni-register-requester.component.scss'],
 })
 export class UniRegisterRequesterComponent implements OnInit {
-
   requestDate = thaiDate(new Date());
   requestNo = '';
   university: any;
@@ -24,8 +23,9 @@ export class UniRegisterRequesterComponent implements OnInit {
   userInfoFormdisplayMode: number = UserInfoFormType.thai;
   uniData!: any;
   submit = false;
+  errPermission = false;
   form = this.fb.group({
-    requester: []
+    requester: [],
   });
 
   constructor(
@@ -42,10 +42,10 @@ export class UniRegisterRequesterComponent implements OnInit {
         this.uniData = res;
       }
     });
-    localForage.getItem('registerUserForm').then((res:any) => {
+    localForage.getItem('registerUserForm').then((res: any) => {
       if (res) {
         this.form.patchValue({
-          requester: res
+          requester: res,
         });
       }
     });
@@ -58,19 +58,27 @@ export class UniRegisterRequesterComponent implements OnInit {
     this.submit = true;
     const data = this.form.getRawValue();
     const { requester } = data as any;
-    if (this.form.valid && requester.prefixth == requester.prefixen) {
+    if (
+      this.form.valid &&
+      requester.prefixth == requester.prefixen &&
+      (!!requester?.permission1 || !!requester?.permission2)
+    ) {
       const userInfo = {
         ...requester,
         schoolid: this.uniData.schoolid,
         unitype: this.uniData.unitype,
         institution: this.uniData.institution,
-        affiliation: this.uniData.affiliation
+        affiliation: this.uniData.affiliation,
       };
       this.submit = false;
-      
-      localForage.setItem('registerUserForm', userInfo).then(()=>{
+      this.errPermission = false;
+      localForage.setItem('registerUserForm', userInfo).then(() => {
         this.router.navigate(['/register', 'coordinator']);
       });
+    } else {
+      if (!requester.permission1 && !requester.permission2) {
+        this.errPermission = true;
+      }
     }
   }
 

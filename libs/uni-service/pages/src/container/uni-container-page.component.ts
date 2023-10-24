@@ -74,22 +74,22 @@ export class UniContainerPageComponent implements OnInit {
         {
           path: '/xxx',
           label: 'ทะเบียนข้อมูลหลักสูตรที่รับรองปริญญาและประกาศนียบัตร',
-          permission: '',
+          permission: '1,2',
         },
         {
           path: '/xxx',
           label: 'ข้อมูลรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา',
-          permission: '',
+          permission: '1,2',
         },
         {
           path: '/xxx',
           label: 'ข้อมูลผลการทดสอบ',
-          permission: '',
+          permission: '1,2',
         },
         {
           path: '/xxx',
           label: 'ข้อมูลผลการประเมินสมรรถนะ',
-          permission: '',
+          permission: '1,2',
         },
       ],
       subMenuName: 'data',

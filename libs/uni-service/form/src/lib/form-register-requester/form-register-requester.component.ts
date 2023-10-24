@@ -23,6 +23,7 @@ export class FormRegisterRequesterInfoComponent
   @Input() occupyList: Array<any> = [];
   @Input() displayMode!: number[];
   @Input() isSubmit = false;
+  @Input() errorPermission = false;
   validatorMessages = validatorMessages;
   educationOccupy: any = {
     permission: '',
@@ -100,10 +101,6 @@ export class FormRegisterRequesterInfoComponent
 
   uppercaseChangeLast(event:any) {
     this.form.patchValue({ lastnameen: toUpperCaseName(event.target.value) });
-  }
-
-  testChecked(event: any) {
-    console.log(this.form.value)
   }
 
   get idCardNo() {
