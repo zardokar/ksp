@@ -283,17 +283,16 @@
     <div class="col">
       <label class="form-label required">ประพฤติผิดจรรยาบรรณต่อ</label>
       <div formGroupName="accusationaction" class="d-flex flex-column">
-        <ng-container *ngFor="let item of accusationtypeList ; index as j">
+        <ng-container *ngFor="let item of arrayType">
           <div class="d-flex flex-row align-items-center mb-2">
-            <input #accusationaction
+            <input 
               type="checkbox"
-              id="actionbox-{{j+1}}"
+              
               class="form-check-input"
               value="{{ item.value }}"
-              name="{{item.name}}"
-              formControlName="{{ item.name }}"
-              (click)="checkAction(item.name)"
-              [checked]="item.value"
+              [checked]="item.selected !== false"
+              (change)="onCheckedType($event,item.value)"
+              
             />
             <label class="form-label ms-2">{{ item.label }}</label>
           </div>

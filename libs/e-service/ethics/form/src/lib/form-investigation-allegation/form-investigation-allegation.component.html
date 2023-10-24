@@ -94,15 +94,17 @@
     </div> -->
 
     <div class="bg-light p-3 mt-3">
-      <label class="form-label">การพิจารณาดำเนินการ</label>
+      <label class="form-label">การแจ้งข้อกล่าวหา/กล่าวโทษ</label>
       <div formGroupName="investigationaction" class="d-flex flex-column">
-      <ng-container *ngFor="let item of allegationList">
+      <ng-container *ngFor="let item of arrayAct">
         <div class="d-flex flex-row align-items-center mb-2">
           <input 
-            type="radio"
+            type="checkbox"
             class="form-check-input"
-            value="{{ item.value }}"
+            [value]="item.value"
             formControlName="{{ item.name }}"
+            [checked]="item.selected !== false"
+            (change)="onCheckedAction($event,item.value)"
           />
           <label class="form-label ms-2">{{ item.label }}</label>
         </div>

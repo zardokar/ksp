@@ -42,10 +42,18 @@ export class AccusationMainComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkRequestId();
-    this.form.valueChanges.subscribe((res) => {
+    // this.checkRequestId();
+    // this.form.valueChanges.subscribe((res) => {
       // console.log(res);
       // console.log('form value = ', this.form.controls.accusation.value);
+    // });
+  }
+
+  ngAfterViewInit( ) : void{
+    this.checkRequestId();
+    this.form.valueChanges.subscribe((res) => {
+      console.log(res);
+      console.log('form value = ', this.form.controls.accusation.value);
     });
   }
 
@@ -127,9 +135,9 @@ export class AccusationMainComponent implements OnInit {
           res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
           res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
           
-          if( typeof res?.accusationaction == "string"){
-            res.accusationaction = jsonParse(res.accusationaction)
-          }  
+          // if( typeof res?.accusationaction == "string"){
+          //   res.accusationaction = jsonParse(res.accusationaction)
+          // }  
           
           this.form.controls.accusation.patchValue(res);
         });
@@ -188,10 +196,10 @@ export class AccusationMainComponent implements OnInit {
 
     if (data?.accusationaction) {
       
-      const getKeyAction  = Object.keys( data?.accusationaction )
-      for(const actionType of getKeyAction){
-        data.accusationaction[actionType]  = data?.accusationaction[actionType] !== null ? true : false
-      }
+      // const getKeyAction  = Object.keys( data?.accusationaction )
+      // for(const actionType of getKeyAction){
+      //   data.accusationaction[actionType]  = data?.accusationaction[actionType] !== null ? true : false
+      // }
       
       data.accusationaction = JSON.stringify(data?.accusationaction);
     }

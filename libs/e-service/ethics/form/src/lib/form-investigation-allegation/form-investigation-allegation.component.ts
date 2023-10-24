@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
@@ -32,6 +32,13 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
+import { isNull } from 'lodash';
+interface checkboxData {
+  value: any;
+  label: string;
+  name?: string;
+  selected: false;
+}
 
 @Component({
   selector: 'e-service-form-investigation-allegation',
@@ -61,6 +68,7 @@ export class FormInvestigationAllegationComponent
   @Input() hideAllButtons = false;
   @Input() hideContainer = false;
   @Input() hideTitle = false;
+  // @Output() arrayAct : checkboxData[] = []
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
@@ -70,6 +78,7 @@ export class FormInvestigationAllegationComponent
   allegationList = allegationList;
   accusationtypeList  = accusationtypeList;
   actionShow  = [] as string[];
+  arrayAct : checkboxData[] = []
 
   override form = this.fb.group({
     accusationcondemnation:[],
@@ -89,6 +98,7 @@ export class FormInvestigationAllegationComponent
     //                                     coworkers: [],
     //                                     society: [],
     //                                   }),
+    // investigationaction: this.fb.array([] as checkboxData[]),
     investigationaction: [],
     investigationnotificationdate:[],
     investigationnotificationdetail:[],
@@ -117,8 +127,25 @@ export class FormInvestigationAllegationComponent
     super();
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
-      this.form?.valueChanges.subscribe((value) => {
-        this.onChange(value);
+      this.form?.valueChanges.subscribe((values) => {
+
+        if( isNull(values.investigationaction)){
+          for(let allegationType of allegationList){
+            let { label , value } = allegationType
+            this.arrayAct.push({
+                            label:label,
+                            value:value,
+                            selected:false
+                          })
+          }
+          
+          values.investigationaction  = this.arrayAct as any
+
+        }else{
+          this.arrayAct = values.investigationaction as any
+        }
+
+        this.onChange(values);
         this.onTouched();
       })
     );
@@ -156,8 +183,20 @@ export class FormInvestigationAllegationComponent
 
 
   getListData() {
-    
+
     this.prefixList$ = this.generalInfoService.getPrefix();
     console.log(this.prefixList$)
   }
+
+  onCheckedAction(evt:any,actType:any){
+
+    let getActIndex   =  allegationList.findIndex((data)=>{
+          return data.value == actType
+      })
+
+    this.arrayAct[getActIndex].selected =   evt.target.checked
+    this.form.controls.investigationaction.patchValue(this.arrayAct as any)
+
+  }
+
 }

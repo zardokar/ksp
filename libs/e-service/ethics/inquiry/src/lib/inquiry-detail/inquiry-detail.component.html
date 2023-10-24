@@ -88,6 +88,8 @@
                   type="text"
                   class="form-control"
                   formControlName="idcardno"
+                  maxlength="13"
+                  (keyup)="onChangeIDcardno($event)"
                 />
               </td>
               <td>
@@ -356,7 +358,7 @@
         class="form-control"
         type="text"
         rows="3"
-        formControlName="inquiryexaminereport"
+        formControlName="inqueryexaminereport"
       ></textarea>
     </div>
   </div>
@@ -612,6 +614,7 @@
             type="text"
             min="0"
             formControlName="year"
+            (keyup)="onChangeIDcardno($event)"
           />
           <label class="form-label mx-3">ปี</label>
           <input
@@ -620,6 +623,7 @@
             type="text"
             min="0"
             formControlName="month"
+            (keyup)="onChangeIDcardno($event)"
           />
           <label class="form-label mx-3">เดือน</label>
           <input
@@ -628,6 +632,7 @@
             type="text"
             min="0"
             formControlName="day"
+            (keyup)="onChangeIDcardno($event)"
           />
           <label class="form-label mx-3">วัน</label>
         </div>
