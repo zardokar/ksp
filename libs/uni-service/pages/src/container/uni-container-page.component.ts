@@ -69,7 +69,7 @@ export class UniContainerPageComponent implements OnInit {
       icon: 'assets/images/icon-sidenav/display.svg',
       label: 'ทะเบียนข้อมูล',
       path: '/degree-cert-list',
-      permission: '',
+      permission: '1,2',
       // subMenu: [
       //   {
       //     path: '/xxx',
