@@ -13,7 +13,6 @@
               <input
                 class="form-check-input my-0 radio"
                 type="checkbox"
-                (change)="testChecked($event)"
                 formControlName="permission1"
               />
               <label class="ms-4">เจ้าหน้าที่ประสานงาน (รับรองปริญญาและประกาศนียบัตรทางการศึกษา)</label>
@@ -24,7 +23,6 @@
               <input
                 class="form-check-input my-0 radio"
                 type="checkbox"
-                (change)="testChecked($event)"
                 formControlName="permission2"
               />
               <label class="ms-4">เจ้าหน้าที่ประสานงาน (นำส่งรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา)</label>
@@ -33,7 +31,7 @@
         </div>
         <ng-container
           *ngIf="
-            isSubmit && permission1.invalid
+            isSubmit && errorPermission
           "
         >
           <span class="text-danger">

@@ -187,10 +187,28 @@ export class UniRegisterPasswordComponent implements OnInit {
         })
       )
       .subscribe((res: any) => {
-        if (res) {
+        if (res.returncode == '00') {
           this.submit = false;
           const requestNo = res?.requestno;
           this.showCompleteDialog(requestNo);
+        } else if (res.returncode == '409') {
+          this.dialog.open(CompleteDialogComponent, {
+            width: '375px',
+            data: {
+              header: `ยืนยันข้อมูลไม่สำเร็จ`,
+              content: `หมายเลขบัตรประชาชนซ้ำ`,
+              btnLabel: 'ปิด',
+            },
+          });
+        } else {
+          this.dialog.open(CompleteDialogComponent, {
+            width: '375px',
+            data: {
+              header: `ยืนยันข้อมูลไม่สำเร็จ`,
+              content: res?.returnmessage,
+              btnLabel: 'ปิด',
+            },
+          });
         }
       });
   }
