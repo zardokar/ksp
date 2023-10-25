@@ -100,6 +100,7 @@ export class Ethics {
   inquerylicensesuspendnotificationdate: string | null = null;
   inquerylicensesuspendrecognizedate: string | null = null;
   inquerynotificationdate: string | null = null;
+  inqueryexaminereport: string | null = null;
 
   resultredno: string | null = null;
   resultblackno: string | null = null;

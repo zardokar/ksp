@@ -84,6 +84,7 @@ export class InquiryMainComponent implements OnInit {
               payload.inquerynotificationdate                   = cleanUpDate(payload.inquerynotificationdate);
               payload.inquiryresult                             = JSON.stringify(payload.inquiryresult);
               payload.inquirysubcommittee                       = JSON.stringify( payload.inquirysubcommittee );
+              payload.inquiryexaminereport                      = payload.inquiryexaminereport 
             }
             const payload2                = this.form.value.inquiryResult as any;
             if (payload2) {
@@ -115,6 +116,10 @@ export class InquiryMainComponent implements OnInit {
             payload.accusationcondemnation        = JSON.stringify(payload3.accusationcondemnation)
             payload.accusationconsideration       = JSON.stringify(payload3.accusationconsideration)
             payload.accusationaction              = JSON.stringify(payload3.accusationaction)
+
+            payload.accusationfile                = JSON.stringify(payload3.accusationfile)
+            payload.accuserinfo                   = JSON.stringify(payload3.accuserinfo)
+            payload.licenseinfo                   = JSON.stringify(payload3.licenseinfo)
 
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),

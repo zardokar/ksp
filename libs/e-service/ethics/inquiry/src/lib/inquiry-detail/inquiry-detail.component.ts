@@ -69,6 +69,7 @@ export class InquiryDetailComponent
     inquiryorderdate: [],
     inquirysubcommittee: this.fb.array([] as FormGroup[]),
     inquiryexplaindate: [],
+    inqueryexaminereport:[],
     inquiryjbdate: [],
     inquiryreport: [],
     inquiryfile: [],
@@ -80,7 +81,11 @@ export class InquiryDetailComponent
       considertimes: [],
       considerdate: [],
       considerreason: [],
-      considerday: [],
+      considerday: this.fb.group({
+        year : [],
+        month : [],
+        day : []
+      }),
       considerdatefrom: [],
       considerdateto: [],
       consider: [],
@@ -215,6 +220,13 @@ export class InquiryDetailComponent
       // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
       this.members.controls[grpind].get('bureauname')?.setValue(res.bureauname)
     });
+  }
+
+  onChangeIDcardno(event : any)
+  {
+    const regex = /[^0-9]/g
+    const dom   = event.target
+    dom.value = dom.value.replace(regex, '')
   }
 
 }
