@@ -40,6 +40,9 @@ export class InvestigationDetailComponent implements OnInit {
   @ViewChild(FormInvestigationAllegationComponent)
   allegation!: FormInvestigationAllegationComponent;
   ngOnInit(): void {
+    // this.checkRequestId();
+  }
+  ngAfterViewInit( ) : void{
     this.checkRequestId();
   }
   cancel() {
@@ -81,10 +84,11 @@ export class InvestigationDetailComponent implements OnInit {
             // );
             payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
             payload.investigationnote = allegationValue.investigationnote
-            payload.investigationaction = allegationValue.investigationaction || null
-            // payload.investigationaction = JSON.stringify(
-            //   allegationValue.investigationaction
-            // );
+            // payload.investigationaction = allegationValue.investigationaction || null
+            payload.investigationaction = JSON.stringify(
+              allegationValue.investigationaction
+            );
+
             payload.investigationdetail = allegationValue.investigationdetail
 
             if (payload?.accusationaction) {
@@ -216,7 +220,7 @@ export class InvestigationDetailComponent implements OnInit {
               this.allegation.setAccusationAction(res.accusationaction)
             }  
             // -----------------------------------------------
-            
+            res.investigationaction = jsonParse(res.investigationaction)
             // res.investigationorderdate = cleanUpDate( res.investigationorderdate )
             // res.investigationrecognizedate = cleanUpDate( res.investigationrecognizedate )
             // res.investigationreportdate = cleanUpDate( res.investigationreportdate )

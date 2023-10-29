@@ -42,6 +42,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { isArray, isNull } from 'lodash';
+interface typeList {
+  value: any;
+  label: string;
+  name?: string;
+  selected: false;
+}
 
 @Component({
   selector: 'e-service-ethic-accusation-record',
@@ -84,6 +91,7 @@ export class AccusationRecordComponent
   prefixList$!: Observable<any>;
   sellictypetab: any;
   isActionBox= false;
+  arrayType : typeList[] = []
 
   override form = this.fb.group({
     accusationblackno: [null, Validators.required],
@@ -91,13 +99,14 @@ export class AccusationRecordComponent
     accusationincidentdate: [null, Validators.required],
     accusationincidentplace: [null, Validators.required],
     accusationcondemnationtype: 0,
-    accusationaction: this.fb.group({
-                                      self: [],
-                                      profession: [],
-                                      service: [],
-                                      coworkers: [],
-                                      society: [],
-                                    }),
+    // accusationaction: this.fb.group({
+    //                                   self: [],
+    //                                   profession: [],
+    //                                   service: [],
+    //                                   coworkers: [],
+    //                                   society: [],
+    //                                 }),
+    accusationaction: [],
     accusationcondemnation: this.fb.array([] as FormGroup[]), //[null, Validators.required],
     accusationissuedate: [],
     accusationdetail: [],
@@ -130,8 +139,28 @@ export class AccusationRecordComponent
     super();
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
-      this.form?.valueChanges.subscribe((value) => {
-        this.onChange(value);
+      this.form?.valueChanges.subscribe((values) => {
+
+        if( isNull(values.accusationaction ) && this.arrayType.length == 0){
+          for(let accusationType of accusationtypeList){
+            let { label , value } = accusationType
+            this.arrayType.push({
+                            label:label,
+                            value:value,
+                            selected:false
+                          })
+          }
+          
+          values.accusationaction  = this.arrayType as any
+          
+        }else if(isNull(values.accusationaction ) && this.arrayType.length > 0){
+          values.accusationaction  = this.arrayType as any
+        }else if(isArray(values.accusationaction) === false){
+          values.accusationaction  = this.arrayType as any
+        }else{
+          this.arrayType = values.accusationaction as any
+        }
+        this.onChange(values);
         this.onTouched();
       })
     );
@@ -213,9 +242,9 @@ export class AccusationRecordComponent
   }
 
   ngOnInit(): void {
-    this.route.data.subscribe((res) => {
-      console.log('res2 = ', res);
-    });
+    // this.route.data.subscribe((res) => {
+    //   console.log('res2 = ', res);
+    // });
     this.uniqueTimestamp = uuidv4();
     this.getListData();
   }
@@ -244,23 +273,35 @@ export class AccusationRecordComponent
     });
   }
 
-  setAccusationaction(data: EhicsAccusationaction = defaultAccusationaction)
-  {
-    // console.log(data);
-    let getdata = this.form.controls.accusationaction.value as any;
+  // setAccusationaction(data: EhicsAccusationaction = defaultAccusationaction)
+  // {
+  //   // console.log(data);
+  //   let getdata = this.form.controls.accusationaction.value as any;
     
 
+  // }
+
+
+  onCheckedType(evt:any,actType:any){
+
+    let getActIndex   =  accusationtypeList.findIndex((data)=>{
+          return data.value == actType
+    })
+
+    this.arrayType[getActIndex].selected =   evt.target.checked
+    this.form.controls.accusationaction.patchValue(this.arrayType as any)
+    console.log(this.form.value.accusationaction)
   }
 
-  checkAction(name:any){
-    let getdata = this.form.controls.accusationaction.value as any;
-    if(getdata[name] == null){
-      getdata[name] = true 
-    }else if( !isNaN( getdata[name]) ){
-      getdata[name] = false 
-    }
-    // console.log(getdata);
-  }
+  // checkAction(name:any){
+  //   let getdata = this.form.controls.accusationaction.value as any;
+  //   if(getdata[name] == null){
+  //     getdata[name] = true 
+  //   }else if( !isNaN( getdata[name]) ){
+  //     getdata[name] = false 
+  //   }
+  //   // console.log(getdata);
+  // }
 
   // ------------------------------------------------------
   setAccusedInfo(accused_data: any)
