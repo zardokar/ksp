@@ -489,7 +489,7 @@ export class DegreeCertRequestComponent implements OnInit, AfterContentChecked {
         : null,
       tokenkey: getCookie('userToken') || null,
     };
-    if (['a', 'b', 'c', 'd'].includes(this.step1DegreeType)) {
+    if (['a', 'b', 'c'].includes(this.step1DegreeType)) {
       reqBody['coursestructure'] = step2?.plan1?.plans
         ? JSON.stringify(step2?.plan1?.plans)
         : null;

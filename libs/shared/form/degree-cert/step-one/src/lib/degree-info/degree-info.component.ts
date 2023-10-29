@@ -76,7 +76,6 @@ export class DegreeInfoComponent
     this.form.controls['degreeType'].valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
-        console.log('res = ', res);
         // it has 8 degree types and target with 2 form types
         /* const degreeType = Number(res) < 4 ? 'a' : 'b';
         this.degreeTypeChanged.emit(degreeType); */
