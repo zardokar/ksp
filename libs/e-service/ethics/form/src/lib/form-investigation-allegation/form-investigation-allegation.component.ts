@@ -32,7 +32,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
-import { isNull } from 'lodash';
+import { isNull , isArray } from 'lodash';
 interface checkboxData {
   value: any;
   label: string;
@@ -86,7 +86,7 @@ export class FormInvestigationAllegationComponent
     investigationnote:[],
     investigationorderno: [],
     investigationorderdate: [],
-    investigationsubcommittee: this.fb.array([] as FormGroup[]),
+    investigationsubcommittee: this.fb.array([] as checkboxData[]),
     investigationdate: [],
     investigationreportdate: [],
     investigationreport: [],
@@ -116,6 +116,10 @@ export class FormInvestigationAllegationComponent
   });
 
   ngOnInit(): void {
+    // this.getListData();
+  }
+
+  ngAfterViewInit(): void {
     this.getListData();
   }
 
@@ -128,7 +132,7 @@ export class FormInvestigationAllegationComponent
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
       this.form?.valueChanges.subscribe((values) => {
-
+        console.log(values.investigationaction)
         if( isNull(values.investigationaction)){
           for(let allegationType of allegationList){
             let { label , value } = allegationType
@@ -141,6 +145,10 @@ export class FormInvestigationAllegationComponent
           
           values.investigationaction  = this.arrayAct as any
 
+        }else if(isNull(values.investigationaction ) && this.arrayAct.length > 0){
+          values.investigationaction  = this.arrayAct as any
+        }else if(isArray(values.investigationaction) === false){
+          values.investigationaction  = this.arrayAct as any
         }else{
           this.arrayAct = values.investigationaction as any
         }
@@ -170,12 +178,12 @@ export class FormInvestigationAllegationComponent
   //   this.members.removeAt(index);
   // }
   setAccusationAction(data:any){
-    let getkeys = Object.keys(data)
-    for(let name of getkeys){
-      let checkstatus = data[name]
-      if(checkstatus == true){
-        let getListLabel  = accusationtypeList.find((action)=>{return action.name == name})
-        let getLabel  = getListLabel?.label as string
+    // let getkeys = Object.keys(data)
+    for(let AccAct of data){
+      // let checkstatus = data[name]
+      if(AccAct.selected == true){
+        // let getListLabel  = accusationtypeList.find((action)=>{return action.value == this.value})
+        let getLabel  = AccAct?.label as string
         this.actionShow.push(getLabel)
       }
     }

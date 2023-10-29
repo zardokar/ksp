@@ -292,7 +292,7 @@
               value="{{ item.value }}"
               [checked]="item.selected !== false"
               (change)="onCheckedType($event,item.value)"
-              
+              [disabled]="mode === 'view'"
             />
             <label class="form-label ms-2">{{ item.label }}</label>
           </div>

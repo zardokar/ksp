@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccusationRecordComponent } from '@ksp/e-service/ethics/accusation';
-import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
+import { FormInvestigationDetailComponent , FormInvestigationAllegationComponent } from '@ksp/e-service/ethics/form';
 import {
   CompleteDialogComponent,
   ConfirmDialogComponent,
@@ -14,12 +14,14 @@ import {
   jsonStringify,
   replaceEmptyWithNull,
   mapMultiFileInfo,
-  zdtform
+  zdtform,
+  mapFileInfo
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap, zip } from 'rxjs';
 import { InquiryDetailComponent} from '../inquiry-detail/inquiry-detail.component';
 import { InquiryResultComponent } from '../inquiry-result/inquiry-result.component';
 import _, { isArray } from 'lodash';
+import { ACCUSATION_FILES} from '@ksp/shared/interface';
 @Component({
   selector: 'e-service-inquiry-main',
   templateUrl: './inquiry-main.component.html',
@@ -31,6 +33,7 @@ export class InquiryMainComponent implements OnInit {
     inquiryResult: [],
     accusation: [],
     investigation: [],
+    allegation:[],
   });
   ethicsId: any;
   constructor(
@@ -48,6 +51,8 @@ export class InquiryMainComponent implements OnInit {
   inquiry!: InquiryDetailComponent;
   @ViewChild(InquiryResultComponent)
   inquiryResult!: InquiryResultComponent;
+  @ViewChild(FormInvestigationAllegationComponent)
+  allegation!: FormInvestigationAllegationComponent;
   cancel() {
     this.router.navigate(['/inquiry']);
   }
@@ -84,7 +89,7 @@ export class InquiryMainComponent implements OnInit {
               payload.inquerynotificationdate                   = cleanUpDate(payload.inquerynotificationdate);
               payload.inquiryresult                             = JSON.stringify(payload.inquiryresult);
               payload.inquirysubcommittee                       = JSON.stringify( payload.inquirysubcommittee );
-              payload.inquiryexaminereport                      = payload.inquiryexaminereport 
+              payload.inqueryexaminereport                      = payload.inqueryexaminereport 
             }
             const payload2                = this.form.value.inquiryResult as any;
             if (payload2) {
@@ -94,13 +99,13 @@ export class InquiryMainComponent implements OnInit {
               payload.resultblackno       = payload2.resultblackno
               payload.resultcomitteeno    = payload2.resultcomitteeno
               payload.resultcomitteedate  = cleanUpDate( payload2.resultcomitteedate )
-              payload.resultcomitteefile  = payload2.resultcomitteefile 
+              payload.resultcomitteefile  = JSON.stringify(payload2.resultcomitteefile)
               payload.resulttoaccuserdate = cleanUpDate( payload2.resulttoaccuserdate )
-              payload.resulttoaccuserfile = payload2.resulttoaccuserfile 
+              payload.resulttoaccuserfile = JSON.stringify(payload2.resulttoaccuserfile) 
               payload.resulttoschooldate  = cleanUpDate( payload2.resulttoschooldate )
-              payload.resulttoschoolfile  = payload2.resulttoschoolfile 
+              payload.resulttoschoolfile  = JSON.stringify(payload2.resulttoschoolfile)
               payload.resulttoaccuseddate = cleanUpDate( payload2.resulttoaccuseddate )
-              payload.resulttoaccusedfile = payload2.resulttoaccusedfile 
+              payload.resulttoaccusedfile = JSON.stringify(payload2.resulttoaccusedfile)
               payload.resultdetail        = payload2.resultdetail 
               payload.resultstartsuspendlicensedate   = cleanUpDate( payload2.resultstartsuspendlicensedate ) 
               payload.resultendsuspendlicensedate     = cleanUpDate( payload2.resultendsuspendlicensedate )
@@ -120,6 +125,23 @@ export class InquiryMainComponent implements OnInit {
             payload.accusationfile                = JSON.stringify(payload3.accusationfile)
             payload.accuserinfo                   = JSON.stringify(payload3.accuserinfo)
             payload.licenseinfo                   = JSON.stringify(payload3.licenseinfo)
+
+            const allegationValue = this.form.value.allegation as any
+            console.log(allegationValue)
+            payload.investigationnotificationdate = allegationValue.investigationnotificationdate || null
+
+            payload.investigationaccusedrecognizedate = allegationValue.investigationaccusedrecognizedate
+
+            // payload.investigationnotificationdetail = JSON.stringify(
+            //   allegationValue.investigationnotificationdetail
+            // );
+            payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
+            payload.investigationnote = allegationValue.investigationnote
+            // payload.investigationaction = allegationValue.investigationaction || null
+            payload.investigationaction = JSON.stringify(allegationValue.investigationaction);
+            // console.log(payload.investigationaction);
+
+            payload.investigationdetail = allegationValue.investigationdetail
 
             return zip(
               // this.service.updateEthicsInquiry(replaceEmptyWithNull(payload)),
@@ -210,13 +232,26 @@ export class InquiryMainComponent implements OnInit {
             res.inquerylicensesuspendrecognizedate        = cleanUpDate(res.inquerylicensesuspendrecognizedate);
             res.inquerynotificationdate                   = cleanUpDate(res.inquerynotificationdate);
 
+            res.investigationaction = jsonParse(res.investigationaction)
+            
             res.resultredno               = res.resultredno
             res.resultblackno             = res.resultblackno
             res.resultcomitteeno          = res.resultcomitteeno
-            res.resultcomitteefile        = res.resultcomitteefile 
-            res.resulttoaccuserfile       = res.resulttoaccuserfile 
-            res.resulttoschoolfile        = res.resulttoschoolfile 
-            res.resulttoaccusedfile       = res.resulttoaccusedfile 
+            // res.resultcomitteefile.forEach(
+            //   (element: any, index: any) => {
+            //     if (res.resultcomitteefile) {
+            //       const json: any = res.resultcomitteefile;
+            //       if (json) {
+            //         element.fileid = json[index]?.fileid;
+            //         element.filename = json[index]?.filename;
+            //       }
+            //     }
+            //   }
+            // );
+            res.resultcomitteefile        = jsonParse(res.resultcomitteefile)
+            res.resulttoaccuserfile       = jsonParse(res.resulttoaccuserfile)
+            res.resulttoschoolfile        = jsonParse(res.resulttoschoolfile)
+            res.resulttoaccusedfile       = jsonParse(res.resulttoaccusedfile) 
             res.resultcomitteedate        = cleanUpDate( res.resultcomitteedate )
             res.resulttoaccuserdate       = cleanUpDate( res.resulttoaccuserdate )
             res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
@@ -307,14 +342,19 @@ export class InquiryMainComponent implements OnInit {
               }
               res.inquerymeetinghistory = dataobj;
             }
+            // if( typeof res?.accusationaction == "string"){
+            //   res.accusationaction = jsonParse(res.accusationaction)
+            // }              
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
-            }              
+            }  
+            this.allegation.setAccusationAction(res.accusationaction)
 
             this.form.controls.inquiry.patchValue(res);
             this.form.controls.inquiryResult.patchValue(res);
             this.form.controls.accusation.patchValue(res);
             this.form.controls.investigation.patchValue(res);
+            this.form.controls.allegation.patchValue(res);
           });
       }
     });

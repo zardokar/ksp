@@ -11,7 +11,7 @@ import { InquiryDetailComponent } from './inquiry-detail/inquiry-detail.componen
 import { InquiryResultComponent } from './inquiry-result/inquiry-result.component';
 import { TopNavComponent } from '@ksp/shared/menu';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
+import { FormInvestigationDetailComponent , FormInvestigationAllegationComponent } from '@ksp/e-service/ethics/form';
 import { InquiryListComponent } from './inquiry-list/inquiry-list.component';
 
 export const routes: Routes = [
@@ -53,6 +53,7 @@ export const routes: Routes = [
     TopNavComponent,
     ReactiveFormsModule,
     FormInvestigationDetailComponent,
+    FormInvestigationAllegationComponent
   ],
   declarations: [InquiryMainComponent],
   exports: [InquiryMainComponent],
