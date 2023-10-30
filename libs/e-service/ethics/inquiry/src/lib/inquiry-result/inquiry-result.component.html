@@ -252,7 +252,15 @@
     <div class="col mb-3">
       <label class="form-label"><br /> </label>
       <div class="d-flex">
-        <ksp-file-upload></ksp-file-upload>
+        
+        <!-- <ksp-file-upload
+
+        ></ksp-file-upload> -->
+
+        <ksp-file-upload
+        (uploadComplete)="onUploadComplete($event,'resultcomitteefile')"
+      ></ksp-file-upload>
+        
       </div>
     </div>
   </div>
@@ -358,7 +366,9 @@
     <div class="col mb-3">
       <label class="form-label"><br /> </label>
       <div class="d-flex">
-        <ksp-file-upload></ksp-file-upload>
+        <ksp-file-upload
+          (uploadComplete)="onUploadComplete($event,'resulttoaccuserfile')"
+        ></ksp-file-upload>
       </div>
     </div>
   </div>
@@ -382,7 +392,9 @@
     <div class="col mb-3">
       <label class="form-label"><br /> </label>
       <div class="d-flex">
-        <ksp-file-upload></ksp-file-upload>
+        <ksp-file-upload
+          (uploadComplete)="onUploadComplete($event,'resulttoschoolfile')"
+        ></ksp-file-upload>
       </div>
     </div>
   </div>
@@ -428,7 +440,9 @@
     <div class="col mb-3">
       <label class="form-label"><br /> </label>
       <div class="d-flex">
-        <ksp-file-upload></ksp-file-upload>
+        <ksp-file-upload
+          (uploadComplete)="onUploadComplete($event,'resulttoaccusedfile')"
+        ></ksp-file-upload>
       </div>
     </div>
   </div>
