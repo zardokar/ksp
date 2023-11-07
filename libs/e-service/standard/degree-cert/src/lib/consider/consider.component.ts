@@ -137,7 +137,7 @@ export class ConsiderComponent implements OnInit {
   considerCert: any = [];
   newConsiderCourses: any = [];
   newConsiderCert: any = [];
-  degreeType = 'a';
+  degreeType = '';
   choices = [
     { name: 'เห็นควรพิจารณาให้การรับรอง', value: 1 },
     { name: 'เห็นควรพิจารณาไม่ให้การรับรอง', value: 2 },
@@ -146,7 +146,12 @@ export class ConsiderComponent implements OnInit {
   ];
   historyList: Array<any> = [];
   result: any = { '1': 'ผ่านการพิจารณา', '2': 'ไม่ผ่านการพิจารณา' };
-  result2: any = { 1: 'เห็นควรพิจารณาให้การรับรอง', 2: 'เห็นควรพิจารณาไม่ให้การรับรอง', 3: 'ให้สถาบันแก้ไข / เพิ่มเติม', 4: 'ส่งคืนหลักสูตร' };
+  result2: any = {
+    1: 'เห็นควรพิจารณาให้การรับรอง',
+    2: 'เห็นควรพิจารณาไม่ให้การรับรอง',
+    3: 'ให้สถาบันแก้ไข / เพิ่มเติม',
+    4: 'ส่งคืนหลักสูตร',
+  };
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   requestKey: any = '';
 
@@ -169,13 +174,16 @@ export class ConsiderComponent implements OnInit {
       'considerCourses',
       []
     );
-    console.log(this.newConsiderCert, this.newConsiderCourses)
     if (this.newConsiderCert && this.newConsiderCert.length > 0) {
       this.form.controls.verify.patchValue({
         detail: null,
         reason: _.get(_.last(this.newConsiderCert), 'verifyForm', null),
-        result: _.get(_.last(this.newConsiderCert), 'considerationResult.result', null),
-      })
+        result: _.get(
+          _.last(this.newConsiderCert),
+          'considerationResult.result',
+          null
+        ),
+      });
       this.form.controls.verify.updateValueAndValidity();
     }
     this.eRequestService
@@ -267,7 +275,6 @@ export class ConsiderComponent implements OnInit {
             } else {
               this.degreeType = 'b';
             }
-            console.log(this.degreeType)
             this.allowEdit =
               res?.requestprocess === '3' && res?.requeststatus === '1';
             return this.uniInfoService.mappingUniverSitySelectByIdWithForm(
@@ -287,23 +294,27 @@ export class ConsiderComponent implements OnInit {
                 this.daftRequest.degreelevel == '3' ||
                 this.daftRequest.degreelevel == '4'
               ) {
-                this.form.controls.plan.patchValue({
-                  plansResult: [],
-                  plans: res?.step2?.plan1.plans || [],
-                  subjects: res?.step2?.plan1.subjects,
-                  subject1GroupName: res?.step2?.plan1.subject1GroupName,
-                  subject2GroupName: res?.step2?.plan1.subject2GroupName,
-                  subject3GroupName: res?.step2?.plan1.subject3GroupName,
-                });
+                setTimeout(() => {
+                  this.form.controls.plan.patchValue({
+                    plansResult: [],
+                    plans: res?.step2?.plan1.plans || [],
+                    subjects: res?.step2?.plan1.subjects,
+                    subject1GroupName: res?.step2?.plan1.subject1GroupName,
+                    subject2GroupName: res?.step2?.plan1.subject2GroupName,
+                    subject3GroupName: res?.step2?.plan1.subject3GroupName,
+                  });
+                }, 0);
               } else {
-                this.form.controls.plan.patchValue({
-                  plansResult: [],
-                  plans: res?.step2?.plan2.plans || [],
-                  subjects: res?.step2?.plan2.subjects,
-                  subject1GroupName: res?.step2?.plan2.subject1GroupName,
-                  subject2GroupName: res?.step2?.plan2.subject2GroupName,
-                  subject3GroupName: res?.step2?.plan2.subject3GroupName,
-                });
+                setTimeout(() => {
+                  this.form.controls.plan.patchValue({
+                    plansResult: [],
+                    plans: res?.step2?.plan2.plans || [],
+                    subjects: res?.step2?.plan2.subjects,
+                    subject1GroupName: res?.step2?.plan2.subject1GroupName,
+                    subject2GroupName: res?.step2?.plan2.subject2GroupName,
+                    subject3GroupName: res?.step2?.plan2.subject3GroupName,
+                  });
+                }, 0);
               }
             }
             this.form.patchValue({
@@ -348,7 +359,7 @@ export class ConsiderComponent implements OnInit {
       considerCourses: this.newConsiderCourses,
       considerCert: this.newConsiderCert,
       oldPlan: this.stepData.step2,
-      newPlan: this.form.controls.plan.getRawValue()
+      newPlan: this.form.controls.plan.getRawValue(),
     });
     let reqProcess = '';
     let reqStatus = '';
@@ -538,7 +549,6 @@ export class ConsiderComponent implements OnInit {
         : null,
       tokenkey: getCookie('userToken') || null,
     };
-    console.log(step2?.nitet);
     const newPlans = this.form.controls.plan.getRawValue() as any;
     if (['1', '2', '3', '4'].includes(this.daftRequest.degreelevel)) {
       reqBody['coursestructure'] = JSON.stringify(

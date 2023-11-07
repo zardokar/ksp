@@ -22,7 +22,26 @@ export class CourseConsiderComponent
   planSums: number[] = [0, 0, 0, 0];
   newPlanSums: number[] = [0, 0, 0];
   contactForm?: FormGroup;
-  @Input() degreeType = '';
+  _degreeType = '';
+  @Input() set degreeType(degreeType: any) {
+    switch (degreeType) {
+      case 'a': {
+        this.addData();
+        break;
+      }
+      case 'b': {
+        this.addDataTypeB();
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    this._degreeType = degreeType;
+  }
+  get degreeType(): any {
+    return this._degreeType;
+  }
   @Input() showSector1 = true;
   @Input() showSector2 = true;
   @Input() showOldPlan = true;
@@ -55,13 +74,6 @@ export class CourseConsiderComponent
         label: (currYear - index + 543).toString(),
       });
     }
-    console.log(this.form.value, this.degreeType);
-    if (this.degreeType && this.degreeType == 'a') {
-      this.addData();
-    } else {
-      this.addDataTypeB();
-    }
-    this.calculateSum();
   }
 
   sum(source: any[], data: string): number {
@@ -137,8 +149,8 @@ export class CourseConsiderComponent
     return this.form.controls['subjects'];
   }
 
-  addDataTypeB() {
-    const subjects = [
+  async addDataTypeB() {
+    const subjects = await [
       this.newSubject('หมวดวิชาเลือก'),
       this.newSubject('วิทยานิพนธ์'),
       this.newSubject('การค้นคว้าอิสระ'),
@@ -162,12 +174,13 @@ export class CourseConsiderComponent
 
     plans.forEach((p) => this.plans.push(p));
     plansResult.forEach((pr) => this.plansResult.push(pr));
-    subjects.forEach((s) => this.subjects.push(s));
+    await subjects.forEach((s) => this.subjects.push(s));
     if (this.mode === 'view') this.form.disable();
+    this.calculateSum();
   }
 
-  addData() {
-    const subjects = [
+  async addData() {
+    const subjects = await [
       this.newSubject('วิชาชีพครู : ภาคทฤษฎีและปฏิบัติ'),
       this.newSubject('วิชาชีพครู : ฝึกปฏิบัติวิชาชีพระหว่างเรียน'),
       this.newSubject(
@@ -195,8 +208,9 @@ export class CourseConsiderComponent
 
     plans.forEach((p) => this.plans.push(p));
     plansResult.forEach((pr) => this.plansResult.push(pr));
-    subjects.forEach((s) => this.subjects.push(s));
+    await subjects.forEach(async (s) => await this.subjects.push(s));
     if (this.mode === 'view') this.form.disable();
+    this.calculateSum();
   }
 
   newPlan(year: number) {
@@ -241,7 +255,6 @@ export class CourseConsiderComponent
   }
 
   setCheckedData(event: any, index: any) {
-    console.log(index, this.plansResult.at(index).value);
     if (!this.plansResult.at(index).value.consider) {
       this.plansResult.at(index).patchValue({
         year: this.plans.at(index).value.year || null,
@@ -251,6 +264,24 @@ export class CourseConsiderComponent
       this.plansResult.at(index).patchValue({
         year: null,
         student: null,
+      });
+    }
+  }
+
+  setCheckedDataB(event: any, index: any) {
+    if (!this.plansResult.at(index).value.consider) {
+      this.plansResult.at(index).patchValue({
+        year: this.plans.at(index).value.year || null,
+        student1: this.plans.at(index).value.student1 || null,
+        student2: this.plans.at(index).value.student2 || null,
+        student3: this.plans.at(index).value.student3|| null,
+      });
+    } else {
+      this.plansResult.at(index).patchValue({
+        year: null,
+        student1: null,
+        student2: null,
+        student3: null,
       });
     }
   }
