@@ -32,7 +32,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
-import { isNull , isArray } from 'lodash';
+import { isNull , isArray, forEach } from 'lodash';
 interface checkboxData {
   value: any;
   label: string;
@@ -65,16 +65,16 @@ export class FormInvestigationAllegationComponent
   extends KspFormBaseComponent
   implements OnInit
 {
-  @Input() hideAllButtons = false;
-  @Input() hideContainer = false;
-  @Input() hideTitle = false;
+  // @Input() hideAllButtons = false;
+  // @Input() hideContainer = false;
+  // @Input() hideTitle = false;
   // @Output() arrayAct : checkboxData[] = []
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
   decisions = decisions;
   selecteddecisions : any;
-  disabled = false;
+  // disabled = false;
   allegationList = allegationList;
   accusationtypeList  = accusationtypeList;
   actionShow  = [] as string[];
@@ -131,9 +131,11 @@ export class FormInvestigationAllegationComponent
     super();
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
+      
       this.form?.valueChanges.subscribe((values) => {
-        console.log(values.investigationaction)
-        if( isNull(values.investigationaction)){
+
+        this.arrayAct = []
+        if( isNull(values.investigationaction ) ||  values?.investigationaction == undefined ){
           for(let allegationType of allegationList){
             let { label , value } = allegationType
             this.arrayAct.push({
@@ -144,43 +146,21 @@ export class FormInvestigationAllegationComponent
           }
           
           values.investigationaction  = this.arrayAct as any
-
-        }else if(isNull(values.investigationaction ) && this.arrayAct.length > 0){
-          values.investigationaction  = this.arrayAct as any
-        }else if(isArray(values.investigationaction) === false){
-          values.investigationaction  = this.arrayAct as any
-        }else{
-          this.arrayAct = values.investigationaction as any
+        }
+        else {
+          this.arrayAct = values.investigationaction
         }
 
         this.onChange(values);
         this.onTouched();
+
       })
     );
   }
-  // get members() {
-  //   return this.form.controls.investigationsubcommittee as FormArray;
-  // }
-  // addRow(data: EhicsSubcommittee = defaultSubcommittee) {
-  //   const rewardForm = this.fb.group({
-  //     idcardno: data.idcardno,
-  //     idnumber: data.idnumber,
-  //     positioncommittee: data.positioncommittee,
-  //     prefix: data.prefix,
-  //     firstname: data.firstname,
-  //     lastname: data.lastname,
-  //     position: data.position,
-  //     bureau: data.bureau,
-  //   });
-  //   this.members.push(rewardForm);
-  // }
-  // deleteRow(index: number) {
-  //   this.members.removeAt(index);
-  // }
+
   setAccusationAction(data:any){
-    // let getkeys = Object.keys(data)
+    this.actionShow = []
     for(let AccAct of data){
-      // let checkstatus = data[name]
       if(AccAct.selected == true){
         // let getListLabel  = accusationtypeList.find((action)=>{return action.value == this.value})
         let getLabel  = AccAct?.label as string
@@ -204,6 +184,8 @@ export class FormInvestigationAllegationComponent
 
     this.arrayAct[getActIndex].selected =   evt.target.checked
     this.form.controls.investigationaction.patchValue(this.arrayAct as any)
+
+    // this.form.controls.investigationaction.disable()
 
   }
 
