@@ -206,8 +206,10 @@ export class UserDetailComponent implements OnInit {
           : education?.permission1 && !education.permission2
           ? '1'
           : '2';
-      this.form.controls.permission1.patchValue(education?.permission1);
-      this.form.controls.permission2.patchValue(education?.permission2);
+      this.form.patchValue({
+        permission1: education?.permission1,
+        permission2: education?.permission2
+      });
       this.requestType = this.requestData.requesttype
         ? parseInt(this.requestData.requesttype)
         : 0;

@@ -151,7 +151,6 @@ export class DegreeCertStepOneComponent
   }
   onDegreeTypeChanged(degreeType: string) {
     this.degreeType.emit(degreeType);
-    console.log(degreeType);
     if (degreeType === 'a' || degreeType === 'b') {
       this.courseTypesFilter = this.courseTypes;
     } else {

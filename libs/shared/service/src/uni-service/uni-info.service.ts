@@ -54,11 +54,9 @@ export class UniInfoService {
         ? parseJson(res?.coordinatorinfo)
         : null,
     };
-    // console.log(parseJson(res.courseinstructor))
     const parseCourseInstructor = res.courseinstructor
       ? parseJson(res.courseinstructor)
       : {};
-    console.log(parseCourseInstructor);
     const parseCourseAdvisor = res.courseadvisor
       ? parseJson(res.courseadvisor)
       : [];
@@ -77,9 +75,7 @@ export class UniInfoService {
         advisors: parseCourseAdvisor,
       },
     };
-    // console.log(parseJson(res.coursestructure), parseJson(res.courseplan), res?.degreelevel)
     if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
-      console.log('here');
       formData.step2.plan1 = {
         plans: res.coursestructure ? parseJson(res.coursestructure) : [],
         subjects: res.courseplan ? parseJson(res.courseplan) : [],
@@ -108,7 +104,6 @@ export class UniInfoService {
         rows: res.processteaching ? parseJson(res.processteaching) : [],
       },
     };
-    console.log(parseJson(res?.attachfiles));
     if (res?.attachfiles)
       formData.step4 = {
         files: parseJson(res?.attachfiles),

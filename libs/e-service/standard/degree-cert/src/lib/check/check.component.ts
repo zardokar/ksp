@@ -130,7 +130,6 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res) => {
-        console.log(res.res);
         this.verifyResult = res.newres;
         this.historyResult = res.res.filter((data: any) => {
           return (
@@ -213,7 +212,6 @@ export class CheckComponent implements OnInit, AfterContentChecked {
           })
         )
         .subscribe((res) => {
-          console.log(res);
           if (res?.returncode !== 98) {
             this.requestNumber = res?.requestNo;
             this.form.patchValue({
@@ -336,7 +334,6 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       'verifyStep4',
     ]);
 
-    console.log(detail);
     let process: any;
     let status: any;
     if (verify == 1) {
@@ -392,7 +389,6 @@ export class CheckComponent implements OnInit, AfterContentChecked {
       'verifyStep4',
     ]);
     const verify = _.get(this.form, 'value.step5.verify', '');
-    console.log(detail);
     if (
       !detail.verifyStep1 ||
       !detail.verifyStep2 ||
