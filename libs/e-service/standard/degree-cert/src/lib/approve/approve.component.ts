@@ -24,7 +24,7 @@ import {
   thaiDate,
 } from '@ksp/shared/utility';
 import _ from 'lodash';
-import { Subject, map } from 'rxjs';
+import { Subject, debounceTime, map } from 'rxjs';
 import moment from 'moment';
 import { EUniApproveProcess } from '@ksp/shared/constant';
 const detailToState = (res: any) => {
@@ -91,9 +91,12 @@ export class ApproveComponent implements OnInit {
     step1: '',
     verify: [],
     approveData: [],
-    plan: [{
-      plansResult: []
-    }]
+    plan: [
+      {
+        plans: [],
+        plansResult: [],
+      },
+    ],
   });
   allowEdit = false;
   step1Data: any;
@@ -147,6 +150,26 @@ export class ApproveComponent implements OnInit {
       'considerCourses',
       []
     );
+    this.form.controls.verify.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe((res: any) => {
+        if (res?.result == '1') {
+          setTimeout(() => {
+            this.form.controls.plan.patchValue({
+              plans: _.get(
+                _.last(this.verifyResult),
+                'detail.newPlan.plans',
+                []
+              ) as any,
+              plansResult: _.get(
+                _.last(this.verifyResult),
+                'detail.newPlan.plansResult',
+                []
+              ) as any,
+            });
+          }, 0);
+        }
+      });
   }
   getDegreeCert() {
     if (this.route.snapshot.params['key']) {
@@ -191,7 +214,6 @@ export class ApproveComponent implements OnInit {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res) => {
-        console.log(res);
         this.historyList = res.response
           .filter((data: any) => {
             return (
@@ -235,7 +257,6 @@ export class ApproveComponent implements OnInit {
         this.form.controls.approveData.patchValue(
           lastPlan?.detail?.approveData
         );
-        this.form.controls.plan.patchValue({plansResult: _.get(_.last(res?.verifyResult), 'detail.newPlan.plansResult', []) as any});
       });
   }
 
