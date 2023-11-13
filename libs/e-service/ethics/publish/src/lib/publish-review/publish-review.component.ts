@@ -236,7 +236,9 @@ export class PublishReviewComponent implements OnInit {
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
             }  
-            this.allegation.setAccusationAction(res.accusationaction)     
+            if( isArray(res?.accusationaction ) ){
+              this.allegation.setAccusationAction(res.accusationaction)  
+            }
 
             this.form.controls.inquiry.patchValue(res);
             this.form.controls.inquiryResult.patchValue(res);
