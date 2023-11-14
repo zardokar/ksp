@@ -21,3 +21,5 @@ export { UniRequestService } from './uni-service/uni-request.service';
 export { UniInfoService } from './uni-service/uni-info.service';
 
 export { LoaderService } from './loader.service';
+
+export { KSPXLicenseService } from './kspx-self-service/license.service';
