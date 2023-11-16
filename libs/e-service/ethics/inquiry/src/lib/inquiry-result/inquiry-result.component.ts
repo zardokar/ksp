@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component , ViewChild , Input , OnInit } from '@angular/core';
+import { Component , ViewChild , EventEmitter, Input, Output , OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { EServiceUiAccusationInfoModule } from '@ksp/e-service/ui/accusation-info';
@@ -11,6 +11,7 @@ import {
   RequestHeaderInfoComponent,
 } from '@ksp/shared/ui';
 import {
+  ACCUSATION_FILES,
   defaultMeeting,
   EhicsMeeting,
   KspFormBaseComponent,
@@ -18,7 +19,7 @@ import {
 import { GeneralInfoService } from '@ksp/shared/service';
 import { FileUploadComponent } from '@ksp/shared/form/file-upload';
 import { FormBuilder, ReactiveFormsModule , FormGroup , FormArray} from '@angular/forms';
-import { providerFactory, thaiDate } from '@ksp/shared/utility';
+import { providerFactory, thaiDate ,mapFileInfo } from '@ksp/shared/utility';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 // import { InquiryDetailComponent } from '../inquiry-detail/inquiry-detail.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -49,6 +50,8 @@ import { Observable } from 'rxjs';
 export class InquiryResultComponent extends KspFormBaseComponent implements OnInit {
   @Input() searchType = '';
   @Input() bureaus: any[] = [];
+  @Output() downloadClick = new EventEmitter<any>();
+  @Output() uploadComplete = new EventEmitter<any>();
   override form = this.fb.group({
     resultredno: [],
     resultblackno:[],
@@ -68,6 +71,7 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
     resultacademicname:[],
     resultaffiliationname:[],
     resulttoschoolnotificationdate:[],
+    // ccusationFiles: any[] = structuredClone(ACCUSATION_FILES);
     // inquerymeetinghistory: this.fb.array([] as FormGroup[]),
     // inquiryresult: this.fb.group({
     //   considertimes: [],
@@ -83,6 +87,10 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
   prefixList$!: Observable<any>;
   today = thaiDate(new Date());
   requestNumber = '';
+  disabled = 'edit';
+  uniqueTimestamp!: string;
+  filename! : string;
+  fileid! : string;
 
   constructor(private router: Router, private fb: FormBuilder , public dialog: MatDialog, private generalInfoService: GeneralInfoService) {
     super();
@@ -180,5 +188,43 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
       this.form.controls.resultacademicname.patchValue(res.schoolname);
     });
   }
+
+  // updateComplete(file: any, group: any) {
+  //   const { fileid, filename } = file;
+  //   group.fileid = fileid;
+  //   group.filename = filename;
+  //   this.uploadComplete.emit(group.fileid);
+  // }
+
+  onUploadComplete(evt: any , field : any) {
+    
+    const { fileid, filename } = evt;
+    const mapFile = {
+      filename : filename as string,
+      fileid : fileid as string
+    } as any
+    console.log('evt = ', mapFile);
+    switch(field){
+      case "resultcomitteefile" : {this.form.controls.resultcomitteefile.patchValue(mapFile)}
+      break;
+      case "resulttoaccuserfile" : {this.form.controls.resulttoaccuserfile.patchValue(mapFile)}
+      break;
+      case "resulttoschoolfile" : {this.form.controls.resulttoschoolfile.patchValue(mapFile)}
+      break;
+      case "resulttoaccusedfile" : {this.form.controls.resulttoaccusedfile.patchValue(mapFile)}
+      break;
+    }
+    // this.form.controls.resultcomitteefile.patchValue(mapFile)
+
+  }
+
+  // uploadComplete(evt: any) {
+  //   //console.log('upload result = ', evt);
+  //   const fileInfo: any = evt;
+  //   this.form.patchValue(fileInfo);
+  //   //console.log('this.form.value = ', this.form.value);
+  // }
+
+  
 
 }

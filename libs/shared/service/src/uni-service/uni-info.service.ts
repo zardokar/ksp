@@ -294,7 +294,7 @@ export class UniInfoService {
       }),
     };
     return this.http.get(
-      `${environment.zdklabs}/public/user?identity_no=${params?.identity_no}`,
+      `${environment.selfAPIURL}/public/user?identity_no=${params?.identity_no}`,
       httpOptions
     );
   }

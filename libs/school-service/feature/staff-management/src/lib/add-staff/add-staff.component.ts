@@ -7,6 +7,7 @@ import {
   LoaderService,
   SchoolLicenseService,
   StaffService,
+  KSPXLicenseService
 } from '@ksp/shared/service';
 import { Observable, Subject } from 'rxjs';
 import {
@@ -15,7 +16,8 @@ import {
   getCookie,
   parseJson,
   replaceEmptyWithNull,
-  replaceUndefinedWithNull
+  replaceUndefinedWithNull,
+  zutils
 } from '@ksp/shared/utility';
 import {
   CompleteDialogComponent,
@@ -50,8 +52,12 @@ import localForage from 'localforage';
   styleUrls: ['./add-staff.component.scss'],
 })
 export class AddStaffComponent implements OnInit {
+  selectLicTab = '';
+  licenseInfo: SelfLicense| null | any = null;
+
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   staffId!: any;
+  staffbirthdate!: string;
   countries$!: Observable<Country[]>;
   nationList$!: Observable<Nationality[]>;
   visaTypeList!: Observable<VisaType[]>;
@@ -82,6 +88,10 @@ export class AddStaffComponent implements OnInit {
     edu: this.fb.array([]),
     teachingInfo: [],
     hiringInfo: [],
+    licenseno:'',
+    usertype:'',
+    certificatestartdate:'',
+    certificateenddate:'',
   });
 
   constructor(
@@ -93,7 +103,8 @@ export class AddStaffComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     public dialog: MatDialog,
     private licenseService: SchoolLicenseService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private kspxlicservice : KSPXLicenseService
   ) {}
 
   ngOnInit(): void {
@@ -113,6 +124,7 @@ export class AddStaffComponent implements OnInit {
 
     const payload = {
       cardno: staffId,
+      idcardno: staffId,
       licenseno: null,
       name: null,
       licensetype: null,
@@ -121,18 +133,22 @@ export class AddStaffComponent implements OnInit {
       row: '100',
     };
 
-    this.licenseService
-      .getStaffLicenses(payload)
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res) {
-          this.foundLicenses = res;
-        } else {
-          this.foundLicenses = [];
-          this.notFound = true;
-          //console.log('res = ', this.notFound);
-        }
-      });
+    this.kspxlicservice.searchSelfLicense(payload) 
+    .pipe(untilDestroyed(this))
+    .subscribe((res) => {
+
+      console.log(res)
+      this.licenseInfo = selectLicense(res,this.staffbirthdate)
+      console.log(  this.licenseInfo )
+
+      console.log( this.form.controls.licenseno )
+      // this.form.controls.licenseno       = res[0].licenseno as string;
+      // this.form.usertype              = res[0].usertype as string;
+      // this.form.certificatestartdate  = res[0].certificatestartdate as string;
+      // this.form.certificateenddate    = res[0].certificateenddate as string;
+
+    });
+
   }
 
   get edu() {
@@ -222,7 +238,6 @@ export class AddStaffComponent implements OnInit {
       schoolid: this.schoolId,
     };
 
-
     this.staffService
       .searchStaffFromIdCard(payload)
       .pipe(untilDestroyed(this))
@@ -246,18 +261,12 @@ export class AddStaffComponent implements OnInit {
               this.patchAll(res)
             }
 
-            console.log( reslen, res.returncode, `Heyyyyyyyyyyyy` , (res && res.returncode !== '98'), ( reslen > 0 ) )
-
             if ( reslen > 0 ) {
               // found staff
               this.router.navigate(['/staff-management', 'edit-staff', res.id]);
             } else {
               // not found then reset form and set idcard again
-              this.router.navigate([
-                '/staff-management',
-                'add-staff-thai',
-                idcardno,
-              ]);
+              this.router.navigate(['/staff-management', 'add-staff-thai',idcardno ]);
             }
             this.searchStaffDone = true;
           });
@@ -273,7 +282,7 @@ export class AddStaffComponent implements OnInit {
       return;
     }
     this.licenseService.searchKuruspaNo(kspno).subscribe((res) => {
-      //console.log('mode x = ', this.mode);
+      console.log('mode x = ', this.mode);
       if (this.mode === 'edit' && res && res.kuruspano) {
         localForage.setItem('sch-kuruspa-no', res);
       } else if (res && res.kuruspano) {
@@ -306,27 +315,39 @@ export class AddStaffComponent implements OnInit {
 
   pathTeachingInfo(res: any) {
     //console.log('teaching = ', res);
-    const teachingLevel = levels.map((level) => {
-      if (res.teachingLevel.includes(level.value)) {
-        return level.value;
-      } else {
-        return false;
-      }
-    });
 
-    const teachingSubjects = subjects.map((subj) => {
-      if (res.teachingSubjects.includes(subj.value)) {
-        return subj.value;
-      } else {
-        return false;
-      }
-    });
+    let teachingLevel : any
+    let teachingSubjects : any
+
+    if(zutils.exist(res,'teachingLevel'))
+    {
+        teachingLevel  = levels.map((level) => {
+            if (res.teachingLevel.includes(level.value)) {
+              return level.value;
+            } else {
+              return false;
+            }
+          }
+        );
+  
+       teachingSubjects = subjects.map((subj) => {
+        if (res.teachingSubjects.includes(subj.value)) {
+          return subj.value;
+        } else {
+          return false;
+        }
+      });
+
+    }
+
     const data = {
       ...res,
       teachingLevel,
       teachingSubjects,
     };
+
     this.form.controls.teachingInfo.patchValue(data);
+
   }
 
   checkMode() {
@@ -473,6 +494,13 @@ export class AddStaffComponent implements OnInit {
 
   pathUserInfo(data: any) {
     console.log(data,`pathUserInfo`)
+
+    if(data.birthdate)
+      this.staffbirthdate = data.birthdate
+
+    if(data.idcardno)
+      this.searchLicense(data.idcardno)
+
     data.birthdate = data.birthdate.split('T')[0];
     this.form.controls.userInfo.patchValue(data);
   }
@@ -631,4 +659,39 @@ export class AddStaffComponent implements OnInit {
 
     return respdata
   }
+
+  onClickTabLicenseType(data : any){
+    this.selectLicTab = data
+  }
+}
+
+
+// ----------------------------------------------------
+function selectLicense(dataarray : any[any], birthdate : string = '')
+{
+  const result : SelfLicense  = {}
+  const now                   = new Date()
+
+  dataarray.map( (license : any) => {
+    const cert_end = zutils.exist(license.certificateenddate) ? new Date( license.certificateenddate ) : undefined
+    if( cert_end !== undefined && (cert_end >= now) )
+    {
+      result.userid           = license.userid
+      result.idcardno         = license.identitynumber
+      result.careertype       = license.usertype
+      result.licensetype      = license.usertype
+      result.licenseno        = license.certificateno
+      result.licensestartdate = license.certificatestartdate
+      result.licenseenddate   = license.certificateenddate
+      result.firstnameth      = license.nameth
+      result.lastnameth       = license.lastnameth
+      result.firstnameen      = license.nameen
+      result.lastnameen       = license.lastnameen
+      result.passportno       = license.passportno
+      result.sex              = license.genderid
+      result.birthdate        = birthdate
+    }
+  })
+
+  return result 
 }

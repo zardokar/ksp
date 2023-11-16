@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccusationRecordComponent } from '@ksp/e-service/ethics/accusation';
 import { InquiryDetailComponent ,InquiryResultComponent } from '@ksp/e-service/ethics/inquiry';
-import { FormInvestigationDetailComponent } from '@ksp/e-service/ethics/form';
+import { FormInvestigationDetailComponent , FormInvestigationAllegationComponent } from '@ksp/e-service/ethics/form';
 import {
   CompleteDialogComponent,
   ConfirmDialogComponent,
@@ -30,6 +30,7 @@ export class PublishReviewComponent implements OnInit {
     inquiryResult: [],
     accusation: [],
     investigation: [],
+    allegation: []
   });
   ethicsId: any;
   today = thaiDate(new Date());
@@ -48,6 +49,8 @@ export class PublishReviewComponent implements OnInit {
   inquiry!: InquiryDetailComponent;
   @ViewChild(InquiryResultComponent)
   inquiryResult!: InquiryResultComponent;
+  @ViewChild(FormInvestigationAllegationComponent)
+  allegation!: FormInvestigationAllegationComponent;
   cancel() {
     this.router.navigate(['/', 'publish', 'list']);
   }
@@ -123,6 +126,7 @@ export class PublishReviewComponent implements OnInit {
             res.investigationdate         = cleanUpDate( res.investigationdate )
             res.investigationreportdate   = cleanUpDate( res.investigationreportdate)
             res.investigationorderdate    = cleanUpDate( res.investigationorderdate)
+            res.investigationaction       = jsonParse(res.investigationaction)
             res.inquerylicensestatus                      = res.inquerylicensestatus;
             res.inquerylicensestatusnotificationdate      = cleanUpDate( res.inquerylicensestatusnotificationdate );
             res.inquerylicensestatusaccusedrecognizedate  = cleanUpDate(res.inquerylicensestatusaccusedrecognizedate);
@@ -228,14 +232,19 @@ export class PublishReviewComponent implements OnInit {
               }
               res.inquerymeetinghistory = dataobj;
             }
+
             if( typeof res?.accusationaction == "string"){
               res.accusationaction = jsonParse(res.accusationaction)
-            }              
+            }  
+            if( isArray(res?.accusationaction ) ){
+              this.allegation.setAccusationAction(res.accusationaction)  
+            }
 
             this.form.controls.inquiry.patchValue(res);
             this.form.controls.inquiryResult.patchValue(res);
             this.form.controls.accusation.patchValue(res);
             this.form.controls.investigation.patchValue(res);
+            this.form.controls.allegation.patchValue(res);
             this.form.controls.publishstatus.patchValue(res.publishstatus);
           });
       }

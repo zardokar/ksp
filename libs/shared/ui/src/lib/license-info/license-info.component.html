@@ -39,12 +39,10 @@
           {{ SelfServiceRequestSubType[license.licensetype] }}
         </div>
         <div>
-          {{ SelfPrefixTh[+license.prefixth] }} {{ license.firstnameth }}
-          {{ license.lastnameth }}
+          {{ SelfPrefixTh[+license.prefixth] }} {{ license.firstnameth }} {{ license.lastnameth }}
         </div>
         <div>
-          {{ SelfPrefixEn[+license.prefixen] }} {{ license.firstnameen }}
-          {{ license.firstnameen }}
+          {{ SelfPrefixEn[+license.prefixen] }} {{ license.firstnameen }} {{ license.firstnameen }}
         </div>
         <div>{{ license.birthdate | thaiDate }}</div>
         <div>{{ license.licensestartdate | thaiDate }}</div>

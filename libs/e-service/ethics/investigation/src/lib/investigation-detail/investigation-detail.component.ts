@@ -216,11 +216,12 @@ export class InvestigationDetailComponent implements OnInit {
               res.investigationsubcommittee = dataobj;
             }
             if( typeof res?.accusationaction == "string"){
-              res.accusationaction = jsonParse(res.accusationaction)
-              this.allegation.setAccusationAction(res.accusationaction)
-            }  
+              res.accusationaction = jsonParse(res.accusationaction)        
+              // this.allegation.setAccusationAction(res.accusationaction)
+            }
             // -----------------------------------------------
             res.investigationaction = jsonParse(res.investigationaction)
+            this.allegation.setAccusationAction(res.accusationaction)
             // res.investigationorderdate = cleanUpDate( res.investigationorderdate )
             // res.investigationrecognizedate = cleanUpDate( res.investigationrecognizedate )
             // res.investigationreportdate = cleanUpDate( res.investigationreportdate )
