@@ -544,12 +544,12 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
             const data = replaceEmptyWithNull(payload);
             const formatedData = formatDatePayload(data);
             
-            zutils.convertBase64toJSONStr( formatedData , ['hiringinfo', 'teachinginfo'])
+            zutils.convertBase64toJSONStr( formatedData , ['hiringinfo', 'teachinginfo', 'addresses', 'educations'])
 
             // --------------------------------------------------------------------------
             if( data.requestno === undefined && data.requestdate === undefined)
             {
-              return this.requestService.schCreateRequest(formatedData);
+              return this.requestService.schKSPXCreateRequest(formatedData);
             }else{
               return this.requestService.schUpdateRequest(formatedData);
             }
