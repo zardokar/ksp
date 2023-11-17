@@ -104,6 +104,7 @@ export class ImportStudentComponent implements OnInit {
     });
     const userId = Number(getCookie('userId'));
     localForage.getItem('courseData').then((res: any) => {
+      console.log(res)
       if (res) {
         this.courseData = res;
         this.payload = {

@@ -4,7 +4,7 @@
   <span detail>{{ headerDetail[processType] }}</span></ksp-top-nav
 >
 
-<div class="bg-secondary bg-opacity-10 px-4 pt-1 pb-3">
+<div class="bg-secondary bg-opacity-10 px-4 pt-1 pb-3 full-height-2 full-width-2">
   <div class="box-header">รายละเอียดแบบคำขอ</div>
   <div class="bg-white p-3">
     <ksp-request-header-info></ksp-request-header-info>
@@ -42,7 +42,10 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col" class="text-center" colspan="5">
+            <th scope="col" class="text-center" colspan="5" *ngIf="degreeType === 'a'">
+              แผนการรับนิสิต / นักศึกษา (ผ่านการรับรอง)
+            </th>
+            <th scope="col" class="text-center" colspan="11" *ngIf="degreeType === 'b'">
               แผนการรับนิสิต / นักศึกษา (ผ่านการรับรอง)
             </th>
           </tr>
@@ -56,11 +59,29 @@
             <th scope="col" class="text-center" style="min-width: 120px">
               จำนวนนักศึกษา
             </th>
-            <th scope="col" class="text-center" style="min-width: 250px">
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'a'">
               ยื่นรายชื่อเข้ารับการศึกษา
             </th>
-            <th scope="col" class="text-center" style="min-width: 250px">
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อเข้ารับการศึกษาแผนที่ 1
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อเข้ารับการศึกษาแผนที่ 2
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อเข้ารับการศึกษาแผนที่ 3
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'a'">
               ยื่นรายชื่อสำเร็จการศึกษา
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อสำเร็จการศึกษาแผนที่ 1
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อสำเร็จการศึกษาแผนที่ 2
+            </th>
+            <th scope="col" class="text-center" style="min-width: 250px" *ngIf="degreeType === 'b'">
+              ยื่นรายชื่อสำเร็จการศึกษาแผนที่ 3
             </th>
           </tr>
         </thead>
@@ -73,10 +94,13 @@
             <td class="text-center form-label vertical-middle">
               <div>{{ row.year || '-' }}</div>
             </td>
-            <td class="text-center form-label vertical-middle">
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'a'">
               <div>{{ row.student }}</div>
             </td>
-            <td class="text-center form-label vertical-middle">
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div>{{ row.sumStudent }}</div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'a'">
               <div>
                 {{ row.admissioncount || 0 }} / {{ row.student }}
                 <span
@@ -90,13 +114,97 @@
                 >
               </div>
             </td>
-            <td class="text-center form-label vertical-middle">
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div>
+                {{ row.admissioncount1 || 0 }} / {{ row.student1 }}
+                <span
+                  role="button"
+                  *ngIf="checkAdmission(row)"
+                  (click)="goToImportStudent('admissionList', row, 1, row.student1)"
+                  class="text-decoration-underline text-primary"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div>
+                {{ row.admissioncount2 || 0 }} / {{ row.student2 }}
+                <span
+                  role="button"
+                  *ngIf="checkAdmission(row)"
+                  (click)="goToImportStudent('admissionList', row, 2, row.student2)"
+                  class="text-decoration-underline text-primary"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div>
+                {{ row.admissioncount3 || 0 }} / {{ row.student3 }}
+                <span
+                  role="button"
+                  *ngIf="checkAdmission(row)"
+                  (click)="goToImportStudent('admissionList', row, 3, row.student3)"
+                  class="text-decoration-underline text-primary"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'a'">
               <div
                 *ngIf="checkGraduate(row)">
                 {{ row.graduatecount || 0 }} / {{ row.student }}
                 <span
                   role="button"
                   (click)="goToImportStudent('graduateList', row)"
+                  class="text-decoration-underline text-orange"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div
+                *ngIf="checkGraduate(row)">
+                {{ row.graduatecount || 0 }} / {{ row.student1 }}
+                <span
+                  role="button"
+                  (click)="goToImportStudent('graduateList', row, 1, row.student1)"
+                  class="text-decoration-underline text-orange"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div
+                *ngIf="checkGraduate(row)">
+                {{ row.graduatecount || 0 }} / {{ row.student2 }}
+                <span
+                  role="button"
+                  (click)="goToImportStudent('graduateList', row, 2, row.student2)"
+                  class="text-decoration-underline text-orange"
+                >
+                  <i role="button" class="bi bi-pencil-fill fs-6"></i>
+                  รายชื่อนักศึกษา</span
+                >
+              </div>
+            </td>
+            <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
+              <div
+                *ngIf="checkGraduate(row)">
+                {{ row.graduatecount || 0 }} / {{ row.student3 }}
+                <span
+                  role="button"
+                  (click)="goToImportStudent('graduateList', row, 3, row.student3)"
                   class="text-decoration-underline text-orange"
                 >
                   <i role="button" class="bi bi-pencil-fill fs-6"></i>
