@@ -109,6 +109,7 @@ export class EthicsService {
   formatMyInfo(info: Ethics): Ethics {
     const dateColumn = [
       'accusationincidentdate',
+      'accusationreceiveddate',
       'accusationissuedate',
       'accusationassigndate',
       'inquerylicensesuspendrecognizedate',

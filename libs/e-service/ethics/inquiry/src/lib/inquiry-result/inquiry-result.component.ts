@@ -71,6 +71,7 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
     resultacademicname:[],
     resultaffiliationname:[],
     resulttoschoolnotificationdate:[],
+    accusationblackno:[]
     // ccusationFiles: any[] = structuredClone(ACCUSATION_FILES);
     // inquerymeetinghistory: this.fb.array([] as FormGroup[]),
     // inquiryresult: this.fb.group({
@@ -151,7 +152,7 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
 
   getListData() {
     this.prefixList$ = this.generalInfoService.getPrefix();
-    console.log(this.prefixList$)
+    // console.log(this.prefixList$)
   }
 
   searchSchool(target:any) {
@@ -168,7 +169,6 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
       },
     });
     dialog.afterClosed().subscribe((res: any) => {
-      console.log(res);
       // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
       // if(bureau === undefined)
       // {
@@ -203,7 +203,7 @@ export class InquiryResultComponent extends KspFormBaseComponent implements OnIn
       filename : filename as string,
       fileid : fileid as string
     } as any
-    console.log('evt = ', mapFile);
+    // console.log('evt = ', mapFile);
     switch(field){
       case "resultcomitteefile" : {this.form.controls.resultcomitteefile.patchValue(mapFile)}
       break;

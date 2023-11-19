@@ -44,6 +44,7 @@ export class Ethics {
   accusationcondemnationtype: string | null = null;
   accusationcondemnation: string | null = null;
   accusationissuedate: string | null = null;
+  accusationreceiveddate: string | null = null;
   accusationdetail: string | null = null;
   accusationpunishmentdetail: string | null = null;
   accusationviolatedetail: string | null = null;
@@ -152,8 +153,10 @@ export const defaultSubcommittee: EhicsSubcommittee = {
 export const defaultAccused: Ehicsaccused = {
   id: null,
   licenseno: null,
+  certificateno: null,
   identitynumber: null,
   usertype: null,
+  careertype: null,
   titlethid: null,
   nameth: null,
   lastnameth: null,
@@ -209,7 +212,9 @@ export interface EhicsSubcommittee {
 export interface Ehicsaccused {
   id: string | null;
   licenseno: string | null;
+  certificateno: string | null;
   identitynumber: number | null;
+  careertype: string | null;
   usertype: string | null;
   titlethid: string | null;
   nameth: string | null;
