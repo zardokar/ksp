@@ -12,6 +12,7 @@ import {
   jsonParse,
   mapFileInfo,
   replaceEmptyWithNull,
+  zdtform
 } from '@ksp/shared/utility';
 import { EMPTY, switchMap } from 'rxjs';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -52,8 +53,8 @@ export class AccusationMainComponent implements OnInit {
   ngAfterViewInit( ) : void{
     this.checkRequestId();
     this.form.valueChanges.subscribe((res) => {
-      console.log(res);
-      console.log('form value = ', this.form.controls.accusation.value);
+      // console.log(res);
+      // console.log('form value = ', this.form.controls.accusation.value);
     });
   }
 
@@ -76,12 +77,8 @@ export class AccusationMainComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
-        console.log("This ethicsId : " , this.ethicsId);
-        console.log("This accusation" , this.accusation);
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
-          console.log("This res : " ,res);
-          
-          // console.log(res.createdate as string );
+
           this.accusation.accusationFiles.forEach(
             (element: any, index: any) => {
               if (res.accusationfile) {
@@ -131,9 +128,17 @@ export class AccusationMainComponent implements OnInit {
             const json = jsonParse(res?.investigationresult);
             res.investigationresult = json;
           }
-          res.accusationincidentdate = moment(res?.accusationincidentdate).toISOString()
-          res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
-          res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
+          // res.accusationincidentdate = moment(res?.accusationincidentdate).toISOString()
+          // res.accusationassigndate = moment(res?.accusationassigndate).toISOString()
+          // res.accusationissuedate = moment(res?.accusationissuedate).toISOString()
+
+          res.accusationassigndate      = cleanUpDate( res?.accusationassigndate as any )
+          res.accusationincidentdate    = cleanUpDate( res?.accusationincidentdate as any )
+          res.accusationissuedate       = cleanUpDate( res?.accusationissuedate as any )
+          if (res?.accusationreceiveddate) {
+            res.accusationreceiveddate    = cleanUpDate( res?.accusationreceiveddate as any )
+          }
+          
           
           // if( typeof res?.accusationaction == "string"){
           //   res.accusationaction = jsonParse(res.accusationaction)
@@ -168,7 +173,6 @@ export class AccusationMainComponent implements OnInit {
     // const phone = document.getElementById("person-phone") as HTMLButtonElement;
     // const email = document.getElementById("person-email") as HTMLButtonElement;
     // const image = document.getElementById("person-img") as HTMLButtonElement;
-    console.log("data in form :: " , data);
     // const objPerson = {
     //    identitynumber : idno.innerText,
     //    nameth : nameth.innerText,
@@ -179,8 +183,6 @@ export class AccusationMainComponent implements OnInit {
     //    genderid : gender.innerText,
     //    profileimage : image.getAttribute("src")
     // }
-    
-    // console.log("data form accusation :: " , objPerson);
 
     data.processid = '1'  // Set default first process
 
@@ -211,6 +213,13 @@ export class AccusationMainComponent implements OnInit {
     if (data?.accusationconsideration) {
       data.accusationconsideration = JSON.stringify(data?.accusationconsideration);
     }
+
+    data.accusationassigndate      = cleanUpDate( data?.accusationassigndate as any )
+    data.accusationincidentdate    = cleanUpDate( data?.accusationincidentdate as any )
+    data.accusationissuedate       = cleanUpDate( data?.accusationissuedate as any )
+    data.accusationreceiveddate    = cleanUpDate( data?.accusationreceiveddate as any )
+    
+
     data.accusationfile = JSON.stringify(
       mapFileInfo(this.accusation.accusationFiles)
     );
@@ -249,4 +258,36 @@ export class AccusationMainComponent implements OnInit {
   cancel() {
     this.router.navigate(['/accusation']);
   }
+
+  
+}
+
+function cleanUpDate(data: string)
+{
+  let convertSTRpass      = true
+  let convertFormSTRpass  = true
+  let convertSTR : any
+  let convertFormSTR : any
+
+  try{
+      convertSTR          = zdtform.from(data , 'UTC_MS',0)
+      const result        =  new Date( convertSTR ) 
+      convertSTRpass      = isFinite(result.getTime())
+  }catch(excp){
+      convertSTRpass      = false
+  }
+  try{
+      convertFormSTR      = zdtform.convertDateStrtoDTStr(data , 'DD-MMM-YY')
+      const result        = new Date( convertFormSTR ) 
+      convertFormSTRpass  = isFinite(result.getTime())
+  }catch(excp){
+      convertFormSTRpass  = false
+  }
+
+  if( convertSTRpass ) 
+      return convertSTR
+  else if( convertFormSTRpass ) 
+      return convertFormSTR
+  else 
+      return ""
 }

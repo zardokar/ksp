@@ -6,6 +6,9 @@ export class SelfLicense {
   renewtype?: string | null = null;
   isforeign?: string | null = null;
   licenseno?: string | null = null;
+  certificateno?: string | null = null;
+  certificatestartdate?: string | null = null;
+  certificateenddate?: string | null = null;
   requestno?: string | null = null;
   licensestartdate?: string | null = null;
   licenseenddate?: string | null = null;

@@ -37,7 +37,7 @@ import {
   decisionsSelector,
   accusationtypeList
 } from '@ksp/shared/interface';
-import { providerFactory, thaiDate } from '@ksp/shared/utility';
+import { providerFactory, thaiDate , zdtform } from '@ksp/shared/utility';
 import { v4 as uuidv4 } from 'uuid';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
@@ -109,6 +109,7 @@ export class AccusationRecordComponent
     accusationaction: [],
     accusationcondemnation: this.fb.array([] as FormGroup[]), //[null, Validators.required],
     accusationissuedate: [],
+    accusationreceiveddate:[],
     accusationdetail: [],
     accusationpunishmentdetail: [],
     accusationviolatedetail: [],
@@ -211,8 +212,10 @@ export class AccusationRecordComponent
       nameth: [accusedData.nameth],
       lastnameth: [accusedData.lastnameth],
       phonenumber: [accusedData.phonenumber],
-      certificatestartdate: [accusedData.certificatestartdate],
-      certificateenddate: [accusedData.certificateenddate],
+      certificateno: [accusedData.certificateno],
+      careertype:[accusedData.careertype],
+      certificatestartdate: [zdtform.convertDateForm(accusedData.certificatestartdate, 'th', 'be', 'DD MMMM YYYY') ],
+      certificateenddate: [ zdtform.convertDateForm(accusedData.certificateenddate, 'th', 'be', 'DD MMMM YYYY')],
       bureau: [accusedData.bureau]
     });
     this.accuseds.push(accusedForm);
@@ -226,7 +229,6 @@ export class AccusationRecordComponent
 
   addCondemnationRow(data: EhicsCondemnation = defaultCondemnation) {
     // this.accusedInfo = accusedData
-    console.log(data)
     const accusationcondemnationForm = this.fb.group({
       condemnationtype : [data.condemnationtype],
       condemnationdetail : [data.condemnationdetail]
@@ -263,7 +265,7 @@ export class AccusationRecordComponent
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log("after Close ::: ",result);
+      // console.log("after Close ::: ",result);
       if(result !== ""){
       this.addAccusedRow(result)
       }
@@ -290,7 +292,6 @@ export class AccusationRecordComponent
 
     this.arrayType[getActIndex].selected =   evt.target.checked
     this.form.controls.accusationaction.patchValue(this.arrayType as any)
-    console.log(this.form.value.accusationaction)
   }
 
   // checkAction(name:any){
@@ -333,6 +334,36 @@ export class AccusationRecordComponent
       this.currentlictab = event
   }
 
+}
+
+function cleanUpDate(data: string)
+{
+  let convertSTRpass      = true
+  let convertFormSTRpass  = true
+  let convertSTR : any
+  let convertFormSTR : any
+
+  try{
+      convertSTR          = zdtform.from(data , 'UTC_MS',0)
+      const result        =  new Date( convertSTR ) 
+      convertSTRpass      = isFinite(result.getTime())
+  }catch(excp){
+      convertSTRpass      = false
+  }
+  try{
+      convertFormSTR      = zdtform.convertDateStrtoDTStr(data , 'DD-MMM-YY')
+      const result        = new Date( convertFormSTR ) 
+      convertFormSTRpass  = isFinite(result.getTime())
+  }catch(excp){
+      convertFormSTRpass  = false
+  }
+
+  if( convertSTRpass ) 
+      return convertSTR
+  else if( convertFormSTRpass ) 
+      return convertFormSTR
+  else 
+      return ""
 }
 
 
