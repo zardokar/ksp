@@ -80,6 +80,7 @@ export class AddStaffComponent implements OnInit {
   eduSelected: number[] = [];
   foundLicenses: SelfLicense[] = [];
   notFound = false;
+  isForeigner=false;
   selectedTabIndex = 0;
   form = this.fb.group({
     userInfo: [],
@@ -141,7 +142,7 @@ export class AddStaffComponent implements OnInit {
       this.licenseInfo = selectLicense(res,this.staffbirthdate)
       console.log(  this.licenseInfo )
 
-      console.log( this.form.controls.licenseno )
+      // console.log( this.form.controls.licenseno )
       // this.form.controls.licenseno       = res[0].licenseno as string;
       // this.form.usertype              = res[0].usertype as string;
       // this.form.certificatestartdate  = res[0].certificatestartdate as string;
@@ -257,7 +258,7 @@ export class AddStaffComponent implements OnInit {
               res = res[0]
               res = this.convertSelfData(res)
               idcardno = res.idcardno 
-      
+              
               this.patchAll(res)
             }
 
@@ -283,8 +284,12 @@ export class AddStaffComponent implements OnInit {
     }
     this.licenseService.searchKuruspaNo(kspno).subscribe((res) => {
       console.log('mode x = ', this.mode);
+
       if (this.mode === 'edit' && res && res.kuruspano) {
         localForage.setItem('sch-kuruspa-no', res);
+        if(this.isForeigner === true){
+          this.router.navigate(['/staff-management', 'add-staff-foreign', kspno ]);
+        }
       } else if (res && res.kuruspano) {
         localForage.setItem('sch-kuruspa-no', res);
         this.router.navigate(['/staff-management', 'add-staff-foreign', kspno]);
@@ -364,6 +369,7 @@ export class AddStaffComponent implements OnInit {
       this.userInfoType = UserInfoFormType.thai;
     } else if (this.router.url.includes('add-staff-foreign')) {
       this.mode = 'add';
+      this.isForeigner = true
       this.userInfoType = UserInfoFormType.foreign;
       this.patchDataFromLicense();
     } else if (this.router.url.includes('edit-staff')) {
@@ -403,6 +409,7 @@ export class AddStaffComponent implements OnInit {
     this.form.reset();
     const checked = evt.target.checked;
     if (checked) {
+      this.isForeigner = true
       this.userInfoType = UserInfoFormType.foreign;
     } else {
       this.userInfoType = UserInfoFormType.thai;
