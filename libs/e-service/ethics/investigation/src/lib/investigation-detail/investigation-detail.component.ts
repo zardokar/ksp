@@ -91,10 +91,10 @@ export class InvestigationDetailComponent implements OnInit {
 
             if (payload?.accusationaction) {
       
-              const getKeyAction  = Object.keys( accusationValue?.accusationaction )
-              for(const actionType of getKeyAction){
-                payload.accusationaction[actionType]  = accusationValue?.accusationaction[actionType] !== null ? true : false
-              }
+              // const getKeyAction  = Object.keys( accusationValue?.accusationaction )
+              // for(const actionType of getKeyAction){
+              //   payload.accusationaction[actionType]  = accusationValue?.accusationaction[actionType] !== null ? true : false
+              // }
               
               payload.accusationaction = JSON.stringify(accusationValue?.accusationaction);
             }
