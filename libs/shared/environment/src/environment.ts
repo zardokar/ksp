@@ -9,7 +9,7 @@ const DOMAIN_DEV_ZDK       = 'https://ksp-api.zdklabs.io';
 const DOMAIN_DEV_SELF_API  = 'https://ksp-api.zdklabs.io';
 
 // -----------------------------------------------------------------------------
-const CURRENT_DOMAIN       = DOMAIN_DEV_OCN
+const CURRENT_DOMAIN       = DOMAIN_PROD_OCN
 const CURRENT_SELF_DOMAIN  = DOMAIN_PROD_SELF
 const CURRENT_SELF_API     = DOMAIN_DEV_SELF_API
 const CURRENT_FILE_URL     = `${DOMAIN_DEV_SELF_API}/app/files`
