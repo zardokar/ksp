@@ -7,7 +7,7 @@ const domain = 'https://ksp-ocnapi.ksp.or.th';
 export const environment = {
   production: false,
   systemType: '02',
-  shortApiUrl: domain,
+  shortApiUrl: domain + '/kspapi',
   apiUrl: domain + '/ksp',
 };
 

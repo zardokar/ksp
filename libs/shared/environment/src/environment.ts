@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-const DOMAIN_PROD_OCN      = 'https://ksp-ocnapi.ksp.or.th';
+const DOMAIN_PROD_OCN      = 'https://ksp-ocnapi.ksp.or.th/';
 const DOMAIN_PROD_SELF_API = 'https://ksp-api.ksp.or.th';
 const DOMAIN_PROD_SELF     = 'https://ksp-self.ksp.or.th';
 
@@ -24,7 +24,7 @@ const SELF_PUB_AUTH        = `Basic ${btoa('ksppublicapi:KspPublicApi@2023')}`
 
 export const environment = {
       production : false,
-     shortApiUrl : CURRENT_DOMAIN,
+     shortApiUrl : CURRENT_DOMAIN + '/kspapi',
           apiUrl : CURRENT_DOMAIN + '/ksp',
       selfAPIURL : CURRENT_SELF_API,
          fileUrl : CURRENT_FILE_URL,
