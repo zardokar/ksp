@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-const DOMAIN_PROD_OCN      = 'https://ksp-ocnapi.ksp.or.th/';
+const DOMAIN_PROD_OCN      = 'https://ksp-ocnapi.ksp.or.th';
 const DOMAIN_PROD_SELF_API = 'https://ksp-api.ksp.or.th';
 const DOMAIN_PROD_SELF     = 'https://ksp-self.ksp.or.th';
 
