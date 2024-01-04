@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { ListData } from './input-type';
 import { FileGroup } from './ksp-file';
 import { MenuConfig } from './ksp-menu-config';
-export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation';
+export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation' | 'recording';
 
 export interface EthicsCustomRouteData {
   menuConfig: MenuConfig[];
@@ -231,11 +231,11 @@ export interface EhicsCondemnation {
 }
 
 export interface EhicsAccusationaction {
-  self: Boolean | null;
-  profession: Boolean | null;
-  service: Boolean | null;
-  coworkers: Boolean | null;
-  society: Boolean | null;
+  self: boolean | null;
+  profession: boolean | null;
+  service: boolean | null;
+  coworkers: boolean | null;
+  society: boolean | null;
 }
 
 export interface EhicsMeeting {
