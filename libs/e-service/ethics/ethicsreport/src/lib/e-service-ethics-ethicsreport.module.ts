@@ -5,6 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { EServiceContainerPageComponent } from '@ksp/e-service/feature/container-page';
 
 import { EthicsReportRecordingComponent } from './ethicsreport-recording/ethicsreport-recording.component';
+import { EthicsReportRecordingStatisticComponent } from './ethicsreport-recordingstat/ethicsreport-recordingstat.component';
+import { EthicsReportResultStatisticComponent } from './ethicsreport-resultstat/ethicsreport-resultstat.component';
 // --------------------------------------------------------------------------------------------------------------------------
 export const routes: Routes = [
     {
@@ -18,7 +20,15 @@ export const routes: Routes = [
         },
         {
           path: 'recording',
-          component: EthicsReportRecordingComponent,
+          component: EthicsReportRecordingComponent
+        },
+        {
+          path: 'recordingstat',
+          component: EthicsReportRecordingStatisticComponent
+        },
+        {
+          path: 'resultstat',
+          component: EthicsReportResultStatisticComponent
         }
       ],
     },
