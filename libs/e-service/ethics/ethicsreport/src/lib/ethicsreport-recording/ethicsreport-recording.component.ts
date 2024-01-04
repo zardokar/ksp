@@ -1,15 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { TopNavComponent } from '@ksp/shared/menu';
+import { LoaderService } from '@ksp/shared/service';
+// --------------------------------------------------------------------------------------------------------------------------
 @Component({
     templateUrl: './ethicsreport-recording.component.html',
     styleUrls: ['./ethicsreport-recording.component.scss'],
     standalone: true,
     imports: [
-      CommonModule
+      CommonModule,
+      MatProgressSpinnerModule,
+      TopNavComponent
     ],
 })
+// --------------------------------------------------------------------------------------------------------------------------
+export class EthicsReportRecordingComponent 
+{
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
-export class EthicsReportRecordingComponent {
-    
+  constructor(
+              public router: Router,
+              private route: ActivatedRoute,
+              private fb: FormBuilder,
+              private loaderService: LoaderService
+  )
+  {}
 }

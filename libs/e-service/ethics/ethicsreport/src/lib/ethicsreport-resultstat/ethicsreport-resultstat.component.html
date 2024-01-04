@@ -1,3 +1,18 @@
+<div *ngIf="isLoading | async" class="overlay">
+    <mat-progress-spinner class="spinner" mode="indeterminate">
+    </mat-progress-spinner>
+</div>
+  
+<ksp-top-nav>
+    <span header>ระบบงานจรรยาบรรณ</span><span subHeader>รายงานสถิติผลการพิจารณาและผลคำวินิจฉัย</span>
+</ksp-top-nav>
+
 <div>
-    Hello Result Stat
+    <!--
+        การแจ้งข้อกล่าวหา/กล่าวโทษ
+        กรณีข้อ 13/1, ข้อ 60/5 และ ข้อ 60/6"
+        คำวินิจฉัย
+        วันเดือนปีที่บันทึก (ถึง)
+        วันเดือนปีที่บันทึก (จาก)
+    -->
 </div>
