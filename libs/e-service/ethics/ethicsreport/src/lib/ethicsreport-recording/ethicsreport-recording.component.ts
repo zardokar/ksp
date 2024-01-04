@@ -4,10 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { TopNavComponent } from '@ksp/shared/menu';
 import { LoaderService } from '@ksp/shared/service';
+
+import { GNXTableComponent } from '@ksp/shared/utility';
 // --------------------------------------------------------------------------------------------------------------------------
 @Component({
     templateUrl: './ethicsreport-recording.component.html',
@@ -16,7 +19,10 @@ import { LoaderService } from '@ksp/shared/service';
     imports: [
       CommonModule,
       MatProgressSpinnerModule,
-      TopNavComponent
+      MatDatepickerModule,
+      ReactiveFormsModule,
+      TopNavComponent,
+      GNXTableComponent
     ],
 })
 // --------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +32,15 @@ export class EthicsReportRecordingComponent
 
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
+  form = this.fb.group({
+    black_no: [],
+    red_no: [],
+    search_id: [],
+    license_id: [],
+    fromDate: [],
+    toDate: []
+  });
+
   constructor(
               public router: Router,
               private route: ActivatedRoute,
@@ -34,5 +49,15 @@ export class EthicsReportRecordingComponent
   )
   {
     
+  }
+
+  clear()
+  {
+
+  }
+
+  onClickSearch()
+  {
+
   }
 }
