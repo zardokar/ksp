@@ -21,6 +21,7 @@ import { LoaderService } from '@ksp/shared/service';
 })
 // --------------------------------------------------------------------------------------------------------------------------
 export class EthicsReportRecordingStatisticComponent {
+  HEAD_LABEL : string = 'รายงานสถิติการบันทึกข้อมูลจรรยาบรรณ (ขั้นตอน)'
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(

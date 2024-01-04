@@ -22,6 +22,7 @@ import { LoaderService } from '@ksp/shared/service';
 })
 
 export class EthicsReportResultStatisticComponent {
+  HEAD_LABEL : string = 'รายงานสถิติผลการพิจารณาและผลคำวินิจฉัย'
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(

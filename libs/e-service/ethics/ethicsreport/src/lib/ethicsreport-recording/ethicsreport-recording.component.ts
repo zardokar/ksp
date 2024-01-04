@@ -22,6 +22,8 @@ import { LoaderService } from '@ksp/shared/service';
 // --------------------------------------------------------------------------------------------------------------------------
 export class EthicsReportRecordingComponent 
 {
+  HEAD_LABEL : string = 'รายงานการบันทึกข้อมูลจรรยาบรรณ'
+
   isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
@@ -30,5 +32,7 @@ export class EthicsReportRecordingComponent
               private fb: FormBuilder,
               private loaderService: LoaderService
   )
-  {}
+  {
+    
+  }
 }
