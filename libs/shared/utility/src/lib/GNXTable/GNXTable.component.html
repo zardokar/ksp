@@ -1,9 +1,17 @@
 <table class="gtable" [style]="this.tablestyle">
     <thead class="gtable">
-        <tr [style]="this.config.tr_headstyle">
+        <tr [style]="this.config.tr_headstyle" >
+            <th [style]="this.headstyle" *ngFor="let col of this.dataCols;">
+                {{col}}
+            </th>
         </tr>
     </thead>
     <tbody class="gtable">
+        <tr class="gtable" [style]="this.config.tr_bodystyle" *ngFor="let row of this.dataRows;">
 
+            <td [style]="this.cellstyle" *ngFor="let key of this.datakeys;">
+                {{row[key]}}
+            </td>
+        </tr>
     </tbody>
 </table>
