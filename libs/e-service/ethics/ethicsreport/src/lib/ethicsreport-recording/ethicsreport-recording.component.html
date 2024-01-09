@@ -100,15 +100,19 @@
         </div>
     </form>
 
-    <div class="bg-white p-3 mt-3">
-        <div class="d-flex justify-content-between">
+    <div class="bg-white p-3 mt-3 default-width">
+        <div class="d-flex justify-content-between mb-2">
           <div class="box-header">{{this.HEAD_LABEL}}</div>
           <hr />
-          <div class="full-width">
-            <ksp-gnx-table>
+        </div>
+        <div class="default-width" style="overflow-x: scroll;">
+            <ksp-gnx-table
+                [dataCols]      ="this.REPORT_COLS_DATA"
+                [dataRows]      ="this.reportdata"
+                [TableStyle]    ="this.TABLE_STYLE"
+            >
             </ksp-gnx-table>
           </div>
-        </div>
     </div>
 
 </div>

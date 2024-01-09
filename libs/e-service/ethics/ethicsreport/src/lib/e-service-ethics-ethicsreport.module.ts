@@ -10,7 +10,7 @@ import { EthicsReportResultStatisticComponent } from './ethicsreport-resultstat/
 // --------------------------------------------------------------------------------------------------------------------------
 export const routes: Routes = [
     {
-      path: '', // สอบสวน
+      path: '',
       component: EServiceContainerPageComponent,
       children: [
         {
