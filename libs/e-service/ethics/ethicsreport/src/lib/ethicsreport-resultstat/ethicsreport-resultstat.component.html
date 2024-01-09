@@ -9,11 +9,112 @@
 
 <div class="bg-secondary bg-opacity-10 px-3 pt-1 pb-3 full-height">
     <div class="box-header">{{this.HEAD_LABEL}}</div>
-    <!--
-        การแจ้งข้อกล่าวหา/กล่าวโทษ
-        กรณีข้อ 13/1, ข้อ 60/5 และ ข้อ 60/6"
-        คำวินิจฉัย
-        วันเดือนปีที่บันทึก (ถึง)
-        วันเดือนปีที่บันทึก (จาก)
-    -->
+    <!--  -->
+    <form [formGroup]="form" class="bg-white px-4 py-2 default-width">
+        <div class="box-header">ค้นหา</div>
+        <hr />
+
+        <div class="row mb-2">
+            <div class="col-6">
+                <label class="form-label">การแจ้งข้อกล่าวหา/กล่าวโทษ กรณีข้อ 13/1, ข้อ 60/5 และ ข้อ 60/6</label>
+                <select class="form-select" formControlName="accusation_type">
+                    <option selected value="null">ทั้งหมด</option>
+                    <option value="1">กรณี 13/1 ไม่ร้ายแรง วินิจฉัยโทษตักเตือน</option>
+                    <option value="2">กรณี 13/1 ไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์</option>
+                    <option value="3">กรณี 60/5 ไม่ร้ายแรง วินิจฉัยโทษตักเตือน</option>
+                    <option value="4">กรณี 60/5 ไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์</option>
+                    <option value="5">กรณี 60/6 ร้ายแรง วินิจฉัยโทษพักใช้</option>
+                    <option value="5">กรณี 60/6 ร้ายแรง วินิจฉัยโทษเพิกถอน</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <label class="form-label">คำวินิจฉัย</label>
+                <select class="form-select" formControlName="accusation_type">
+                    <option selected value="null">ทั้งหมด</option>
+                    <option value="1">ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี</option>
+                    <option value="2">ตักเตือน</option>
+                    <option value="3">ภาคทัณฑ์</option>
+                    <option value="4">พักใช้</option>
+                    <option value="5">เพิกถอนหนังสืออนุญาตประกอบวิชาชีพ</option>
+                    <option value="5">มติคณะกรรมการอื่นๆ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+
+            <div class="col">
+                <label class="form-label">วันเดือนปีที่บันทึก (จาก)</label>
+                <div class="d-flex align-items-center">
+                    <input
+                        matInput
+                        [matDatepicker]="pickerFromDate"
+                        autocomplete="off"
+                        class="form-control form-date"
+                        formControlName="fromDate"
+                        placeholder="วว/ดด/ปปปป"
+                    />
+                    <mat-datepicker-toggle
+                        class="button-date"
+                        matSuffix
+                        [for]="pickerFromDate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFromDate></mat-datepicker>
+                </div>
+            </div>
+
+            <div class="col">
+                <label class="form-label">วันเดือนปีที่บันทึก (ถึง)</label>
+                <div class="d-flex align-items-center">
+                    <input
+                        matInput
+                        [matDatepicker]="pickerToDate"
+                        autocomplete="off"
+                        class="form-control form-date"
+                        formControlName="toDate"
+                        placeholder="วว/ดด/ปปปป"
+                    />
+                    <mat-datepicker-toggle
+                        class="button-date"
+                        matSuffix
+                        [for]="pickerToDate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #pickerToDate></mat-datepicker>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 mb-2">
+            <button
+              (click)="clear()"
+              type="button"
+              class="btn border-primary text-primary" >
+              ล้างข้อมูล
+            </button>
+            <button
+              (click)="onClickSearch()"
+              type="button"
+              class="ms-2 btn btn-primary">
+              ค้นหา
+            </button>
+        </div>
+    </form>
+    <!--  -->
+
+    <div class="bg-white p-3 mt-3 default-width">
+        <div class="d-flex justify-content-between mb-2">
+          <div class="box-header">{{this.HEAD_LABEL}}</div>
+          <hr />
+        </div>
+        <div class="default-width" >
+            <ksp-gnx-table
+                [dataCols]      ="this.REPORT_COLS_DATA"
+                [dataRows]      ="this.reportdata"
+                [TableStyle]    ="this.TABLE_STYLE"
+            >
+            </ksp-gnx-table>
+          </div>
+    </div>
+    
 </div>
