@@ -189,23 +189,26 @@ const EthicsReportRecordDefaultValue : EthicsReportRecord = {
 }
 
 // --------------------------------------------------------------------------------------------------------------------------
-const dummy1     = Object.assign({}, EthicsReportRecordDefaultValue) 
-const dummy2     = Object.assign({}, EthicsReportRecordDefaultValue)
-const dummy3     = Object.assign({}, EthicsReportRecordDefaultValue)
+const dummy1              = Object.assign({}, EthicsReportRecordDefaultValue) 
+const dummy2              = Object.assign({}, EthicsReportRecordDefaultValue)
+const dummy3              = Object.assign({}, EthicsReportRecordDefaultValue)
 
-dummy1.no        = "1"
-dummy1.black_no  = "17/2551 (ก)"
-dummy1.province  = "กรุงเทพมหานคร"
-dummy1.accuser   = "เลขาธิการคุรุสภา"
+dummy1.no                 = "1"
+dummy1.black_no           = "17/2551 (ก)"
+dummy1.province           = "กรุงเทพมหานคร"
+dummy1.accuser            = "เลขาธิการคุรุสภา"
+dummy1.accusation_title   = "ละเมิดสิทธิเด็กและเยาวชน"
 
-dummy2.no        = "2"
-dummy2.black_no  = "152/2551 (ว)"
-dummy2.province  = "ปทุมธานี"
-dummy1.accuser   = "เลขาธิการคุรุสภา"
+dummy2.no                 = "2"
+dummy2.black_no           = "152/2551 (ว)"
+dummy2.province           = "ปทุมธานี"
+dummy2.accuser            = "เลขาธิการคุรุสภา"
+dummy2.accusation_title   = "เมาสุราในขณะปฏิบัติราชการ"
 
-dummy3.no        = "3"
-dummy3.black_no  = "17/2551 (ก)"
-dummy3.province  = "ปทุมธานี"
-dummy1.accuser   = "เลขาธิการคุรุสภา"
+dummy3.no                 = "3"
+dummy3.black_no           = "17/2551 (ก)"
+dummy3.province           = "ปทุมธานี"
+dummy3.accuser            = "เลขาธิการคุรุสภา"
+dummy3.accusation_title   = "ทุพพลภาพและหย่อนสมรรถภาพ"
 
 const DUMMY_DATA = [ dummy1, dummy2, dummy3 ]
