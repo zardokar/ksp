@@ -303,6 +303,19 @@ const routes: EthicsCustomRoute[] = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'ethicsreport',
+    data: {
+      ethicsMode: 'recording',
+      menuConfig: ethicsMenu,
+      headerLabel: 'รายงานการบันทึกข้อมูลจรรยาบรรณ',
+    },
+    loadChildren: () =>
+      import('@ksp/e-service/ethics/ethicsreport').then(
+        (m) => m.EServiceEthicsReportModule
+      ),
+    canActivate: [AuthGuard],
+  },
 
   {
     path: 'one-school-one-innovation',
