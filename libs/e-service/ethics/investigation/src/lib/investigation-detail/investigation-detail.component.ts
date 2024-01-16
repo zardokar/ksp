@@ -82,20 +82,18 @@ export class InvestigationDetailComponent implements OnInit {
             // );
             payload.investigationnotificationdetail = allegationValue.investigationnotificationdetail
             payload.investigationnote = allegationValue.investigationnote
-            // payload.investigationaction = allegationValue.investigationaction || null
+
             payload.investigationaction = JSON.stringify(
               allegationValue.investigationaction
+            );
+
+            payload.investigationfile = JSON.stringify(
+              payload.investigationfile
             );
 
             payload.investigationdetail = allegationValue.investigationdetail
 
             if (payload?.accusationaction) {
-      
-              // const getKeyAction  = Object.keys( accusationValue?.accusationaction )
-              // for(const actionType of getKeyAction){
-              //   payload.accusationaction[actionType]  = accusationValue?.accusationaction[actionType] !== null ? true : false
-              // }
-              
               payload.accusationaction = JSON.stringify(accusationValue?.accusationaction);
             }
             payload.accusationcondemnation  = JSON.stringify(
@@ -147,6 +145,7 @@ export class InvestigationDetailComponent implements OnInit {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
+            console.log(res);
             // ----------------------------------------------- Fill Accused Info
             // if(res?.licenseinfo){
             //   this.accusation.setAccusedInfo(res?.licenseinfo)
@@ -168,6 +167,11 @@ export class InvestigationDetailComponent implements OnInit {
                   element.filename = dataobj[index]?.filename;
               }
             });
+            // this.investigation.investigationFile
+            res.investigationfile = jsonParse(
+              res.investigationfile
+            );
+            this.investigation.patchFile(res.investigationfile)
             // ----------------------------------------------- Fill Accusation user info
             if (res?.accuserinfo) {
               const dataobj = typeof res?.accuserinfo !== "object" ? jsonParse(res?.accuserinfo) : res?.accuserinfo

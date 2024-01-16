@@ -24,6 +24,9 @@ import {
   defaultSubcommittee,
   EhicsSubcommittee,
   KspFormBaseComponent,
+  uploadFiles,
+  KspFile,
+  FileGroup
 } from '@ksp/shared/interface';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
@@ -31,6 +34,7 @@ import { GeneralInfoService } from '@ksp/shared/service';
 import { v4 as uuidv4 } from 'uuid';
 import { UniversitySearchComponent } from '@ksp/shared/search';
 import { MatDialog } from '@angular/material/dialog';
+import { FileService } from '@ksp/shared/form/file-upload';
 
 @Component({
   selector: 'e-service-form-investigation-detail',
@@ -69,6 +73,8 @@ export class FormInvestigationDetailComponent
   selecteddecisions : any;
   disabled = false;
   uniqueTimestamp: any;
+  investigationFile: KspFile[]=[];
+  investigationFileName: any
 
   override form = this.fb.group({
     investigationnotificationdetail:[],
@@ -81,6 +87,7 @@ export class FormInvestigationDetailComponent
     investigationdate: [],
     investigationreportdate: [],
     investigationreport: [],
+    // investigationfile: this.fb.array([] as KspFile[]),
     investigationfile: [],
     investigationresult: this.fb.group({
       informaccused:[],
@@ -100,7 +107,8 @@ export class FormInvestigationDetailComponent
     public dialog: MatDialog,
     private router: Router,
     private fb: FormBuilder,
-    private generalInfoService: GeneralInfoService
+    private generalInfoService: GeneralInfoService,
+    private fileService: FileService
   ) {
     super();
     this.subscriptions.push(
@@ -170,5 +178,64 @@ export class FormInvestigationDetailComponent
       // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
       this.members.controls[grpind].get('bureauname')?.setValue(res.bureauname)
     });
+  }
+
+  // deleteFile(group: any) {
+  //   const payload = {
+  //     id: group.fileid,
+  //     requesttype: this.requestType,
+  //     uniquetimestamp: this.uniqueTimestamp ?? group?.uniqueTimestamp,
+  //   };
+
+  //   this.fileService.deleteFile(payload).subscribe((res: any) => {
+  //     if (res?.returnmessage == 'success') {
+  //       group.fileid = '';
+  //       group.filename = '';
+  //     }
+  //   });
+  // }
+
+  downloadFile(group: any) {
+    const id = group.fileid;
+    this.fileService.downloadFile({ id }).subscribe((res: any) => {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      if(res.file){
+        a.href = atob(res.file);
+      }else if(res.filedata){
+        a.href = atob(res.filedata);
+      }
+      a.download = group.filename;
+      document.body.appendChild(a);
+      a.click();
+    });
+  }
+
+  updateComplete(file: any, group: any) {
+    const { fileid, filename } = file;
+    group.fileid = fileid;
+    group.filename = filename;
+    // this.uploadComplete.emit(this.groups);
+  }
+
+  onUploadComplete(evt: any) {
+    console.log('evt = ', evt);
+    let {fileid , filename} = evt
+    let objFile = {
+      fileid:fileid ,
+      filename: filename
+    } as any
+    this.investigationFileName = objFile.filename
+    this.investigationFile  = objFile
+    this.form.controls.investigationfile.setValue(objFile);
+
+  }
+
+  patchFile(data:any){
+
+    this.investigationFileName = data.filename
+    this.investigationFile = data;
+    console.log(this.investigationFile)
+
   }
 }

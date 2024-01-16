@@ -251,7 +251,23 @@
         ></textarea>
       </div>
     </div>
-    <ksp-file-upload></ksp-file-upload>
+  
+    <div formControlName="investigationfile">
+
+      <ksp-file-upload
+        [showUploadedFileName]="false"
+        (uploadComplete)="onUploadComplete($event)"
+      ></ksp-file-upload>
+
+      <span
+      *ngIf="investigationFile"
+      class="fs-6 text-secondary text-decoration-underline ms-2"
+      (click)="downloadFile(investigationFile)"
+      >
+      {{ investigationFileName }}</span>
+
+    </div>  
+    
   </div>
 
   <div class="bg-light p-3 mt-3">
