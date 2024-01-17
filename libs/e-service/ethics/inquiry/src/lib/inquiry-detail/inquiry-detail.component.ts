@@ -93,7 +93,7 @@ export class InquiryDetailComponent
     }),
   });
   prefixList$!: Observable<any>;
-  today = thaiDate(new Date());
+  // today = thaiDate(new Date());
   requestNumber = '';
   selectedlicensesuspension = false
   
@@ -153,7 +153,7 @@ export class InquiryDetailComponent
     this.prefixList$ = this.generalInfoService.getPrefix();
   }
   addConsiderRow(data: EhicsMeeting = defaultMeeting) {
-    let getdate = new Date( data?.meetingdate || '')
+    const getdate = new Date( data?.meetingdate || '')
     const rewardForm = this.fb.group({
       meetingtimes: data.meetingtimes,
       meetingdate: thaiDate(new Date(getdate )) ,
@@ -179,7 +179,7 @@ export class InquiryDetailComponent
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log("after Close ::: ",result);
+      // console.log("after Close ::: ",result);
       if(result !== ""){
       this.addConsiderRow(result)
       }
@@ -203,7 +203,6 @@ export class InquiryDetailComponent
       },
     });
     dialog.afterClosed().subscribe((res: any) => {
-      console.log(res);
       // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
       // if(bureau === undefined)
       // {

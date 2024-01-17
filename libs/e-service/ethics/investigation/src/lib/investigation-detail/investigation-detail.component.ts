@@ -66,8 +66,6 @@ export class InvestigationDetailComponent implements OnInit {
             const payload = this.form.value.investigation as any;
             const allegationValue = this.form.value.allegation as any
             const accusationValue = this.form.value.accusation as any
-            console.log(allegationValue);
-            console.log(payload);
             payload.processid = '2'
             payload.investigationresult = JSON.stringify(
               payload.investigationresult
@@ -149,7 +147,6 @@ export class InvestigationDetailComponent implements OnInit {
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res: any) => {
-            console.log(res);
             // ----------------------------------------------- Fill Accused Info
             // if(res?.licenseinfo){
             //   this.accusation.setAccusedInfo(res?.licenseinfo)

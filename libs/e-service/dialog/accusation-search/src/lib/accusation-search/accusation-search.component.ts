@@ -9,9 +9,11 @@ import {
   GeneralInfoService,
 } from '@ksp/shared/service';
 
-import { replaceEmptyWithNull, zutils } from '@ksp/shared/utility';
+import { replaceEmptyWithNull, zutils , zdtform } from '@ksp/shared/utility';
 import { Observable } from 'rxjs';
-
+import {
+  SelfServiceRequestSubTypeSTR,
+} from '@ksp/shared/constant';
 import { SelfLicense } from '@ksp/shared/interface';
 
 @Component({
@@ -25,6 +27,7 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
   form = this.fb.group({
     id:'',
     licenseno:'',
+    certificateno:'',
     idcardno: '',
     prefixth: '',
     firstnameth: '',
@@ -38,6 +41,7 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     offset: '0',
     row: '20',
   });
+  SelfServiceRequestSubTypeSTR = SelfServiceRequestSubTypeSTR;
   selectedRow: any;
   personSelected = false;
   addressSelected = false;
@@ -100,22 +104,20 @@ export class AccusationSearchComponent implements OnInit, AfterViewInit {
     // this.selectedIdCard = form.identitynumber;
     const payload2 = { "id" : form.id }
     this.service.searchSelfLicense(payload2).subscribe((res) => {
-      console.log(res);
 
       this.licenseInfo = selectLicense(res)
-      console.log(  this.licenseInfo )
 
       form.licenseno  = res[0].licenseno as string;
       form.usertype   = res[0].usertype as string;
-      form.certificatestartdate   = res[0].certificatestartdate as string;
-      form.certificateenddate   = res[0].certificateenddate as string;
+      form.careertype       = SelfServiceRequestSubTypeSTR[res[0].usertype]
+      form.certificatestartdate   = cleanUpDate(res[0].certificatestartdate) as string;
+      form.certificateenddate   = cleanUpDate(res[0].certificateenddate) as string;
     });
     this.selectedIdCard = form;
   }
   onClickGetInfo(form: any) {
       this.onClickRadio( form )
-      
-      console.log(form);
+
       this.personalInfo  = form as any
       this.identityNo = form.identitynumber
       this.personSelected = true;
@@ -138,11 +140,12 @@ function selectLicense(dataarray : any[any])
     {
       result.userid           = license.userid
       result.idcardno         = license.identitynumber
-      result.careertype       = license.usertype
+      result.certificateno    = license.certificateno
+      result.careertype       = SelfServiceRequestSubTypeSTR[license.usertype]
       result.licensetype      = license.usertype
       result.licenseno        = license.certificateno
-      result.licensestartdate = license.certificatestartdate
-      result.licenseenddate   = license.certificateenddate
+      result.certificatestartdate = cleanUpDate(license.certificatestartdate)
+      result.certificateenddate   = cleanUpDate(license.certificateenddate)
       result.firstnameth      = license.nameth
       result.lastnameth       = license.lastnameth
       result.firstnameen      = license.nameen
@@ -156,6 +159,36 @@ function selectLicense(dataarray : any[any])
 }
 
 // ----------------------------------------------------
+
+function cleanUpDate(data: string)
+{
+  let convertSTRpass      = true
+  let convertFormSTRpass  = true
+  let convertSTR : any
+  let convertFormSTR : any
+
+  try{
+      convertSTR          = zdtform.from(data , 'UTC_MS',0)
+      const result        =  new Date( convertSTR ) 
+      convertSTRpass      = isFinite(result.getTime())
+  }catch(excp){
+      convertSTRpass      = false
+  }
+  try{
+      convertFormSTR      = zdtform.convertDateStrtoDTStr(data , 'DD-MMM-YY')
+      const result        = new Date( convertFormSTR ) 
+      convertFormSTRpass  = isFinite(result.getTime())
+  }catch(excp){
+      convertFormSTRpass  = false
+  }
+
+  if( convertSTRpass ) 
+      return convertSTR
+  else if( convertFormSTRpass ) 
+      return convertFormSTR
+  else 
+      return ""
+}
 
 export const column = [
   'order',

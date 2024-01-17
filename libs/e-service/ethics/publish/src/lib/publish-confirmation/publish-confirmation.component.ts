@@ -118,29 +118,30 @@ export class PublishConfirmationComponent implements OnInit {
         this.service
           .getEthicsByID({ id: this.ethicsId })
           .subscribe((res: any) => {
-            console.log(res);
+            // console.log(res);
 
             res.createdate                = cleanUpDate( res.createdate )
             // res.licenseinfo               = jsonParse(res.licenseinfo)
-            res.accusationassigndate      = cleanUpDate( res.accusationassigndate )
-            res.accusationincidentdate    = cleanUpDate( res.accusationincidentdate )
-            res.accusationissuedate       = cleanUpDate( res.accusationissuedate )
-            res.inquiryjbdate             = cleanUpDate( res.inquiryjbdate )
-            res.inquiryorderdate          = cleanUpDate( res.inquiryorderdate )
-            res.investigationdate         = cleanUpDate( res.investigationdate )
-            res.investigationreportdate   = cleanUpDate( res.investigationreportdate)
-            res.investigationorderdate    = cleanUpDate( res.investigationorderdate)
-            res.investigationaction       = jsonParse(res.investigationaction)
+            res.accusationassigndate      = res?.accusationassigndate ? cleanUpDate( res?.accusationassigndate ) : res.accusationassigndate
+            res.accusationincidentdate    = res?.accusationincidentdate ? cleanUpDate( res?.accusationincidentdate ) : res.accusationincidentdate
+            res.accusationissuedate       = res?.accusationissuedate ? cleanUpDate( res?.accusationissuedate ) : res.accusationissuedate
+            res.inquiryjbdate             = res?.inquiryjbdate ? cleanUpDate( res?.inquiryjbdate ) : res.inquiryjbdate
+            res.inquiryorderdate          = res?.inquiryorderdate ? cleanUpDate( res?.inquiryorderdate ) : res?.inquiryorderdate
+            res.investigationdate         = res?.investigationdate ? cleanUpDate( res?.investigationdate ) : res.investigationdate
+            res.investigationreportdate   = res?.investigationreportdate ? cleanUpDate( res?.investigationreportdate ) : res.investigationreportdate
+            res.investigationorderdate    = res?.investigationorderdate ? cleanUpDate( res?.investigationorderdate ) : res.investigationorderdate
             res.inquerylicensestatus                      = res.inquerylicensestatus;
-            res.inquerylicensestatusnotificationdate      = cleanUpDate( res.inquerylicensestatusnotificationdate );
-            res.inquerylicensestatusaccusedrecognizedate  = cleanUpDate(res.inquerylicensestatusaccusedrecognizedate);
+            res.inquerylicensestatusnotificationdate      = res?.inquerylicensestatusnotificationdate ? cleanUpDate(res.inquerylicensestatusnotificationdate) : res?.inquerylicensestatusnotificationdate;
+            res.inquerylicensestatusaccusedrecognizedate  = res?.inquerylicensestatusaccusedrecognizedate ? cleanUpDate(res.inquerylicensestatusaccusedrecognizedate) : res?.inquerylicensestatusaccusedrecognizedate;
             res.inquiryorderno                            = res.inquiryorderno;
-            res.inquiryexplaindate                        = cleanUpDate(res.inquiryexplaindate);
+            res.inquiryexplaindate                        = res?.inquiryexplaindate ? cleanUpDate(res.inquiryexplaindate) : res?.inquiryexplaindate;
             res.inquiryreport                             = res.inquiryreport;
             res.inquiryfile                               = jsonParse(res.inquiryfile);
-            res.inquerylicensesuspendnotificationdate     = cleanUpDate(res.inquerylicensesuspendnotificationdate);
-            res.inquerylicensesuspendrecognizedate        = cleanUpDate(res.inquerylicensesuspendrecognizedate);
-            res.inquerynotificationdate                   = cleanUpDate(res.inquerynotificationdate);
+            res.inquerylicensesuspendnotificationdate     = res?.inquerylicensesuspendnotificationdate ? cleanUpDate(res.inquerylicensesuspendnotificationdate) : res?.inquerylicensesuspendnotificationdate;
+            res.inquerylicensesuspendrecognizedate        = res?.inquerylicensesuspendrecognizedate ? cleanUpDate(res.inquerylicensesuspendrecognizedate ) : res?.inquerylicensesuspendrecognizedate;
+            res.inquerynotificationdate                   = res?.inquerynotificationdate ? cleanUpDate(res.inquerynotificationdate) : res?.inquerynotificationdate;
+
+            res.investigationaction                       = jsonParse(res.investigationaction)
 
             res.resultredno               = res.resultredno
             res.resultblackno             = res.resultblackno
@@ -149,17 +150,17 @@ export class PublishConfirmationComponent implements OnInit {
             res.resulttoaccuserfile       = res.resulttoaccuserfile 
             res.resulttoschoolfile        = res.resulttoschoolfile 
             res.resulttoaccusedfile       = res.resulttoaccusedfile 
-            res.resultcomitteedate        = cleanUpDate( res.resultcomitteedate )
-            res.resulttoaccuserdate       = cleanUpDate( res.resulttoaccuserdate )
-            res.resulttoschooldate        = cleanUpDate( res.resulttoschooldate )
-            res.resulttoaccuseddate       = cleanUpDate( res.resulttoaccuseddate )              
+            res.resultcomitteedate        = res?.resultcomitteedate ? cleanUpDate( res?.resultcomitteedate ) : res.resultcomitteedate
+            res.resulttoaccuserdate       = res?.resulttoaccuserdate ? cleanUpDate( res?.resulttoaccuserdate ) : res.resulttoaccuserdate
+            res.resulttoschooldate        = res?.resulttoschooldate ? cleanUpDate( res?.resulttoschooldate ) : res.resulttoschooldate
+            res.resulttoaccuseddate       = res?.resulttoaccuseddate ? cleanUpDate( res?.resulttoaccuseddate ) : res.resulttoaccuseddate                
             res.resultdetail              = res.resultdetail 
-            res.resultstartsuspendlicensedate   = cleanUpDate( res.resultstartsuspendlicensedate ) 
-            res.resultendsuspendlicensedate     = cleanUpDate( res.resultendsuspendlicensedate )
-            res.resulttoaccusednotificationdate = cleanUpDate( res.resulttoaccusednotificationdate )
+            res.resultstartsuspendlicensedate   = res?.resultstartsuspendlicensedate ? cleanUpDate( res?.resultstartsuspendlicensedate ) : res.resultstartsuspendlicensedate    
+            res.resultendsuspendlicensedate     = res?.resultendsuspendlicensedate ? cleanUpDate( res?.resultendsuspendlicensedate ) : res.resultendsuspendlicensedate
+            res.resulttoaccusednotificationdate = res?.resulttoaccusednotificationdate ? cleanUpDate( res?.resulttoaccusednotificationdate ) : res.resulttoaccusednotificationdate
             res.resultacademicname              = res.resultacademicname 
             res.resultaffiliationname           = res.resultaffiliationname 
-            res.resulttoschoolnotificationdate  = cleanUpDate( res.resulttoschoolnotificationdate )
+            res.resulttoschoolnotificationdate  = res?.resulttoschoolnotificationdate ? cleanUpDate( res?.resulttoschoolnotificationdate ) : res.resulttoschoolnotificationdate
 
             if( typeof res?.licenseinfo == "string"){
               res.licenseinfo = jsonParse(res.licenseinfo)

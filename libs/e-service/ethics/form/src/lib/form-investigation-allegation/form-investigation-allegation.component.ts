@@ -79,6 +79,7 @@ export class FormInvestigationAllegationComponent
   accusationtypeList  = accusationtypeList;
   actionShow  = [] as string[];
   arrayAct : checkboxData[] = []
+  arrayActed = false
 
   override form = this.fb.group({
     accusationcondemnation:[],
@@ -120,6 +121,7 @@ export class FormInvestigationAllegationComponent
   }
 
   ngAfterViewInit(): void {
+    // this.arrayAct = []
     this.getListData();
   }
 
@@ -134,21 +136,27 @@ export class FormInvestigationAllegationComponent
       
       this.form?.valueChanges.subscribe((values) => {
 
-        this.arrayAct = []
-        if( isNull(values.investigationaction ) ||  values?.investigationaction == undefined ){
-          for(let allegationType of allegationList){
-            let { label , value } = allegationType
-            this.arrayAct.push({
-                            label:label,
-                            value:value,
-                            selected:false
-                          })
+        // this.arrayAct = []
+        if(this.arrayActed == false){
+          if( isNull(values.investigationaction ) ||  values?.investigationaction == undefined ){
+            // this.arrayAct = []
+            for(let allegationType of allegationList){
+              let { label , value } = allegationType
+              this.arrayAct.push({
+                              label:label,
+                              value:value,
+                              selected:false
+                            })
+            }
+            this.arrayActed  = true
+            values.investigationaction  = this.arrayAct as any
           }
-          
-          values.investigationaction  = this.arrayAct as any
-        }
-        else {
-          this.arrayAct = values.investigationaction
+          else {
+            this.arrayAct = values.investigationaction
+          }
+
+        }else{
+          this.arrayAct = values?.investigationaction ? values?.investigationaction : this.arrayAct
         }
 
         this.onChange(values);
@@ -173,7 +181,7 @@ export class FormInvestigationAllegationComponent
   getListData() {
 
     this.prefixList$ = this.generalInfoService.getPrefix();
-    console.log(this.prefixList$)
+    // console.log(this.prefixList$)
   }
 
   onCheckedAction(evt:any,actType:any){

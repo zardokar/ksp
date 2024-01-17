@@ -137,7 +137,7 @@ export class FormInvestigationDetailComponent
   getListData() {
     
     this.prefixList$ = this.generalInfoService.getPrefix();
-    console.log(this.prefixList$)
+    // console.log(this.prefixList$)
   }
 
   searchSchool(target:any) {
@@ -154,7 +154,6 @@ export class FormInvestigationDetailComponent
       },
     });
     dialog.afterClosed().subscribe((res: any) => {
-      console.log(res);
       // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
       // if(bureau === undefined)
       // {
