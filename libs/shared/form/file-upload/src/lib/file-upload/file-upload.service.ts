@@ -31,6 +31,17 @@ export class FileService {
     );
   }
 
+  uploadImage(payload: any) {
+    return this.http.post(
+      `${environment.apiUrl}${this.apiURL.uploadImage}`,
+      payload,
+      {
+        reportProgress: true,
+        observe: 'events',
+      }
+    );
+  }
+
   deleteFile(payload: any) {
     return this.http.post(
       `${environment.apiUrl}${this.apiURL.delete}`,
@@ -42,17 +53,6 @@ export class FileService {
     return this.http.post(
       `${environment.apiUrl}${this.apiURL.download}`,
       payload
-    );
-  }
-
-  uploadImage(payload: any) {
-    return this.http.post(
-      `${environment.apiUrl}${this.apiURL.uploadImage}`,
-      payload,
-      {
-        reportProgress: true,
-        observe: 'events',
-      }
     );
   }
 
@@ -80,6 +80,13 @@ export class FileService {
   eDownloadKspFile(payload: any) {
     return this.http.post(
       `${environment.apiUrl}/e-service/kspfileselectidfile`,
+      payload
+    );
+  }
+
+  getKspXFile(payload: any) {
+    return this.http.post(
+      `${environment.shortApiUrl}/kspx/getfile.php`,
       payload
     );
   }

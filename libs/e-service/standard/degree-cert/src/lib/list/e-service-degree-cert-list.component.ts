@@ -97,15 +97,18 @@ export class EServiceDegreeCertListComponent
     });
     this.route.paramMap.subscribe((res) => {
       if (res) {
-        this.form.controls.search.reset(); 
+        this.form.controls.search.reset();
         /**
          * show action buttons if process = consider || approve
          */
         this.processType = Number(res.get('type'));
         this.showActionButtons = [3, 6].includes(Number(res.get('type')));
         this.showColumnSelect =
-          Number(res.get('type')) == 1 || Number(res.get('type')) == 4 || Number(res.get('type')) == 5 || !res.get('type');
-        this.subTypeSearch = this.processType == '6' ? 'followup' : 'all'
+          Number(res.get('type')) == 1 ||
+          Number(res.get('type')) == 4 ||
+          Number(res.get('type')) == 5 ||
+          !res.get('type');
+        this.subTypeSearch = this.processType == '6' ? 'followup' : 'all';
       }
       this.pageType = Number(res.get('processId'));
       if (this.pageType == 0) {
@@ -132,10 +135,10 @@ export class EServiceDegreeCertListComponent
       if (this.pageType == 3) {
         this.header = 'ออกรหัสรับรองปริญญาและประกาศนียบัตร';
         this.form.controls.search.patchValue({
-          verifyStatus: '5'
+          verifyStatus: '5',
         });
         this.processTypeSearch = "'5','5'";
-      };
+      }
       if (this.pageType == 4) {
         this.header = 'การติดตามเชิงประจักษ์';
         this.form.controls.search.patchValue({
@@ -165,6 +168,7 @@ export class EServiceDegreeCertListComponent
     this.selection.select(...this.dataSource.data);
   }
   getRequest() {
+    console.log(this.form.controls.search.value);
     const {
       institutionNumber,
       institutionName,
@@ -174,7 +178,8 @@ export class EServiceDegreeCertListComponent
       submitDegreeLevel,
       courseStatus,
       approveStatus,
-      verifyStatus
+      verifyStatus,
+      degreeapprovecode,
     } = this.form.controls.search.value as any;
     // let verifystatus = '';
     // if (this.pageType == 0) verifystatus = '1';
@@ -191,7 +196,9 @@ export class EServiceDegreeCertListComponent
       degreelevel: submitDegreeLevel || '',
       status: approveStatus || '',
       process: this.processTypeSearch || '',
-      ...this.tableRecord,
+      offset: this.tableRecord.offset,
+      row: 15,
+      degreeapprovecode: degreeapprovecode,
     };
   }
   override search() {
@@ -199,7 +206,7 @@ export class EServiceDegreeCertListComponent
       .uniRequestDegreeCertSearchEsUni(this.getRequest())
       .subscribe((res) => {
         if (!res?.datareturn) {
-          this.dataSource.data = []; 
+          this.dataSource.data = [];
           this.pageEvent.length = 0;
           return;
         }
@@ -229,7 +236,7 @@ export class EServiceDegreeCertListComponent
               process: item?.process,
               requestType: item?.requesttype,
               status: item?.status,
-              degreeapprovecode: item?.degreeapprovecode
+              degreeapprovecode: item?.degreeapprovecode,
             };
           }
         );

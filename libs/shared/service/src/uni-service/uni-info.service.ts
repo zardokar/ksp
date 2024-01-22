@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@ksp/shared/environment';
 import { getCookie, parseJson } from '@ksp/shared/utility';
@@ -13,7 +13,7 @@ function toDate(sDate: any) {
 })
 export class UniInfoService {
   constructor(private http: HttpClient) {}
-  mappingUniverSitySelectByIdWithForm(res: any): any {
+  mappingUniverSitySelectByIdWithForm(res: any, system: string): any {
     const formData: any = {};
     formData.checkresult = parseJson(res.checkresult);
     formData.requestNo = res?.requestno ?? '';
@@ -54,16 +54,22 @@ export class UniInfoService {
         ? parseJson(res?.coordinatorinfo)
         : null,
     };
-    const parseCourseInstructor = res.courseinstructor ? parseJson(res.courseinstructor) : {};
-    const parseCourseAdvisor = res.courseadvisor ? parseJson(res.courseadvisor) : [];
-    const parseCourseTeacher = res.courseteacher ? parseJson(res.courseteacher) : [];
+    const parseCourseInstructor = res.courseinstructor
+      ? parseJson(res.courseinstructor)
+      : {};
+    const parseCourseAdvisor = res.courseadvisor
+      ? parseJson(res.courseadvisor)
+      : [];
+    const parseCourseTeacher = res.courseteacher
+      ? parseJson(res.courseteacher)
+      : [];
     formData.step2 = {
       teacher: {
         teachers: parseCourseTeacher,
       },
       nitet: {
         nitets: parseCourseInstructor.nitets,
-        nittetAmount: parseCourseInstructor.nittetAmount
+        nittetAmount: parseCourseInstructor.nittetAmount,
       },
       advisor: {
         advisors: parseCourseAdvisor,
@@ -79,9 +85,15 @@ export class UniInfoService {
       formData.step2.plan2 = {
         plans: res.coursestructure ? parseJson(res.coursestructure) : [],
         subjects: res.courseplan ? subjectsdata.subjects : [],
-        subject1GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject1GroupName : '',
-        subject2GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject2GroupName : '',
-        subject3GroupName: subjectsdata.subjectgroupname ? subjectsdata?.subjectgroupname.subject3GroupName : '',
+        subject1GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject1GroupName
+          : '',
+        subject2GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject2GroupName
+          : '',
+        subject3GroupName: subjectsdata.subjectgroupname
+          ? subjectsdata?.subjectgroupname.subject3GroupName
+          : '',
       };
     }
     formData.step3 = {
@@ -92,7 +104,6 @@ export class UniInfoService {
         rows: res.processteaching ? parseJson(res.processteaching) : [],
       },
     };
-    console.log(parseJson(res?.attachfiles))
     if (res?.attachfiles)
       formData.step4 = {
         files: parseJson(res?.attachfiles),
@@ -265,13 +276,26 @@ export class UniInfoService {
     );
   }
 
+  // searchSelfStudent(params: any): Observable<any> {
+  //   return this.http.post(
+  //     `${environment.shortApiUrl}/selfmyinfosearch_uni.php`,
+  //     {
+  //       ...params,
+  //       tokenkey: getCookie('userToken'),
+  //     }
+  //   );
+  // }
+
   searchSelfStudent(params: any): Observable<any> {
-    return this.http.post(
-      `${environment.shortApiUrl}/selfmyinfosearch_uni.php`,
-      {
-        ...params,
-        tokenkey: getCookie('userToken'),
-      }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa('ksppublicapi:KspPublicApi@2023'),
+      }),
+    };
+    return this.http.get(
+      `${environment.selfAPIURL}/public/user?identity_no=${params?.identity_no}`,
+      httpOptions
     );
   }
 

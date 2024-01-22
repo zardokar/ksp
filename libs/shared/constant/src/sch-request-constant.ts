@@ -12,7 +12,7 @@ export enum RequestPageType {
 export const SchoolRequestType = [
   { id: 1, name: 'ขอยื่นผู้ประสานงาน' },
   { id: 2, name: 'ขอยื่นถอดถอนผู้ประสานงาน' },
-  { id: 3, name: 'ขออนุญาตประกอบวิชาชีพ โดยไม่มีหนังสืออนุญาตประกอบวิชาชีพ' },
+  { id: 3, name: 'ขออนุญาตประกอบวิชาชีพ โดยไม่มีใบอนุญาตประกอบวิชาชีพ' },
   { id: 4, name: 'ขอสร้างเลขประจำตัวคุรุสภาสำหรับชาวต่างชาติ' },
   {
     id: 5,
@@ -112,7 +112,7 @@ export const SchoolRequestProcess: SchRequestProcess[] = [
     ],
   },
 
-  //ขอหนังสืออนุญาตประกอบวิชาชีพ โดยไม่มีหนังสืออนุญาตประกอบวิชาชีพ
+  //ขอหนังสืออนุญาตประกอบวิชาชีพ โดยไม่มีใบอนุญาตประกอบวิชาชีพ
   {
     requestType: 3,
     processId: 1,
@@ -242,14 +242,14 @@ export const SchoolRequestProcess: SchRequestProcess[] = [
     ],
   },
 
-  //ขอรับรางวัลหนึ่งโรงเรียนหนึ่งนวัตกรรม *
+  //คำขอรางวัลหนึ่งโรงเรียนหนึ่งนวัตกรรม OSOI (KSPX)
   {
     requestType: 40,
     processId: 1,
     processName: 'สร้างแบบคำขอ',
     status: [
       { id: 0, sname: 'ยกเลิก', ename: 'ยกเลิก' },
-      { id: 1, sname: 'กำลังดำเนินการ', ename: 'กำลังดำเนินการ' },
+      { id: 1, sname: 'บันทึกชั่วคราว', ename: 'บันทึกชั่วคราว' },
     ],
   },
   {
@@ -258,11 +258,62 @@ export const SchoolRequestProcess: SchRequestProcess[] = [
     processName: 'สร้างและส่งแบบคำขอ',
     status: [
       { id: 0, sname: 'ยกเลิก', ename: 'ยกเลิก' },
-      { id: 1, sname: 'กำลังดำเนินการ', ename: 'กำลังดำเนินการ' },
+      { id: 1, sname: 'กำลังดำเนินการ', ename: 'กำลังดำเนินการ' }
     ],
   },
   {
     requestType: 40,
+    processId: 3,
+    processName: 'ตรวจสอบคุณสมบัติ',
+    status: [
+      { id: 1, sname: 'กำลังดำเนินการ', ename: 'สร้างและส่งแบบคำขอ (ดำเนินการเรียบร้อย)' },
+      { id: 2, sname: 'ขอแก้ไข/เพิ่มเติม', ename: 'ขอแก้ไข/เพิ่มเติม' },
+      { id: 3, sname: 'ผ่านการตรวจสอบ', ename: 'ผ่านการตรวจสอบ' },
+      { id: 4, sname: 'ขาดคุณสมบัติ', ename: 'ขาดคุณสมบัติ' }
+    ],
+  },
+  {
+    requestType: 40,
+    processId: 4,
+    processName: 'คัดเลือกระดับภูมิภาค',
+    status: [
+      { id: 1, sname: 'รอการพิจารณาผล', ename: 'ตรวจสอบคุณสมบัติ (ผ่านการตรวจสอบ)' },
+      { id: 2, sname: 'ผ่านการคัดเลือก', ename: 'ผ่านการคัดเลือก' },
+      { id: 3, sname: 'ไม่ผ่านการคัดเลือก', ename: 'ไม่ผ่านการคัดเลือก' }
+    ]
+  },
+  {
+    requestType: 40,
+    processId: 5,
+    processName: 'คัดเลือกระดับประเทศ',
+    status: [
+      { id: 1, sname: 'รอการพิจารณาผล', ename: 'คัดเลือกระดับภูมิภาค (ผ่านการคัดเลือก)' },
+      { id: 2, sname: 'ผ่านการตรวจสอบ', ename: 'ผ่านการตรวจสอบ' },
+      { id: 3, sname: 'ไม่ผ่านการคัดเลือก', ename: 'ไม่ผ่านการคัดเลือก' }
+    ]
+  },
+
+  //ขอรับรางวัลหนึ่งโรงเรียนหนึ่งนวัตกรรม *
+  {
+    requestType: 940,
+    processId: 1,
+    processName: 'สร้างแบบคำขอ',
+    status: [
+      { id: 0, sname: 'ยกเลิก', ename: 'ยกเลิก' },
+      { id: 1, sname: 'กำลังดำเนินการ', ename: 'กำลังดำเนินการ' },
+    ],
+  },
+  {
+    requestType: 940,
+    processId: 2,
+    processName: 'สร้างและส่งแบบคำขอ',
+    status: [
+      { id: 0, sname: 'ยกเลิก', ename: 'ยกเลิก' },
+      { id: 1, sname: 'กำลังดำเนินการ', ename: 'กำลังดำเนินการ' },
+    ],
+  },
+  {
+    requestType: 940,
     processId: 3,
     processName: 'ตรวจสอบเอกสาร',
     status: [
@@ -276,7 +327,7 @@ export const SchoolRequestProcess: SchRequestProcess[] = [
     ],
   },
   {
-    requestType: 40,
+    requestType: 940,
     processId: 4,
     processName: 'พิจาณาและรับรอง',
     status: [
@@ -422,12 +473,12 @@ export const staffLicenseTypes = [
   },
   {
     value: 5,
-    label: 'หนังสืออนุญาตประกอบวิชาชีพ โดยไม่มีหนังสืออนุญาตประกอบวิชาชีพครู',
+    label: 'หนังสืออนุญาตประกอบวิชาชีพ โดยไม่มีใบอนุญาตประกอบวิชาชีพครู',
   },
   {
     value: 6,
     label:
-      'หนังสืออนุญาตประกอบวิชาชีพโดยไม่มีหนังสืออนุญาตประกอบวิชาชีพผู้บริหารสถานศึกษา',
+      'หนังสืออนุญาตประกอบวิชาชีพโดยไม่มีใบอนุญาตประกอบวิชาชีพผู้บริหารสถานศึกษา',
   },
   {
     value: 7,

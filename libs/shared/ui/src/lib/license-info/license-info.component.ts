@@ -4,7 +4,7 @@ import {
   SchoolRequestSubType,
   SelfPrefixEn,
   SelfPrefixTh,
-  SelfServiceRequestSubType,
+  SelfServiceRequestSubTypeSTR,
 } from '@ksp/shared/constant';
 import { SelfLicense } from '@ksp/shared/interface';
 import { ThaiDatePipe } from '@ksp/shared/pipe';
@@ -23,12 +23,14 @@ export class LicenseInfoComponent {
   @Input() subTitle2 = 'วันเดือนปีที่หมดอายุ';
   @Input() rewardTitleName = '';
   @Input() license: SelfLicense | null | any = null;
+  @Input() selectedLicTab = '';
   @Output() selected = new EventEmitter<string>();
-  SelfServiceRequestSubType = SelfServiceRequestSubType;
+  SelfServiceRequestSubType = SelfServiceRequestSubTypeSTR;
   SelfPrefixTh = SelfPrefixTh;
   SelfPrefixEn = SelfPrefixEn;
 
   select(licenseno: string | null | undefined) {
+    console.log("select")
     if (licenseno) {
       this.selected.emit(licenseno);
     }

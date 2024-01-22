@@ -23,6 +23,7 @@ export class FormRegisterRequesterInfoComponent
   @Input() occupyList: Array<any> = [];
   @Input() displayMode!: number[];
   @Input() isSubmit = false;
+  @Input() errorPermission = false;
   validatorMessages = validatorMessages;
   educationOccupy: any = {
     permission: '',
@@ -37,6 +38,7 @@ export class FormRegisterRequesterInfoComponent
 
   constructor(private fb: FormBuilder) {
     super();
+    console.log(this.occupyList)
     this.subscriptions.push(
       // any time the inner form changes update the parent of any change
       this.form?.valueChanges.subscribe((value: any) => {
@@ -69,6 +71,18 @@ export class FormRegisterRequesterInfoComponent
     this.form.patchValue({
       prefixen: event
     });
+  }
+
+  chageposition(event: any) {
+    if (event.target.value == '0') {
+      this.form.controls['other'].setValidators([Validators.required]);
+    } else {
+      this.form.controls['other'].clearValidators();
+      this.form.patchValue({
+        other: null
+      })
+    }
+    this.form.controls['other'].updateValueAndValidity();
   }
 
   changePrefix(event: any) {
@@ -133,7 +147,15 @@ export class FormRegisterRequesterInfoComponent
     return this.form.controls.prefixen;
   }
 
-  get permission() {
-    return this.form.controls.permission;
+  get permission1() {
+    return this.form.controls.permission1;
+  }
+
+  get permission2() {
+    return this.form.controls.permission2;
+  }
+
+  get other() {
+    return this.form.controls.other;
   }
 }

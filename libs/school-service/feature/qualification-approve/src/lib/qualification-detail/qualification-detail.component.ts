@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,6 +48,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable, Subject, switchMap } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { zutils } from '@ksp/shared/utility';
 
 @UntilDestroy()
 @Component({
@@ -55,8 +56,8 @@ import { v4 as uuidv4 } from 'uuid';
   templateUrl: './qualification-detail.component.html',
   styleUrls: ['./qualification-detail.component.scss'],
 })
-export class QualificationDetailComponent implements OnInit {
-  isLoading: Subject<boolean> = this.loaderService.isLoading;
+export class QualificationDetailComponent implements OnInit, AfterViewInit, AfterViewChecked, AfterContentInit {
+  isLoading: Subject<boolean> = this.loaderService.isLoading ;
 
   form = this.fb.group({
     userInfo: [],
@@ -69,7 +70,7 @@ export class QualificationDetailComponent implements OnInit {
     exp1: [],
     exp2: [],
     exp3: [],
-    exp4: [],
+    exp4: []
   });
 
   uniqueNo!: string;
@@ -91,6 +92,7 @@ export class QualificationDetailComponent implements OnInit {
   careerType = '';
   requestId!: number;
   requestData = new KspRequest();
+  detail: any;
   otherreason: any;
   refperson: any;
   evidenceFiles: FileGroup[] = files;
@@ -106,9 +108,10 @@ export class QualificationDetailComponent implements OnInit {
   showEdu3 = false;
   showEdu4 = false;
   formData: any = null;
-  experienceSelected: number[] = [];
+  experienceSelected: any[] = [];
   selectedTabIndex = 0;
   universityList$!: Observable<University[]>;
+  exps_active : any = { exp1: false, exp2: false, exp3: false, exp4: false };
 
   constructor(
     public dialog: MatDialog,
@@ -122,11 +125,11 @@ export class QualificationDetailComponent implements OnInit {
     private staffService: StaffService,
     private loaderService: LoaderService,
     private educationDetailService: EducationDetailService,
-    private licenseService: SchoolLicenseService
+    private licenseService: SchoolLicenseService,
+    private changedetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    //7396307202241
     this.form.valueChanges.subscribe((res) => {
       //console.log('formData', this.form.getRawValue());
       //console.log('edu1 = ', this.form.controls.edu1.valid);
@@ -138,6 +141,19 @@ export class QualificationDetailComponent implements OnInit {
     this.checkRequestSubType();
   }
 
+  ngAfterViewInit(): void {
+    this.changedetector.detectChanges();
+  }
+
+  ngAfterContentInit(): void {
+    this.changedetector.detectChanges();
+  }
+
+  ngAfterViewChecked(): void {
+    this.changedetector.detectChanges();
+  }
+
+  // ---------------------------------------------------------------------------
   checkRequestId() {
     this.route.paramMap.subscribe((params) => {
       this.requestId = Number(params.get('id'));
@@ -229,6 +245,7 @@ export class QualificationDetailComponent implements OnInit {
         req.isforeign = req.isforeign ? '1' : '0';
 
         //console.log('xx = ', req);
+        this.patchExp(req.experienceinfo)
         this.patchUserInfo(req);
         this.patchAddress(parseJson(req.addressinfo));
         this.patchEdu(parseJson(req.eduinfo));
@@ -240,40 +257,84 @@ export class QualificationDetailComponent implements OnInit {
           );
         }
 
+        req.detail
+          ? (req.detail = JSON.parse(zutils.convertBase64toJSONStr(req.detail)) )
+          : null;
+
         req.refperson
           ? (req.refperson = JSON.parse(atob(req.refperson)))
           : null;
 
         req.otherreason
-          ? (req.otherreason = JSON.parse(atob(req.otherreason)))
+          ? (req.otherreason = JSON.parse( zutils.convertBase64toJSONStr(req.otherreason)) )
           : null;
 
-        this.refperson = req.refperson;
-        this.otherreason = req.otherreason;
+        this.detail       = req.detail
+        this.refperson    = req.refperson;
+        this.otherreason  = req.otherreason;
+
+        console.log( `xxx = `, req )
+
       }
     });
   }
 
   patchEdu(edus: any[]) {
     //console.log('edus = ', edus);
-    if (edus && edus.length) {
-      edus.map((edu, i) => {
-        if (edu.degreeLevel === 2) {
-          this.showEdu2 = true;
-        }
-        if (edu.degreeLevel === 3) {
-          this.showEdu3 = true;
-        }
-        if (edu.degreeLevel === 4) {
-          this.showEdu4 = true;
-        }
-        (this.form.get(`edu${i + 1}`) as AbstractControl<any, any>).patchValue(
-          edu
-        );
-      });
-    }
+    this.universityList$.subscribe((unidata) => {
+      if (edus && edus.length) {
+        edus.map((edu, i) => {
+          // ------------------------------------------------------------------------------
+          // Convert data when found number in institution
+          if( isNaN( Number( edu.institution )) === false )
+          {
+            const uresult = unidata?.find( u => {
+              return u.id === edu.institution
+            })
+            edu.institution = `${uresult?.name || ''} ${uresult?.campusname || ''}`
+          }
+          // ------------------------------------------------------------------------------
+
+          if (edu.degreeLevel === 2) {
+            this.showEdu2 = true;
+          }
+          if (edu.degreeLevel === 3) {
+            this.showEdu3 = true;
+          }
+          if (edu.degreeLevel === 4) {
+            this.showEdu4 = true;
+          }
+          (this.form.get(`edu${i + 1}`) as AbstractControl<any, any>).patchValue(
+            edu
+          );
+        });
+      }
+
+    })
   }
 
+  // ----------------------------------------------------------------------
+  patchExp(exps : any)
+  {
+    const expsconverted = JSON.parse( zutils.convertBase64toJSONStr(exps) ) 
+    Object.keys(expsconverted).map( ( expkey: string, count : number) => {
+        if( expsconverted[expkey] !== null && expsconverted[expkey].workInfo.length > 0){
+            this.exps_active[expkey]  = true
+            this.experienceSelected[count+1]   = 2;
+            
+            if( expkey === 'exp1')
+              this.form.controls.exp1.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp2')
+              this.form.controls.exp2.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp3')
+              this.form.controls.exp3.setValue( expsconverted[expkey].workInfo )
+            if( expkey === 'exp4')
+              this.form.controls.exp4.setValue( expsconverted[expkey].workInfo )
+        }
+    })
+  }
+
+  // ----------------------------------------------------------------------
   eduSelected(type: number, evt: any) {
     const checked = evt.target.checked;
     if (type === 2) {
@@ -290,6 +351,7 @@ export class QualificationDetailComponent implements OnInit {
     }
   }
 
+  // ----------------------------------------------------------------------
   experienceSelect(exp: number, evt: any) {
     const checked = evt.target.checked;
     this.experienceSelected[exp] = checked;
@@ -319,7 +381,8 @@ export class QualificationDetailComponent implements OnInit {
           res.amphurname
         } จังหวัด ${res.provincename} รหัสไปรษณีย์ ${res.zipcode}`;
       });
-    this.bureau$ = this.educationDetailService.getBureau();
+    
+    this.bureau$ = this.educationDetailService.getBureauJSON();
   }
 
   cancel() {
@@ -352,13 +415,28 @@ export class QualificationDetailComponent implements OnInit {
         this.onCancelCompleted();
       });
   }
-
+  // ---------------------------------------------------------------------
   onSave() {
+
+    const hascomment = zutils.exist(this.detail,'checkdetail')
+
     const confirmDialog = this.dialog.open(
       QualificationApproveDetailComponent,
       {
         width: '850px',
+        autoFocus: false,
+        maxHeight: '97vh', //you can adjust the value as per your view
         data: {
+          educations: { 
+                        edu1: this.form.get('edu1')?.value,
+                        edu2: this.form.get('edu2')?.value,
+                        edu3: this.form.get('edu3')?.value,
+                        edu4: this.form.get('edu4')?.value
+          },
+          officer_comment : {
+            es_tab4: hascomment ? this.detail.checkdetail[3].detail : undefined ,
+            es_tab5: hascomment ? this.detail.checkdetail[4].detail : undefined
+          },
           education: this.form.get('edu1')?.value,
           mode: this.mode,
           otherreason: this.otherreason,
@@ -374,11 +452,18 @@ export class QualificationDetailComponent implements OnInit {
   }
 
   saved(reasonForm: any) {
+    const hascomment     = zutils.exist(this.detail,'checkdetail')
     const completeDialog = this.dialog.open(
       QualificationApprovePersonComponent,
       {
         width: '850px',
-        data: { mode: this.mode, refperson: this.refperson },
+        data: { 
+          mode: this.mode, 
+          refperson: this.refperson,
+          officer_comment : {
+            es_tab5: hascomment ? this.detail.checkdetail[4].detail : undefined
+          }
+        },
       }
     );
 
@@ -388,7 +473,7 @@ export class QualificationDetailComponent implements OnInit {
       }
     });
   }
-
+  // ---------------------------------------------------------------
   onConfirmed(reasonForm: any, refPersonForm: any) {
     const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -416,7 +501,8 @@ export class QualificationDetailComponent implements OnInit {
             userInfo.schoolid = this.schoolId;
             userInfo.bureauname = this.bureauName;
             userInfo.schoolname = this.schoolName;
-            userInfo.schooladdress = this.address;
+            userInfo.schooladdress  = this.address;
+            userInfo.experienceinfo = JSON.stringify( { exp1: formData.exp1,  exp2: formData.exp2, exp3: formData.exp3,  exp4: formData.exp4 })
             userInfo.process = '1';
             userInfo.status = '1';
             let eduForm = [{ ...formData.edu1, ...{ degreeLevel: 1 } }];
@@ -453,9 +539,20 @@ export class QualificationDetailComponent implements OnInit {
               fileinfo: JSON.stringify({ file }),
             };
 
+            delete payload['detail']
+
             const data = replaceEmptyWithNull(payload);
             const formatedData = formatDatePayload(data);
-            return this.requestService.schCreateRequest(formatedData);
+            
+            zutils.convertBase64toJSONStr( formatedData , ['hiringinfo', 'teachinginfo', 'addresses', 'educations'])
+
+            // --------------------------------------------------------------------------
+            if( data.requestno === undefined && data.requestdate === undefined)
+            {
+              return this.requestService.schKSPXCreateRequest(formatedData);
+            }else{
+              return this.requestService.schUpdateRequest(formatedData);
+            }
           }
           return EMPTY;
         })
@@ -619,10 +716,6 @@ const files: FileGroup[] = [
     name: 'สำเนาบัตรประจำตัวประชาชน / บัตรประจำตัวข้าราชการ',
     files: [],
   },
-  /* {
-    name: 'สำเนาทะเบียนบ้าน',
-    files: [],
-  }, */
   {
     name: 'สำเนาหนังสือแจ้งการเทียบคุณวุฒิ (กรณีจบการศึกษาจากต่างประเทศ)',
     files: [],

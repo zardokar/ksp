@@ -7,20 +7,31 @@
     <div class="row">
       <div class="col-6 mb-3">
         <label class="form-label required">สิทธิสำหรับการเข้าใช้งาน</label>
-        <select class="form-select"
-                formControlName="permission"
-                [ngClass]="{'invalid': isSubmit && permission.invalid}">
-          <option value="null" selected hidden disabled>กรุณาเลือก</option>
-          <option
-            *ngFor="let permission of permissionList"
-            [value]="permission.value"
-          >
-            {{ permission.label }}
-          </option>
-        </select>
+        <div class="row mt-2">
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <input
+                class="form-check-input my-0 radio"
+                type="checkbox"
+                formControlName="permission1"
+              />
+              <label class="ms-4">เจ้าหน้าที่ประสานงาน (รับรองปริญญาและประกาศนียบัตรทางการศึกษา)</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <input
+                class="form-check-input my-0 radio"
+                type="checkbox"
+                formControlName="permission2"
+              />
+              <label class="ms-4">เจ้าหน้าที่ประสานงาน (นำส่งรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา)</label>
+            </div>
+          </div>
+        </div>
         <ng-container
           *ngIf="
-            isSubmit && permission.invalid
+            isSubmit && errorPermission
           "
         >
           <span class="text-danger">
@@ -187,13 +198,21 @@
     <div class="row mb-3">
       <div class="col-sm-6">
         <label class="form-label required">ตำแหน่ง</label>
-        <input
+        <select 
+          class="form-select" 
+          formControlName="position" 
+          (change)="chageposition($event)"
+          [ngClass]="{'invalid': isSubmit && position.invalid}">
+          <option value="null" selected hidden disabled>กรุณาเลือก</option>
+          <option *ngFor="let occupy of occupyList" [value]="occupy.eduoccupytype">{{occupy.eduoccupyname}}</option>
+        </select>
+        <!-- <input
           class="form-control"
           type="text"
           placeholder="กรุณากรอกตำแหน่ง"
           formControlName="position"
           [ngClass]="{'invalid': isSubmit && position.invalid}"
-        />
+        /> -->
         <ng-container
           *ngIf="isSubmit && position.invalid"
         >
@@ -205,17 +224,24 @@
           </span>
         </ng-container>
       </div>
-      <div
-        class="col-sm-6"
-        *ngIf="form.value.position && form.value.position === '0'"
-      >
+      <div class="col-sm-6" *ngIf="form.value.position && form.value.position === '0'">
         <label class="form-label"><br /></label>
         <input
           class="form-control"
           type="text"
           placeholder="อื่นๆ โปรดระบุ"
           formControlName="other"
+          [ngClass]="{'invalid': isSubmit && other.invalid}"
         />
+        <ng-container
+          *ngIf="
+            isSubmit && other.invalid
+          "
+        >
+          <span class="text-danger">
+            {{ validatorMessages.required.replace('field', 'อื่นๆ') }} !
+          </span>
+        </ng-container>
       </div>
     </div>
 
@@ -269,6 +295,9 @@
             validatorMessages.email
           }}</span>
         </ng-container>
+        <span class="text-danger">
+          * กรุณากรอกอีเมลที่ถูกต้องและใช้งานได้จริง ระบบจะส่งผลการตรวจสอบใบคำขอต่างๆ ผ่านทางอีเมลที่กรอกเท่านั้น
+        </span>
       </div>
     </div>
   </div>

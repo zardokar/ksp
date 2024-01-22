@@ -15,11 +15,20 @@ import { map, Observable } from 'rxjs';
 export class SchoolRequestService {
   constructor(private http: HttpClient) {}
 
-  getTempLicense(requestid: string | null): Observable<SchTempLicense> {
+  getKspRequest(id: string | null): Observable<SchTempLicense> {
     return this.http.post<SchTempLicense>(
-      `${environment.apiUrl}/kspstaff/schtemplicenseselectrequestid`,
+      `${environment.shortApiUrl}/kspx/kspreq_search.php`,
       {
-        requestid,
+        id,
+      }
+    );
+  }
+
+  getTempLicense(id: string | null): Observable<SchTempLicense> {
+    return this.http.post<SchTempLicense>(
+      `${environment.apiUrl}/kspstaff/ksprequestselectbyid`,
+      {
+        id,
       }
     );
   }
@@ -47,6 +56,13 @@ export class SchoolRequestService {
   schCreateRequest(payload: Partial<KspRequest>): Observable<any> {
     return this.http.post(
       `${environment.apiUrl}/kspstaff/ksprequestinsert`,
+      payload
+    );
+  }
+
+  schKSPXCreateRequest(payload: Partial<KspRequest>): Observable<any> {
+    return this.http.post(
+      `${environment.shortApiUrl}/kspx/kspreq_insert.php`,
       payload
     );
   }

@@ -10,6 +10,11 @@ import { Ethics } from '@ksp/shared/interface';
 import { EthicsService } from '@ksp/shared/service';
 import { thaiDate } from '@ksp/shared/utility';
 import _ from 'lodash';
+import {
+  jsonParse,
+  mapFileInfo,
+  replaceEmptyWithNull,
+} from '@ksp/shared/utility';
 @Component({
   selector: 'e-service-accusation-decision',
   templateUrl: './accusation-decision.component.html',
@@ -58,7 +63,11 @@ export class AccusationDecisionComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/', 'accusation', 'detail', this.ethicsId || null]);
+    // if(this.ethicsId){
+      this.router.navigate(['/', 'accusation', 'detail', this.ethicsId || '']);
+    // }else{
+    //   this.router.navigate(['/', 'accusation', 'detail']);
+    // }
   }
 
   save() {
@@ -78,11 +87,13 @@ export class AccusationDecisionComponent implements OnInit {
   }
   checkRequestId() {
     this.route.paramMap.subscribe((params) => {
+      // console.log(params);
       this.ethicsId = Number(params.get('id'));
       if (this.ethicsId) {
         this.service.getEthicsByID({ id: this.ethicsId }).subscribe((res) => {
+          console.log("in RES ::: ", res);
           const { accusationconsideration, ...payload } = res;
-          const json = JSON.parse(accusationconsideration as string);
+          const json = accusationconsideration as any;
           this.form.patchValue({ ...payload, accusationconsideration: json });
         });
       }
@@ -93,10 +104,21 @@ export class AccusationDecisionComponent implements OnInit {
     const allowKey = Object.keys(ethics);
     const data = this.form.value as any;
     data.accusationconsideration = JSON.stringify(data.accusationconsideration);
+    data.accuserinfo              = JSON.stringify(data?.accuserinfo);
+    // console.log(this.ethicsId);
+    // console.log(data.accuserinfo);
+    // console.log(data.accusationfile);
+    data.accusationfile           = JSON.stringify(
+      mapFileInfo(data?.accusationfile)
+    );
     const selectData = _.pick(data, allowKey);
+    console.log(data);
+
     if (this.ethicsId) {
       selectData['id'] = this.ethicsId;
+      console.log(selectData);
       this.service.updateEthicsAccusation(selectData).subscribe((res) => {
+        console.log(res);
         this.onCompleted();
       });
     }

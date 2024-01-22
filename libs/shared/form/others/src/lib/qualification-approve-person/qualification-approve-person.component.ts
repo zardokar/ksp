@@ -27,13 +27,14 @@ import { getCookie } from '@ksp/shared/utility';
   templateUrl: './qualification-approve-person.component.html',
   styleUrls: ['./qualification-approve-person.component.scss'],
 })
-export class QualificationApprovePersonComponent
-  extends KspFormBaseComponent
-  implements OnInit
+export class QualificationApprovePersonComponent extends KspFormBaseComponent implements OnInit
 {
   prefixList$!: Observable<any>;
+
+  es_tab5_comment = ''
+
   @Input() set input(value: any) {
-    //console.log(value);
+    console.log(value);
     if (value) this.form.patchValue(value);
   }
   schoolid = getCookie('schoolId');
@@ -68,6 +69,13 @@ export class QualificationApprovePersonComponent
 
   ngOnInit(): void {
     const mode = this.data.mode;
+    console.log(`Inject data : `,this.data)
+
+    if(this.data?.officer_comment?.es_tab5 !== undefined)
+    {
+      this.es_tab5_comment = this.data?.officer_comment?.es_tab5
+    }
+
     if (mode == 'view')
       setTimeout(() => {
         this.form.patchValue(this.data.refperson);

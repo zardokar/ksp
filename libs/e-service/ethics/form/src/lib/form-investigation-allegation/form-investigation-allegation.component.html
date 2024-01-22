@@ -1,0 +1,134 @@
+<form [formGroup]="form">
+  <ksp-request-header-info
+    [requestLabel2]="'เลขที่รายการ'"
+    [requestNumber]="requestNumber"
+  ></ksp-request-header-info>
+
+  <hr />
+
+  <!-- <div class="box-header">ข้อมูลผู้กล่าวหา/กล่าวโทษ</div> -->
+  <div class="bg-white">
+    <div class="row mb-2">
+      <div class="col">
+        <label class="form-label">วันที่แจ้งข้อกล่าวหา/กล่าวโทษ </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker2"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationnotificationdate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </div>
+      </div>
+      <div class="col">
+        <label class="form-label"
+          >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+        </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker3"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationaccusedrecognizedate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker3"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col">
+          <label class="form-label">หมายเหตุ </label>
+          <textarea
+            class="form-control"
+            type="text"
+            rows="3"
+            formControlName="investigationnote"
+          >
+          </textarea>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <label class="form-label"
+          >ความผิดต่อจรรณยาบรรณ
+        </label>
+      <div class="col"  id="accusationaction-show">
+          <ng-container *ngFor="let actlist of actionShow" class="d-flex flex-column">
+            <li>ประพฤติผิดจรรณนาบรรณ{{actlist}}</li>
+          </ng-container>
+      </div>
+    </div>
+
+    <!-- <div class="row mb-2">
+      <div class="col">
+        <div formGroupName="accusationcondemnation" class="d-flex flex-column">
+        <ng-container *ngFor="let item of accusationcondemnation">
+          <div class="d-flex flex-row align-items-center mb-2">
+            <input #decisionsType
+              type="radio"
+              class="form-check-input"
+              value="{{ item.value }}"
+              formControlName="{{ item.name }}"
+            />
+            <label class="form-label ms-2">{{ item.label }}</label>
+          </div>
+  
+        </ng-container>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="bg-light p-3 mt-3">
+      <label class="form-label">การแจ้งข้อกล่าวหา/กล่าวโทษ</label>
+      <div formArrayName="investigationaction" class="d-flex flex-column" *ngFor="let item of arrayAct ; let i = index">
+      <ng-container>
+        
+        <div class="d-flex flex-row align-items-center mb-2">
+          <input 
+            type="checkbox"
+            class="form-check-input"
+            [value]="item.value"
+            formControlName="{{item.name}}"
+            [checked]="item.selected !== false"
+            [disabled]="mode === 'view'"
+            (change)="onCheckedAction($event,item.value)"
+            
+          />
+
+          <label class="form-label ms-2">{{ item.label }}</label>
+        </div>
+
+      </ng-container>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label class="form-label">พยานหลักฐานที่ถูกกล่าวหา/กล่าวโทษ </label>
+        <textarea
+          class="form-control"
+          type="text"
+          rows="3"
+          formControlName="investigationdetail"
+        ></textarea>
+      </div>
+    </div>
+
+   </div>
+  </div>
+</form>

@@ -16,6 +16,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@ksp/e-service/dialog/inquiry-consider-record": [
+        "libs/e-service/dialog/inquiry-consider-record/src/index.ts"
+      ],
       "@ksp/e-service/dialog/accusation-search": [
         "libs/e-service/dialog/accusation-search/src/index.ts"
       ],
@@ -94,6 +97,9 @@
       ],
       "@ksp/e-service/ethics/publish": [
         "libs/e-service/ethics/publish/src/index.ts"
+      ],
+      "@ksp/e-service/ethics/ethicsreport": [
+        "libs/e-service/ethics/ethicsreport/src/index.ts"
       ],
       "@ksp/e-service/feature/container-page": [
         "libs/e-service/feature/container-page/src/index.ts"

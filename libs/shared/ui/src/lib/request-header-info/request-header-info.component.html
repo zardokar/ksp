@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between">
   <div class="d-flex flex-row">
-    <div class="form-label text-secondary">
+    <div class="form-label text-secondary" *ngIf="showRequestDate">
       {{ requestLabel1 }} :
       <span class="text-orange">{{
         (requestDate | thaiDate) || (today | thaiDate)
@@ -9,6 +9,10 @@
     <div *ngIf="requestNumber" class="form-label text-secondary ms-4">
       {{ requestLabel2 }} :
       <span class="text-primary">{{ requestNumber | reqNoFormat }}</span>
+    </div>
+    <div *ngIf="showOthers" class="form-label text-secondary ms-4">
+      {{ others.title }} :
+      <span class="text-primary">{{ others.detail }}</span>
     </div>
   </div>
   <div class="form-label text-secondary" *ngIf="showCurrentDate">

@@ -13,6 +13,7 @@ import { Location } from '@angular/common';
 import {
   ERequestService,
   EUniService,
+  LoaderService,
   UniInfoService,
 } from '@ksp/shared/service';
 import {
@@ -23,20 +24,20 @@ import {
   thaiDate,
 } from '@ksp/shared/utility';
 import _ from 'lodash';
-import { map } from 'rxjs';
+import { Subject, debounceTime, map } from 'rxjs';
 import moment from 'moment';
 import { EUniApproveProcess } from '@ksp/shared/constant';
 const detailToState = (res: any) => {
   const newRes = res?.datareturn
     .filter(({ process }: any) => ['4', '5'].includes(process))
     .map((data: any) => {
-      return { ...data, detail: parseJson(data?.detail)};
+      return { ...data, detail: parseJson(data?.detail) };
     });
   const verifyItems = _.filter(newRes, ({ detail }) => detail && detail.verify);
   const verifyResult = verifyItems.map((data) => ({
     isBasicValid: _.get(data.detail, 'verify.result') === '1',
     name: mapProcess(data),
-    ...data
+    ...data,
   }));
   const considerCourses = _.reduce(
     newRes,
@@ -49,7 +50,10 @@ const detailToState = (res: any) => {
       }
 
       if (curr?.detail && curr?.detail.considerCert) {
-        prev.considerCert = _.concat(prev.considerCert, curr?.detail.considerCert);
+        prev.considerCert = _.concat(
+          prev.considerCert,
+          curr?.detail.considerCert
+        );
       }
       return prev;
     },
@@ -58,7 +62,7 @@ const detailToState = (res: any) => {
   return {
     ...considerCourses,
     verifyResult: verifyResult,
-    response: res.datareturn
+    response: res.datareturn,
   };
 };
 const mapProcess = (data: any) => {
@@ -70,7 +74,7 @@ const mapProcess = (data: any) => {
     id: _.toNumber(data.status),
   });
   return status.sname;
-}
+};
 @Component({
   selector: 'e-service-approve',
   templateUrl: './approve.component.html',
@@ -87,6 +91,12 @@ export class ApproveComponent implements OnInit {
     step1: '',
     verify: [],
     approveData: [],
+    plan: [
+      {
+        plans: [],
+        plansResult: [],
+      },
+    ],
   });
   allowEdit = false;
   step1Data: any;
@@ -107,7 +117,18 @@ export class ApproveComponent implements OnInit {
   newConsiderCourses: any = [];
   newConsiderCert: any = [];
   result: any = { '1': 'ผ่านการพิจารณา', '2': 'ไม่ผ่านการพิจารณา' };
+  result2: any = {
+    1: 'เห็นควรพิจารณาให้การรับรอง',
+    2: 'เห็นควรพิจารณาไม่ให้การรับรอง',
+    3: 'ให้สถาบันแก้ไข / เพิ่มเติม',
+    4: 'ส่งคืนหลักสูตร',
+  };
+  degreeType = 'a';
   historyList: Array<any> = [];
+  requestKey: any = '';
+  planResult: any = [];
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
+
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -116,9 +137,11 @@ export class ApproveComponent implements OnInit {
     private uniInfoService: UniInfoService,
     private eUniService: EUniService,
     private eRequestService: ERequestService,
-    private location: Location
+    private location: Location,
+    private loaderService: LoaderService
   ) {}
   ngOnInit(): void {
+    this.requestKey = this.route.snapshot.params['key'];
     this.getDegreeCert();
     this.getHistory();
     this.newConsiderCert = _.get(this.location.getState(), 'considerCert', []);
@@ -127,6 +150,26 @@ export class ApproveComponent implements OnInit {
       'considerCourses',
       []
     );
+    this.form.controls.verify.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe((res: any) => {
+        if (res?.result == '1') {
+          setTimeout(() => {
+            this.form.controls.plan.patchValue({
+              plans: _.get(
+                _.last(this.verifyResult),
+                'detail.newPlan.plans',
+                []
+              ) as any,
+              plansResult: _.get(
+                _.last(this.verifyResult),
+                'detail.newPlan.plansResult',
+                []
+              ) as any,
+            });
+          }, 0);
+        }
+      });
   }
   getDegreeCert() {
     if (this.route.snapshot.params['key']) {
@@ -135,8 +178,22 @@ export class ApproveComponent implements OnInit {
         .pipe(
           map((res) => {
             this.daftRequest = res;
-            this.allowEdit = res?.requestprocess === '4' && res?.requeststatus === '1';
-            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(res);
+            if (
+              res.degreelevel == '1' ||
+              res.degreelevel == '2' ||
+              res.degreelevel == '3' ||
+              res.degreelevel == '4'
+            ) {
+              this.degreeType = 'a';
+            } else {
+              this.degreeType = 'b';
+            }
+            this.allowEdit =
+              res?.requestprocess === '4' && res?.requeststatus === '1';
+            return this.uniInfoService.mappingUniverSitySelectByIdWithForm(
+              res,
+              'uni-eservice'
+            );
           })
         )
         .subscribe((res) => {
@@ -157,39 +214,49 @@ export class ApproveComponent implements OnInit {
       .kspUniRequestProcessSelectByRequestId(this.route.snapshot.params['key'])
       .pipe(map(detailToState))
       .subscribe((res) => {
-        this.historyList = res.response.filter((data:any)=>{
-          return (data.process == '5' || (data.process == '4' && data.status == '3')) && data.userid
-        }).map((data: any)=>{
-          data.detail = parseJson(data.detail);
-          data.createdate = thaiDate(new Date(data.createdate));
-          const findResult = this.choices.find(choice=>{return choice.value == data.status });
-          data.resultname = findResult ? findResult?.name : '';
-          data.comment = data.detail.verify.detail || '';
-          return data;
-        });
+        this.historyList = res.response
+          .filter((data: any) => {
+            return (
+              (data.process == '5' ||
+                (data.process == '4' && data.status == '3')) &&
+              data.userid
+            );
+          })
+          .map((data: any) => {
+            data.detail = parseJson(data.detail);
+            data.createdate = thaiDate(new Date(data.createdate));
+            const findResult = this.choices.find((choice) => {
+              return choice.value == data.status;
+            });
+            data.resultname = findResult ? findResult?.name : '';
+            data.comment = data.detail.verify.detail || '';
+            return data;
+          });
         this.verifyResult = res?.verifyResult;
         this.considerCert = [
           ...(res?.considerCert || []),
-          ...this.newConsiderCert
+          ...this.newConsiderCert,
         ];
         this.considerCourses = [
           ...(res?.considerCourses || []),
-          ...this.newConsiderCourses
+          ...this.newConsiderCourses,
         ];
         let lastPlan = {} as any;
         if (this.daftRequest.requestprocess == 5) {
-          lastPlan = res?.verifyResult.find((data: any)=>{
+          lastPlan = res?.verifyResult.find((data: any) => {
             return data.process == 5;
           }) as any;
         } else {
           if (this.daftRequest.process != 4 && this.daftRequest.status != 1) {
-            lastPlan = res?.verifyResult.find((data: any)=>{
+            lastPlan = res?.verifyResult.find((data: any) => {
               return data.process == 4 && data.status == 3;
             }) as any;
           }
         }
         this.form.controls.verify.patchValue(lastPlan?.detail?.verify);
-        this.form.controls.approveData.patchValue(lastPlan?.detail?.approveData);
+        this.form.controls.approveData.patchValue(
+          lastPlan?.detail?.approveData
+        );
       });
   }
 
@@ -221,8 +288,8 @@ export class ApproveComponent implements OnInit {
         let reqProcess = '';
         let reqStatus = '';
         if (_.get(this.form, 'value.verify.result', '') == '3') {
-          reqStatus = '3'
-          reqProcess = '4'
+          reqStatus = '3';
+          reqProcess = '4';
         } else {
           reqStatus = _.get(this.form, 'value.verify.result', '');
           reqProcess = '5';
@@ -234,7 +301,7 @@ export class ApproveComponent implements OnInit {
           status: reqStatus,
           detail,
           userid: getCookie('userId'),
-        }
+        };
         this.eRequestService
           .kspUpdateRequestUniRequestDegree(payload)
           .subscribe(() => {
@@ -252,8 +319,8 @@ export class ApproveComponent implements OnInit {
     let reqProcess = '';
     let reqStatus = '';
     if (_.get(this.form, 'value.verify.result', '') == '3') {
-      reqStatus = '3'
-      reqProcess = '4'
+      reqStatus = '3';
+      reqProcess = '4';
     } else {
       reqStatus = _.get(this.form, 'value.verify.result', '');
       reqProcess = '5';
@@ -264,7 +331,7 @@ export class ApproveComponent implements OnInit {
       requestid: this.daftRequest?.requestid,
       userid: getCookie('userId'),
       process: reqProcess,
-      status: reqStatus
+      status: reqStatus,
     };
     // payload.status = _.get(this.form, 'value.verify.result', '');
     payload.detail = jsonStringify({
@@ -308,7 +375,7 @@ export class ApproveComponent implements OnInit {
         checkresult: [],
         systemType: 'ksp',
         showLicense: false,
-        mode: 'view'
+        mode: 'view',
       },
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -333,7 +400,9 @@ export class ApproveComponent implements OnInit {
       coursemajor: this.daftRequest?.coursemajor || null,
       requestno: this.daftRequest?.requestno || null,
       requestid: this.daftRequest?.requestid || null,
-      requestdate: moment(this.daftRequest?.requestdate).format("YYYY-MM-DD[T]HH:mm:ss"),
+      requestdate: moment(this.daftRequest?.requestdate).format(
+        'YYYY-MM-DD[T]HH:mm:ss'
+      ),
       uniid: this.daftRequest?.uniid || null,
       attachfiles: step4 ? JSON.stringify(step4?.files) : null,
       uniname: step1?.institutionsName || null,
@@ -416,7 +485,7 @@ export class ApproveComponent implements OnInit {
       .uniDegreeCertInsert(this._getRequest())
       .subscribe((res) => {
         this.onSubmitKSP(res?.degreeapprovecode, res?.id);
-    });
+      });
   }
 
   onConfirmed(header = 'บันทึกข้อมูลสำเร็จ') {
@@ -428,7 +497,7 @@ export class ApproveComponent implements OnInit {
 
     dialog.componentInstance.completed.subscribe((res) => {
       if (res) {
-        this.router.navigate(['/degree-cert', 'list', 1, 2]);
+        this.router.navigate(['/degree-cert', 'list', 4, 2]);
       }
     });
   }

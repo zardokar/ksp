@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { ListData } from './input-type';
 import { FileGroup } from './ksp-file';
 import { MenuConfig } from './ksp-menu-config';
-export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish';
+export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation' | 'recording' | 'recordingstat' | 'resultstat' ;
 
 export interface EthicsCustomRouteData {
   menuConfig: MenuConfig[];
@@ -15,10 +15,14 @@ export interface EthicsCustomRoute extends Route {
   data?: EthicsCustomRouteData;
 }
 export class Ethics {
-  //id?: string | null = null;
+  id?: string | null = null;
   ethicsno: string | null = null;
+
+  processid: string | null = '1';
+
   accuserinfo: string | null = null;
   licenseinfo: string | null = null;
+  licenseno: string | null = null;
   addressinfo: string | null = null;
   workplaceinfo: string | null = null;
   idcardno: string | null = '999999999';
@@ -40,6 +44,7 @@ export class Ethics {
   accusationcondemnationtype: string | null = null;
   accusationcondemnation: string | null = null;
   accusationissuedate: string | null = null;
+  accusationreceiveddate: string | null = null;
   accusationdetail: string | null = null;
   accusationpunishmentdetail: string | null = null;
   accusationviolatedetail: string | null = null;
@@ -47,7 +52,11 @@ export class Ethics {
   accusationassigndate: string | null = null;
   accusationfile: string | null = null;
   accusationconsideration: string | null = null;
+  accusedinfo: string | null = null;
+  accusationaction: string | null = null;
 
+  investigationaccusedinformeddate: string | null = null;
+  investigationaccusedclarifieddate: string | null = null;
   investigationorderno: string | null = null;
   investigationorderdate: string | null = null;
   investigationsubcommittee: string | null = null;
@@ -57,6 +66,26 @@ export class Ethics {
   investigationfile: string | null = null;
   investigationresult: string | null = null;
 
+  investigationrecognizedate: string | null = null;
+  investigationexplaindate: string | null = null;
+  investigationnotificationdate: string | null = null;
+  investigationaccusedrecognizedate: string | null = null;
+  investigationaction: string | null = null;
+  investigationnotificationdetail: string | null = null;
+  investigationdetail: string | null = null;
+  investigationevidencefile: string | null = null;
+
+  considerationaction: string | null = null;
+  considerationnotificationdate: string | null = null;
+  considerationrecognizedate: string | null = null;
+  considerationoverruledate: string | null = null;
+  considerationcause: string | null = null;
+
+  // allegation: string | null = null;
+  // allegationinformdate: string | null = null;
+  // allegationaccusedinformdate: string | null = null;
+
+  licensesuspension: string | null = null;
   inquiryorderno: string | null = null;
   inquiryorderdate: string | null = null;
   inquirysubcommittee: string | null = null;
@@ -65,8 +94,17 @@ export class Ethics {
   inquiryreport: string | null = null;
   inquiryfile: string | null = null;
   inquiryresult: string | null = null;
+  inquerymeetinghistory: string | null = null;
+  inquerylicensestatus: string | null = null;
+  inquerylicensestatusnotificationdate: string | null = null;
+  inquerylicensestatusaccusedrecognizedate: string | null = null;
+  inquerylicensesuspendnotificationdate: string | null = null;
+  inquerylicensesuspendrecognizedate: string | null = null;
+  inquerynotificationdate: string | null = null;
+  inqueryexaminereport: string | null = null;
 
   resultredno: string | null = null;
+  resultblackno: string | null = null;
   resultcomitteeno: string | null = null;
   resultcomitteedate: string | null = null;
   resultcomitteefile: string | null = null;
@@ -76,6 +114,13 @@ export class Ethics {
   resulttoschoolfile: string | null = null;
   resulttoaccuseddate: string | null = null;
   resulttoaccusedfile: string | null = null;
+  resultdetail: string | null = null;
+  resultstartsuspendlicensedate: string | null = null;
+  resultendsuspendlicensedate: string | null = null;
+  resulttoaccusednotificationdate: string | null = null;
+  resultacademicname: string | null = null;
+  resultaffiliationname: string | null = null;
+  resulttoschoolnotificationdate: string | null = null;
 
   publishstatus: string | null = null;
   publishdate: string | null = null;
@@ -83,9 +128,13 @@ export class Ethics {
 
 export const defaultEhicsMember: EhicsMember = {
   idcardno: null,
+  accusertype: null,
+  groupname: null,
+  address: null,
   prefix: null,
-  firstname: null,
-  lastname: null,
+  fullname: null,
+  // firstname: null,
+  // lastname: null,
   phone: null,
 };
 
@@ -98,12 +147,54 @@ export const defaultSubcommittee: EhicsSubcommittee = {
   lastname: null,
   position: null,
   bureau: null,
+  bureauname: null,
 };
+
+export const defaultAccused: Ehicsaccused = {
+  id: null,
+  licenseno: null,
+  certificateno: null,
+  identitynumber: null,
+  usertype: null,
+  careertype: null,
+  titlethid: null,
+  nameth: null,
+  lastnameth: null,
+  phonenumber: null,
+  certificatestartdate: null,
+  certificateenddate: null,
+  bureau: null
+};
+
+export const defaultCondemnation: EhicsCondemnation = {
+  condemnationtype:  null,
+  condemnationdetail: null
+};
+
+export const defaultAccusationaction: EhicsAccusationaction = {
+  self: null,
+  profession: null,
+  service: null,
+  coworkers: null,
+  society: null,
+}
+
+export const defaultMeeting:EhicsMeeting = {
+  meetingtimes:  null,
+  meetingdate: null,
+  meetingreason:  null,
+  meetingfile: null,
+}
+
 export interface EhicsMember {
   idcardno: string | null;
+  accusertype: string | null;
+  groupname: string | null;
+  address: string | null;
   prefix: number | null;
-  firstname: string | null;
-  lastname: string | null;
+  fullname : string | null;
+  // firstname: string | null;
+  // lastname: string | null;
   phone: string | null;
 }
 export interface EhicsSubcommittee {
@@ -115,6 +206,43 @@ export interface EhicsSubcommittee {
   lastname: string | null;
   position: string | null;
   bureau: string | null;
+  bureauname: string | null;
+}
+
+export interface Ehicsaccused {
+  id: string | null;
+  licenseno: string | null;
+  certificateno: string | null;
+  identitynumber: number | null;
+  careertype: string | null;
+  usertype: string | null;
+  titlethid: string | null;
+  nameth: string | null;
+  lastnameth: string | null;
+  phonenumber: string | null;
+  certificatestartdate: string | null;
+  certificateenddate: string | null;
+  bureau: string | null;
+}
+
+export interface EhicsCondemnation {
+  condemnationtype: string | null;
+  condemnationdetail: string | null;
+}
+
+export interface EhicsAccusationaction {
+  self: boolean | null;
+  profession: boolean | null;
+  service: boolean | null;
+  coworkers: boolean | null;
+  society: boolean | null;
+}
+
+export interface EhicsMeeting {
+  meetingtimes: string | null;
+  meetingdate: string | null;
+  meetingreason: string | null;
+  meetingfile: string | null;
 }
 
 export const ACCUSATION_FILES: FileGroup[] = [
@@ -131,7 +259,7 @@ export const columns = [
   'personId',
   'name',
   'process',
-  'status',
+  // 'status',
   'lastUpdate',
   'edit',
   'view',
@@ -145,32 +273,91 @@ export interface AccusationList {
   personId: string;
   name: string;
   process: string;
-  status: string;
+  // status: string;
   lastUpdate: string;
   edit: string;
   view: string;
 }
 export const decisions: ListData[] = [
   {
-    label: 'มีมูลความผิด วินิจฉัยชี้ขาดความผิดเล็กน้อย',
+    label: 'ไม่มีมูล ยุติเรื่อง ยกข้อกล่าวหา',
+    name: 'decisions',
+    value: 0,
+  },
+  {
+    label: 'มีมูล เป็นการประพฤติผิดจรรยาบรรณไม่ร้ายแรง วินิจฉัยโทษตักเตือน ตามข้อ 13/1',
     name: 'decisions',
     value: 1,
   },
   {
-    label: 'ตักเตือน / ภาคภัณฑ์ (ต้องเลือกอย่างใดอย่างหนึ่งเสมอ)',
+    label: 'มีมูล เป็นการประพฤติผิดจรรยาบรรณไม่ร้ายแรง วินิจฉัยโทษภาคทัณฑ์ ตามข้อ 13/1',
     name: 'decisions',
     value: 2,
   },
   {
-    label: 'มีมูลความผิด นำเสนอคณะกรรมการตั้งคณะอนุกรรมการสอบสวน',
+    label: 'มีมูล เป็นการประพฤติผิด และแต่งตั้งคณะอนุกรรมการสอบสวน',
     name: 'decisions',
     value: 3,
   },
   {
-    label: 'ไม่มีมูล ยุติเรื่อง ยกข้อกล่าวหา',
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษตักเตือน ตามข้อ 60/5',
     name: 'decisions',
     value: 4,
   },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งไม่ร้ายแรง วินิจโทษภาคทัณฑ์ ตามข้อ 60/5',
+    name: 'decisions',
+    value: 5,
+  },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษพักใช้ ตามข้อ 60/5',
+    name: 'decisions',
+    value: 6,
+  },
+  {
+    label: 'ความผิดปรากฏชัดแจ้งร้ายแรง วินิจโทษเพิกถอน ตามข้อ 60/6',
+    name: 'decisions',
+    value: 7,
+  },
+  // {
+  //   label: 'มีมูลความผิด วินิจฉัยชี้ขาดความผิดเล็กน้อย',
+  //   name: 'decisions',
+  //   value: 1,
+  // },
+  // {
+  //   label: 'ตักเตือน / ภาคภัณฑ์ (ต้องเลือกอย่างใดอย่างหนึ่งเสมอ)',
+  //   name: 'decisions',
+  //   value: 2,
+  // },
+  // {
+  //   label: 'มีมูลความผิด นำเสนอคณะกรรมการตั้งคณะอนุกรรมการสอบสวน',
+  //   name: 'decisions',
+  //   value: 3,
+  // },
+
 ];
+
+export const EthicsProcesses: ListData[] = [
+  {
+    value: 1,
+    label: 'บันทึกการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 2,
+    label: 'บันทึกสืบสวนข้อเท็จจริง'
+  },
+  {
+    value: 3,
+    label: 'บันทึกการสอบสวน'
+  },
+  {
+    value: 4,
+    label: 'ยืนยันการกล่าวหา/กล่าวโทษ'
+  },
+  {
+    value: 5,
+    label: 'เผยแพร่การกล่าวหา/กล่าวโทษ'
+  }
+]
 
 export type EthicsKey = keyof Ethics;

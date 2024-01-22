@@ -7,6 +7,7 @@ import {
   LoaderService,
   SchoolLicenseService,
   StaffService,
+  KSPXLicenseService
 } from '@ksp/shared/service';
 import { Observable, Subject } from 'rxjs';
 import {
@@ -16,6 +17,7 @@ import {
   parseJson,
   replaceEmptyWithNull,
   replaceUndefinedWithNull,
+  zutils
 } from '@ksp/shared/utility';
 import {
   CompleteDialogComponent,
@@ -50,8 +52,12 @@ import localForage from 'localforage';
   styleUrls: ['./add-staff.component.scss'],
 })
 export class AddStaffComponent implements OnInit {
+  selectLicTab = '';
+  licenseInfo: SelfLicense| null | any = null;
+
   isLoading: Subject<boolean> = this.loaderService.isLoading;
-  staffId!: number;
+  staffId!: any;
+  staffbirthdate!: string;
   countries$!: Observable<Country[]>;
   nationList$!: Observable<Nationality[]>;
   visaTypeList!: Observable<VisaType[]>;
@@ -74,6 +80,7 @@ export class AddStaffComponent implements OnInit {
   eduSelected: number[] = [];
   foundLicenses: SelfLicense[] = [];
   notFound = false;
+  isForeigner=false;
   selectedTabIndex = 0;
   form = this.fb.group({
     userInfo: [],
@@ -82,6 +89,10 @@ export class AddStaffComponent implements OnInit {
     edu: this.fb.array([]),
     teachingInfo: [],
     hiringInfo: [],
+    licenseno:'',
+    usertype:'',
+    certificatestartdate:'',
+    certificateenddate:'',
   });
 
   constructor(
@@ -93,7 +104,8 @@ export class AddStaffComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     public dialog: MatDialog,
     private licenseService: SchoolLicenseService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private kspxlicservice : KSPXLicenseService
   ) {}
 
   ngOnInit(): void {
@@ -108,10 +120,12 @@ export class AddStaffComponent implements OnInit {
   }
 
   searchLicense(staffId: any) {
+    console.log(`searchLicense`)
     this.notFound = false;
 
     const payload = {
       cardno: staffId,
+      idcardno: staffId,
       licenseno: null,
       name: null,
       licensetype: null,
@@ -120,18 +134,22 @@ export class AddStaffComponent implements OnInit {
       row: '100',
     };
 
-    this.licenseService
-      .getStaffLicenses(payload)
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res) {
-          this.foundLicenses = res;
-        } else {
-          this.foundLicenses = [];
-          this.notFound = true;
-          //console.log('res = ', this.notFound);
-        }
-      });
+    this.kspxlicservice.searchSelfLicense(payload) 
+    .pipe(untilDestroyed(this))
+    .subscribe((res) => {
+
+      console.log(res)
+      this.licenseInfo = selectLicense(res,this.staffbirthdate)
+      console.log(  this.licenseInfo )
+
+      // console.log( this.form.controls.licenseno )
+      // this.form.controls.licenseno       = res[0].licenseno as string;
+      // this.form.usertype              = res[0].usertype as string;
+      // this.form.certificatestartdate  = res[0].certificatestartdate as string;
+      // this.form.certificateenddate    = res[0].certificateenddate as string;
+
+    });
+
   }
 
   get edu() {
@@ -173,11 +191,12 @@ export class AddStaffComponent implements OnInit {
   }
 
   checkStaffId() {
+    console.log(`checkStaffId`)
     this.activatedroute.paramMap
       .pipe(untilDestroyed(this))
       .subscribe((params) => {
         //console.log('param = ', params);
-        this.staffId = Number(params.get('id'));
+        this.staffId = isNaN(Number(params.get('id'))) === false ? Number(params.get('id')) : null ;
         //console.log('staff id = ', this.staffId);
         if (this.staffId) {
           this.searchStaffDone = true;
@@ -219,23 +238,44 @@ export class AddStaffComponent implements OnInit {
       idcardno,
       schoolid: this.schoolId,
     };
+
     this.staffService
       .searchStaffFromIdCard(payload)
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res && res.returncode !== '98') {
-          // found staff
-          this.router.navigate(['/staff-management', 'edit-staff', res.id]);
-        } else {
-          // not found then reset form and set idcard again
-          this.router.navigate([
-            '/staff-management',
-            'add-staff-thai',
-            idcardno,
-          ]);
+      .subscribe((ocnres) => {
+        if( ocnres.returncode === '98' )
+        {
+          this.staffService
+          .searchKSPXStafffromIDCard(payload)
+          .subscribe((res) => {
+
+            console.log(`searchIdCard`, res)
+
+            const reslen = res.length
+            // Convert Data from self
+            if(reslen > 0)
+            {
+              res = res[0]
+              res = this.convertSelfData(res)
+              idcardno = res.idcardno 
+              
+              this.patchAll(res)
+            }
+
+            if ( reslen > 0 ) {
+              // found staff
+              this.router.navigate(['/staff-management', 'edit-staff', res.id]);
+            } else {
+              // not found then reset form and set idcard again
+              this.router.navigate(['/staff-management', 'add-staff-thai',idcardno ]);
+            }
+            this.searchStaffDone = true;
+          });
+        }else{
+          this.router.navigate(['/staff-management', 'edit-staff', ocnres.id]);
         }
-        this.searchStaffDone = true;
-      });
+      })
+
   }
 
   searchKuruspaNo(kspno: string) {
@@ -243,9 +283,13 @@ export class AddStaffComponent implements OnInit {
       return;
     }
     this.licenseService.searchKuruspaNo(kspno).subscribe((res) => {
-      //console.log('mode x = ', this.mode);
+      console.log('mode x = ', this.mode);
+
       if (this.mode === 'edit' && res && res.kuruspano) {
         localForage.setItem('sch-kuruspa-no', res);
+        if(this.isForeigner === true){
+          this.router.navigate(['/staff-management', 'add-staff-foreign', kspno ]);
+        }
       } else if (res && res.kuruspano) {
         localForage.setItem('sch-kuruspa-no', res);
         this.router.navigate(['/staff-management', 'add-staff-foreign', kspno]);
@@ -276,27 +320,39 @@ export class AddStaffComponent implements OnInit {
 
   pathTeachingInfo(res: any) {
     //console.log('teaching = ', res);
-    const teachingLevel = levels.map((level) => {
-      if (res.teachingLevel.includes(level.value)) {
-        return level.value;
-      } else {
-        return false;
-      }
-    });
 
-    const teachingSubjects = subjects.map((subj) => {
-      if (res.teachingSubjects.includes(subj.value)) {
-        return subj.value;
-      } else {
-        return false;
-      }
-    });
+    let teachingLevel : any
+    let teachingSubjects : any
+
+    if(zutils.exist(res,'teachingLevel'))
+    {
+        teachingLevel  = levels.map((level) => {
+            if (res.teachingLevel.includes(level.value)) {
+              return level.value;
+            } else {
+              return false;
+            }
+          }
+        );
+  
+       teachingSubjects = subjects.map((subj) => {
+        if (res.teachingSubjects.includes(subj.value)) {
+          return subj.value;
+        } else {
+          return false;
+        }
+      });
+
+    }
+
     const data = {
       ...res,
       teachingLevel,
       teachingSubjects,
     };
+
     this.form.controls.teachingInfo.patchValue(data);
+
   }
 
   checkMode() {
@@ -313,6 +369,7 @@ export class AddStaffComponent implements OnInit {
       this.userInfoType = UserInfoFormType.thai;
     } else if (this.router.url.includes('add-staff-foreign')) {
       this.mode = 'add';
+      this.isForeigner = true
       this.userInfoType = UserInfoFormType.foreign;
       this.patchDataFromLicense();
     } else if (this.router.url.includes('edit-staff')) {
@@ -332,10 +389,12 @@ export class AddStaffComponent implements OnInit {
   }
 
   loadStaffData(staffId: number) {
+    console.log(`loadStaffData`)
     this.staffService
       .loadStaffFromId(staffId)
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
+
         this.patchAll(res);
         if (res && res.kuruspano) {
           this.userInfoType = UserInfoFormType.foreign;
@@ -350,6 +409,7 @@ export class AddStaffComponent implements OnInit {
     this.form.reset();
     const checked = evt.target.checked;
     if (checked) {
+      this.isForeigner = true
       this.userInfoType = UserInfoFormType.foreign;
     } else {
       this.userInfoType = UserInfoFormType.thai;
@@ -359,9 +419,9 @@ export class AddStaffComponent implements OnInit {
   patchAll(res: any) {
     //console.log('patchAll = ', res);
     this.pathUserInfo(res);
-    this.patchAddress(parseJson(res.addresses));
-    this.patchEdu(parseJson(res.educations));
-    this.pathTeachingInfo(parseJson(res.teachinginfo));
+    try{ this.patchAddress(parseJson(res.addresses)); }catch(excp){ console.log(excp)}
+    try{ this.patchEdu(parseJson(res.educations)); }catch(excp){ console.log(excp)}
+    try{ this.pathTeachingInfo(parseJson(res.teachinginfo)); }catch(excp){ console.log(excp)}
     this.form.controls.hiringInfo.patchValue(parseJson(res.hiringinfo));
   }
 
@@ -440,6 +500,14 @@ export class AddStaffComponent implements OnInit {
   }
 
   pathUserInfo(data: any) {
+    console.log(data,`pathUserInfo`)
+
+    if(data.birthdate)
+      this.staffbirthdate = data.birthdate
+
+    if(data.idcardno)
+      this.searchLicense(data.idcardno)
+
     data.birthdate = data.birthdate.split('T')[0];
     this.form.controls.userInfo.patchValue(data);
   }
@@ -561,4 +629,76 @@ export class AddStaffComponent implements OnInit {
       this.selectedTabIndex--;
     }
   }
+
+  convertSelfData(respdata : any)
+  {
+    const address =     {
+                          "houseNo": respdata.addressno,
+                          "province": respdata.addressprovinceid,
+                          "addressType": 2,
+                          "road": respdata.addressroad,
+                          "location": null,
+                          "moo": respdata.addressmoo,
+                          "alley": respdata.addressalley,
+                          "id": null,
+                          "postcode": respdata.addresszipcode,
+                          "amphur": respdata.amphur,
+                          "tumbol": respdata.addresssubdistrictid
+    } 
+    respdata.schoolid       = '1091560154'
+
+    respdata.sex            = respdata.genderid
+    respdata.contactphone   = respdata.phonenumber
+
+    respdata.idcardno       = respdata.identitynumber 
+    respdata.prefixth       = respdata.titlethid
+    respdata.firstnameth    = respdata.nameth
+
+    respdata.prefixen       = respdata.titleenid
+    respdata.firstnameen    = respdata.nameen
+    respdata.middlenameen   = respdata.middlename
+
+    respdata.nationality    = respdata.nationalityid || 'TH'
+
+    respdata.iaddresses      = []
+    respdata.iaddresses.push(address)
+    respdata.iaddresses.push(address)
+
+    return respdata
+  }
+
+  onClickTabLicenseType(data : any){
+    this.selectLicTab = data
+  }
+}
+
+
+// ----------------------------------------------------
+function selectLicense(dataarray : any[any], birthdate : string = '')
+{
+  const result : SelfLicense  = {}
+  const now                   = new Date()
+
+  dataarray.map( (license : any) => {
+    const cert_end = zutils.exist(license.certificateenddate) ? new Date( license.certificateenddate ) : undefined
+    if( cert_end !== undefined && (cert_end >= now) )
+    {
+      result.userid           = license.userid
+      result.idcardno         = license.identitynumber
+      result.careertype       = license.usertype
+      result.licensetype      = license.usertype
+      result.licenseno        = license.certificateno
+      result.licensestartdate = license.certificatestartdate
+      result.licenseenddate   = license.certificateenddate
+      result.firstnameth      = license.nameth
+      result.lastnameth       = license.lastnameth
+      result.firstnameen      = license.nameen
+      result.lastnameen       = license.lastnameen
+      result.passportno       = license.passportno
+      result.sex              = license.genderid
+      result.birthdate        = birthdate
+    }
+  })
+
+  return result 
 }

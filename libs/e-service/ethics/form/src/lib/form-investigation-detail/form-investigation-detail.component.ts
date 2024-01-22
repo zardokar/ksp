@@ -28,6 +28,9 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
 import { GeneralInfoService } from '@ksp/shared/service';
+import { v4 as uuidv4 } from 'uuid';
+import { UniversitySearchComponent } from '@ksp/shared/search';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'e-service-form-investigation-detail',
@@ -54,6 +57,8 @@ export class FormInvestigationDetailComponent
   extends KspFormBaseComponent
   implements OnInit
 {
+  @Input() searchType = '';
+  @Input() bureaus: any[] = [];
   @Input() hideAllButtons = false;
   @Input() hideContainer = false;
   @Input() hideTitle = false;
@@ -61,8 +66,15 @@ export class FormInvestigationDetailComponent
   today = thaiDate(new Date());
   requestNumber = '';
   decisions = decisions;
+  selecteddecisions : any;
+  disabled = false;
+  uniqueTimestamp: any;
 
   override form = this.fb.group({
+    investigationnotificationdetail:[],
+    investigationrecognizedate:[],
+    investigationexplaindate:[],
+
     investigationorderno: [],
     investigationorderdate: [],
     investigationsubcommittee: this.fb.array([] as FormGroup[]),
@@ -71,16 +83,21 @@ export class FormInvestigationDetailComponent
     investigationreport: [],
     investigationfile: [],
     investigationresult: this.fb.group({
+      informaccused:[],
+      confirminformaccused:[],
+      rejectinformaccused:[],
       decisions: [],
       causedetail: [],
     }),
   });
 
   ngOnInit(): void {
+    this.uniqueTimestamp = uuidv4();
     this.getListData();
   }
 
   constructor(
+    public dialog: MatDialog,
     private router: Router,
     private fb: FormBuilder,
     private generalInfoService: GeneralInfoService
@@ -107,13 +124,51 @@ export class FormInvestigationDetailComponent
       lastname: data.lastname,
       position: data.position,
       bureau: data.bureau,
+      bureauname: data.bureauname,
     });
     this.members.push(rewardForm);
+    if(this.mode === 'view'){
+      this.members.disable()
+    }
   }
   deleteRow(index: number) {
     this.members.removeAt(index);
   }
   getListData() {
+    
     this.prefixList$ = this.generalInfoService.getPrefix();
+    // console.log(this.prefixList$)
+  }
+
+  searchSchool(target:any) {
+    const dialog = this.dialog.open(UniversitySearchComponent, {
+      width: '1200px',
+      height: '100vh',
+      position: {
+        top: '0px',
+        right: '0px',
+      },
+      data: {
+        searchType: this.searchType,
+        subHeader: 'กรุณาเลือกหน่วยงาน/สถานศึกษาที่ท่านสังกัด'
+      },
+    });
+    dialog.afterClosed().subscribe((res: any) => {
+      // const bureau = this.bureaus.find( (bureau : any[any]) => { return bureau.bureauId === res.bureauid}) 
+      // if(bureau === undefined)
+      // {
+      //   this.bureaus.push({
+      //     bureauId : res.bureauid,
+      //     bureauName : res.bureauname
+      //   })
+      // }
+
+      const grpind =  parseInt( target.getAttribute('grpind') )
+
+      // Assign to element
+      target.value = res.bureauname;
+      // this.members.controls[grpind].get('affiliation')?.setValue(res.bureauid);
+      this.members.controls[grpind].get('bureauname')?.setValue(res.bureauname)
+    });
   }
 }

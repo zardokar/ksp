@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CompleteDialogComponent, ConfirmDialogComponent } from '@ksp/shared/dialog';
+import {
+  CompleteDialogComponent,
+  ConfirmDialogComponent,
+} from '@ksp/shared/dialog';
 import { Location } from '@angular/common';
 import _ from 'lodash';
 import { FormBuilder } from '@angular/forms';
-import { ERequestService } from '@ksp/shared/service';
+import { ERequestService, LoaderService } from '@ksp/shared/service';
 import { getCookie, jsonStringify, parseJson } from '@ksp/shared/utility';
-import { map } from 'rxjs';
+import { Subject, map } from 'rxjs';
 import { FormMode } from '@ksp/shared/interface';
 const detailToState = (res: any) => {
   const newRes =
     _.filter(res?.datareturn, ({ process }) => process === '7').map(
       (data: any) => {
-        return { detailParse: parseJson(data?.detail), ...data};
+        return { detailParse: parseJson(data?.detail), ...data };
       }
     ) || [];
   const considerCourses = _.reduce(
@@ -36,7 +39,7 @@ const detailToState = (res: any) => {
   return {
     isNotEmptyConsiderCourses: !!_.size(considerCourses?.considerCourses),
     isNotEmptyConsiderCert: !!_.size(considerCourses?.considerCert),
-    newRes
+    newRes,
   };
 };
 @Component({
@@ -51,7 +54,7 @@ export class FollowUpComponent implements OnInit {
     'พิจารณารับรองหลักสูตร',
     'พิจารณารับรอง',
     'บันทึกการประเมินสภาพจริง',
-    'ติดตามผลเชิงประจักษ์'
+    'ติดตามผลเชิงประจักษ์',
   ];
 
   choices = [
@@ -81,13 +84,16 @@ export class FollowUpComponent implements OnInit {
   process: any;
   processType!: number;
   mode: FormMode = 'edit';
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private location: Location,
     private fb: FormBuilder,
-    private eRequestService: ERequestService
+    private eRequestService: ERequestService,
+    private loaderService: LoaderService
   ) {}
   form = this.fb.group({
     verifyForm: [{}],
@@ -101,7 +107,7 @@ export class FollowUpComponent implements OnInit {
   });
   ngOnInit() {
     this.dataSource = _.get(this.location.getState(), 'dataSource', []);
-    console.log(this.dataSource)
+    console.log(this.dataSource);
     this.route.paramMap.subscribe((res) => {
       this.requestId = res.get('key') ? Number(res.get('key')) : '';
       if (this.requestId) {
@@ -113,18 +119,21 @@ export class FollowUpComponent implements OnInit {
 
   getHistory() {
     this.eRequestService
-    .kspUniRequestProcessSelectByRequestId(this.requestId)
-    .pipe(map(detailToState))
-    .subscribe((res) => {
-      const findHistory = res?.newRes.find((data: any) => { return data.status == '1' });
-      if (findHistory) {
-        this.mode = 'view';
-        this.form.patchValue({
-          verifyForm: findHistory.detailParse.followUpResult.verifyForm,
-          considerationResult: findHistory.detailParse.followUpResult.considerationResult
-        })
-      }
-    });
+      .kspUniRequestProcessSelectByRequestId(this.requestId)
+      .pipe(map(detailToState))
+      .subscribe((res) => {
+        const findHistory = res?.newRes.find((data: any) => {
+          return data.status == '1';
+        });
+        if (findHistory) {
+          this.mode = 'view';
+          this.form.patchValue({
+            verifyForm: findHistory.detailParse.followUpResult.verifyForm,
+            considerationResult:
+              findHistory.detailParse.followUpResult.considerationResult,
+          });
+        }
+      });
   }
 
   cancel() {
@@ -147,7 +156,7 @@ export class FollowUpComponent implements OnInit {
       process: '7',
       status: '1',
       detail: jsonStringify(detail),
-      userid: getCookie('userId')
+      userid: getCookie('userId'),
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
@@ -164,11 +173,10 @@ export class FollowUpComponent implements OnInit {
           payload.requestid = data?.key;
           if (data?.status === '1' && data?.process === '6') {
             this.eRequestService
-            .kspUpdateRequestUniRequestDegree(payload)
-            .subscribe(() => {
-              if (index === _.size(this.dataSource) - 1)
-                this.onConfirmed();
-            });
+              .kspUpdateRequestUniRequestDegree(payload)
+              .subscribe(() => {
+                if (index === _.size(this.dataSource) - 1) this.onConfirmed();
+              });
           }
         });
       }

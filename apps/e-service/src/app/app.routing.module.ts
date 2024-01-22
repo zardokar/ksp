@@ -280,6 +280,19 @@ const routes: EthicsCustomRoute[] = [
   {
     path: 'publish',
     data: {
+      ethicsMode: 'confirmation',
+      menuConfig: ethicsMenu,
+      headerLabel: 'ระบบงานจรรยาบรรณวิชาชีพ',
+    },
+    loadChildren: () =>
+      import('@ksp/e-service/ethics/publish').then(
+        (m) => m.EServiceEthicsPublishModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'publish',
+    data: {
       ethicsMode: 'publish',
       menuConfig: ethicsMenu,
       headerLabel: 'ระบบงานจรรยาบรรณวิชาชีพ',
@@ -287,6 +300,19 @@ const routes: EthicsCustomRoute[] = [
     loadChildren: () =>
       import('@ksp/e-service/ethics/publish').then(
         (m) => m.EServiceEthicsPublishModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'ethicsreport',
+    data: {
+      ethicsMode: 'recording',
+      menuConfig: ethicsMenu,
+      headerLabel: 'รายงานการบันทึกข้อมูลจรรยาบรรณ',
+    },
+    loadChildren: () =>
+      import('@ksp/e-service/ethics/ethicsreport').then(
+        (m) => m.EServiceEthicsReportModule
       ),
     canActivate: [AuthGuard],
   },

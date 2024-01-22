@@ -1,0 +1,93 @@
+<div id="mdt_filechecker_ovl" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing" >
+    <div id="filechecker-overlay-close" (click)="close()"></div>
+    <input id="tkcache" type="hidden" />
+    <div id="mdt_filechecker_wrp" class="cdk-global-overlay-wrapper" dir="ltr" style="justify-content: flex-end; align-items: flex-start;" >
+            <div id="filechecker-overlay" class="cdk-overlay-pane">
+                <div tabindex="0" class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true">
+            </div>
+            <div
+                class="mat-dialog-container cdk-dialog-container ng-tns-c68-300 ng-trigger ng-trigger-dialogContainer ng-star-inserted" 
+                id="mat-dialog-8" role="dialog"  aria-modal="true" style="transform: none; padding: 0;">
+                <div _nghost-foi-c194="" class="ng-star-inserted">
+                    <div _ngcontent-foi-c194="" class="view-layout">
+                        <div id="file_viewer_vleft"      style="width: 21%; height: 72vh;  overflow-y: scroll;"> 
+                            
+                            <h2 id="file_current_title" >{{filetitle}}</h2>
+
+                            <div id="div_thumbnails_con">
+                                <div *ngFor="let item of data.files"
+                                     class="file-block" 
+                                     style="position:relative" 
+                                     (click)="selectThumbnail(item.fileid)">
+
+                                    <img 
+                                        [src]="THUMBLIST[item.fileid]" 
+                                        style="max-height:60%;width:100%;aspect-ratio:auto 1/1;margin-top:.6em" 
+                                        />
+
+                                    <div style="display:inline;width:fit-content;height:fit-content;margin-left:.5em">{{writeFilename(item.filename)}}</div>
+
+                                    <div [class]="CLASSSTYLELIST[item.fileid]" style="position:absolute; width:inherit; height:inherit; border-radius:4px"></div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        
+                        <div id="file_viewer_vright"    style="width: 79%; height: 69vh; margin-top: 3vh; background-color: gray;"> 
+                            <iframe [src]="viewerSafe || null"  style="width: 100%; height: 100%;" frameBorder="0" ></iframe>
+                        </div>
+
+                    </div>
+                    <!--------------------   Checker Input ---------------------------------->
+                    <div _ngcontent-foi-c194="" class="d-flex justify-content-center" style="flex-direction: column; border: solid 0.05em #adadad6f; padding-bottom: 5px;">
+                        <div style="width: 98%; margin-left: 1%;" class="ng-touched ng-dirty ng-invalid">
+                            <form  novalidate="" class="ng-untouched ng-pristine">
+                            <input id="inp_current_openfileid" type="hidden" />
+                                    <div _ngcontent-bcm-c79="" class="d-flex flex-row justify-content-between">
+                                        <div _ngcontent-bcm-c79="" class="box-header text-primary mb-1">ผลการตรวจสอบ<span id="spn_tab_title"></span></div>
+                                    </div>
+                                    <div class="d-flex flex-row mb-3">
+                                        <div class="w-25 d-flex flex-row align-items-center me-3 position-relative ng-star-inserted">
+                                                <input  value="1" 
+                                                        type="radio" 
+                                                        formControlName="radfilereview"
+                                                        name="filechecker" 
+                                                        (click)="onCheckResultClick($event)"
+                                                        class="rad-check-input my-0 radio ng-untouched ng-pristine"
+                                                        [checked]="isAccept"
+                                                        />
+                                            <div class="form-control">
+                                                <label class="ms-4"> รับเอกสารแล้ว </label>
+                                            </div>
+                                        </div>
+                                        <div class="w-25 d-flex flex-row align-items-center me-3 position-relative ng-star-inserted">
+                                                <input  
+                                                        value="2" 
+                                                        type="radio" 
+                                                        formControlName="radfilereview"
+                                                        name="filechecker" 
+                                                        (click)="onCheckResultClick($event)"
+                                                        class="rad-check-input my-0 radio ng-untouched ng-pristine"
+                                                        [checked]="!isAccept"
+                                                        />
+                                            <div class="form-control">
+                                                <label class="ms-4"> ขอเอกสารเพิ่มเติม </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <textarea rows="3" placeholder="ระบุเหตุผลเพิ่มเติม" 
+                                          value={{ifilecomment}}
+                                          (change)="onEditComment($event)" 
+                                          class="form-control mb-1 ng-untouched ng-pristine"></textarea>
+                                <div id="checkfile_result_con"></div>
+                            </form>
+                        </div>
+                        <button id="btn_file_submit" type="button" class="btn btn-primary" style="margin-left: auto; margin-right: auto;" (click)="confirmFile()">ยืนยัน</button>
+                    </div>
+                    <!-------------------- Checker Input (End)---------------------------------->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

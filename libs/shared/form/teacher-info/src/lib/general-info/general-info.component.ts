@@ -2,7 +2,11 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { KspFormBaseComponent, ListData } from '@ksp/shared/interface';
 import { GeneralInfoService } from '@ksp/shared/service';
-import { idCardPattern, providerFactory, validatorMessages } from '@ksp/shared/utility';
+import {
+  idCardPattern,
+  providerFactory,
+  validatorMessages,
+} from '@ksp/shared/utility';
 import _ from 'lodash';
 
 @Component({
@@ -67,12 +71,12 @@ export class TeacherGeneralInfoComponent extends KspFormBaseComponent {
         label: name_th,
       }));
     });
-    const currYear = new Date().getFullYear()+5;
-    for (let index = 0; index < 15; index++) {
+    const currYear = new Date().getFullYear() - 30;
+    for (let index = 0; index <= 30; index++) {
       this.calendaryearList.push({
-        value: ((currYear - index) + 543).toString(),
-        label: ((currYear - index) + 543).toString()
-      })
+        value: (currYear + index + 543).toString(),
+        label: (currYear + index + 543).toString(),
+      });
     }
   }
 
@@ -115,5 +119,4 @@ export class TeacherGeneralInfoComponent extends KspFormBaseComponent {
   get idCardNo() {
     return this.form.controls.personId;
   }
-
 }

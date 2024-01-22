@@ -11,8 +11,10 @@
           <thead>
             <tr>
               <th scope="col" class="text-center">ครั้งที่</th>
+              <th scope="col" class="text-center">ชื่อรายวิชา</th>
               <th scope="col" class="text-center">ชั้นปี</th>
               <th scope="col" class="text-center">ภาคเรียนที่</th>
+              <th scope="col" class="text-center">จำนวนหน่วยกิต</th>
               <th scope="col" class="text-center">จำนวนชั่วโมง</th>
             </tr>
           </thead>
@@ -24,7 +26,15 @@
                   <th scope="row">
                     <div class="fs-5 text-center">{{ i + 1 }}</div>
                   </th>
-
+                  <td>
+                    <div>
+                      <input
+                        class="form-control"
+                        type="text"
+                        formControlName="coursename"
+                      />
+                    </div>
+                  </td>
                   <td>
                     <div>
                       <input
@@ -46,13 +56,23 @@
                       />
                     </div>
                   </td>
-
                   <td>
                     <div>
                       <input
                         class="form-control text-center"
                         type="number"
                         min="0"
+                        formControlName="credit"
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <input
+                        class="form-control text-center"
+                        type="number"
+                        min="0"
+                        (input)="calculateCredit($event, i)"
                         formControlName="hour"
                       />
                     </div>
@@ -64,15 +84,19 @@
             <tr *ngIf="mode === 'edit'">
               <th scope="row"></th>
               <td></td>
+              <td></td>
               <td>
                 <ksp-add-row-button (addRowClick)="addRow()"
                   >เพิ่มจำนวนครั้ง
                 </ksp-add-row-button>
               </td>
               <td></td>
+              <td></td>
             </tr>
 
             <tr>
+              <th scope="row"></th>
+              <th scope="row"></th>
               <th scope="row"></th>
               <th scope="row"></th>
               <td class="text-end fs-5">รวมทั้งหมด</td>

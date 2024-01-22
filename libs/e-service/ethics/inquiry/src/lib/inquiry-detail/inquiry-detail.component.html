@@ -25,7 +25,7 @@
       <div class="d-flex align-items-center">
         <input
           matInput
-          [matDatepicker]="picker1"
+          [matDatepicker]="picker9"
           autocomplete="off"
           class="form-control form-date"
           formControlName="inquiryorderdate"
@@ -34,18 +34,18 @@
         <mat-datepicker-toggle
           class="button-date"
           matSuffix
-          [for]="picker1"
+          [for]="picker9"
         ></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
+        <mat-datepicker #picker9></mat-datepicker>
       </div>
     </div>
   </div>
 
   <div class="d-flex justify-content-between">
-    <div class="form-label">
+    <div class="form-label box-header">
       คณะอนุกรรมการสอบสวนการประพฤติผิดจรรยาบรรณของวิชาชีพ
     </div>
-    <div role="button" class="text-primary" (click)="addRow()">
+    <div role="button" class="text-primary" (click)="addRow()" *ngIf="mode !== 'view'">
       + เพิ่มรายการ
     </div>
   </div>
@@ -55,16 +55,16 @@
       <thead>
         <tr>
           <th scope="col">ลำดับ</th>
-          <th scope="col">หมายเลขบัตรประชาชน</th>
-          <th scope="col">เลขที่หนังสืออนุญาต</th>
           <th scope="col">ตำแหน่งกรรมการ</th>
+          <th scope="col">หมายเลขบัตรประชาชน</th>
           <th scope="col"></th>
           <th scope="col">ชื่อ</th>
           <th scope="col">นามสกุล</th>
           <th scope="col">ตำแหน่ง</th>
+          <th scope="col">วิทยฐานะ</th>
           <th scope="col">สังกัด - หน่วยงาน/สถานศึกษา</th>
           <!-- <th scope="col">แก้ไข</th> -->
-          <th scope="col">ลบ</th>
+          <th scope="col" *ngIf="mode !== 'view'">ลบ</th>
         </tr>
       </thead>
       <tbody>
@@ -72,20 +72,6 @@
           <ng-container *ngFor="let row of members.controls; let i = index">
             <tr [formGroupName]="i">
               <td class="text-center">{{ i + 1 }}</td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idcardno"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="idnumber"
-                />
-              </td>
               <td>
                 <select class="form-select" formControlName="positioncommittee">
                   <option disabled selected hidden value="null">
@@ -96,6 +82,15 @@
                   <option value="3">อนุกรรมการและเลขานุการ</option>
                   <option value="4">ผู้ช่วยเลขานุการ</option>
                 </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idcardno"
+                  maxlength="13"
+                  (keyup)="onChangeIDcardno($event)"
+                />
               </td>
               <td>
                 <select class="form-select" formControlName="prefix">
@@ -130,24 +125,32 @@
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="bureau"
-                />
+                <select class="form-select" formControlName="bureau">
+                  <option value="null" selected hidden disabled>กรุณาเลือก</option>
+                  <option value="1">ไม่มี</option>
+                  <option value="2">ชํานาญการ</option>
+                  <option value="3">ชํานาญการพิเศษ</option>
+                  <option value="4">เชี่ยวชาญ</option>
+                  <option value="5">เชี่ยวชาญพิเศษ</option>
+                </select>
               </td>
-              <!-- <td>
-                <i
-                  role="button"
-                  class="bi bi-pencil-square fs-5 text-primary"
-                ></i>
-              </td> -->
               <td>
-                <i
+
+                <input type="text" class="form-control" formControlName="bureauname" (click)="searchSchool($event.target)" [attr.grpind]="i" />
+                
+              </td>
+              <td *ngIf="mode !== 'view'">
+                <!-- <div class="d-flex justify-content-end" *ngIf="mode !== 'view'"> -->
+                  <i
                   (click)="deleteRow(i)"
                   role="button"
                   class="bi bi-trash fs-5 text-danger"
                 ></i>
+                <!-- </div> -->
+                <!-- <i
+                  role="button"
+                  class="bi bi-trash fs-5 text-danger"
+                ></i> -->
               </td>
             </tr>
           </ng-container>
@@ -156,7 +159,7 @@
     </table>
   </div>
 
-  <div class="table-responsive my-3">
+  <!-- <div class="table-responsive my-3">
     <div class="box-header">ผู้ถูกกล่าวหา/กล่าวโทษ</div>
     <table class="table">
       <thead>
@@ -199,16 +202,175 @@
         </tr>
       </tbody>
     </table>
+  </div> -->
+  <div class="my-3 box-header">การพักใช้ใบอนุญาตประกอบวิชาชีพ</div>
+  <div class="row mb-2">
+    <div class="col-4">
+      <div class="d-flex flex-column">
+        <div class="d-flex flex-row align-items-center mb-2">
+          <input 
+                type="radio"
+                class="form-check-input"
+                value="0"
+                name="suspension"
+                formControlName="inquerylicensestatus"
+                [(ngModel)]="selectedlicensesuspension"
+              />
+          <label class="form-label ms-2">พักใช้ใบอนุญาตประกอบวิชาชีพไว้ก่อน</label>
+        </div>
+        
+        <ng-container *ngIf="selectedlicensesuspension == false">
+            <div class="col">
+              <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษ </label>
+              <div class="d-flex align-items-center">
+                <input
+                  matInput
+                  [matDatepicker]="picker10"
+                  autocomplete="off"
+                  class="form-control form-date"
+                  formControlName="inquerylicensestatusnotificationdate"
+                  placeholder="วว/ดด/ปปปป"
+                  [disabled]=false
+                  />
+                <mat-datepicker-toggle
+                  class="button-date"
+                  matSuffix
+                  [for]="picker10"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker10></mat-datepicker>
+              </div>
+            </div>
+           
+            <div class="col">
+              <label class="form-label"
+                >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+              </label>
+              <div class="d-flex align-items-center">
+                <input
+                  matInput
+                  [matDatepicker]="picker11"
+                  autocomplete="off"
+                  class="form-control form-date"
+                  formControlName="inquerylicensestatusaccusedrecognizedate"
+                  placeholder="วว/ดด/ปปปป"
+                  [disabled]="false"
+                  />
+                <mat-datepicker-toggle
+                  class="button-date"
+                  matSuffix
+                  [for]="picker11"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker11></mat-datepicker>
+              </div>
+            </div>
+            
+  
+  
+        </ng-container>
+
+        <div class="d-flex flex-row align-items-center mb-2">
+          <input 
+                type="radio"
+                class="form-check-input"
+                value="1"
+                name="suspension"
+                formControlName="inquerylicensestatus"
+                [(ngModel)]="selectedlicensesuspension"
+              />
+          <label class="form-label ms-2">ไม่ต้องพักใช้ใบอนุญาตประกอบวิชาชีพไว้ก่อน</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col">
+      <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษ </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker12"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="inquerylicensesuspendnotificationdate"
+          placeholder="วว/ดด/ปปปป"
+          [disabled]=false
+          />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker12"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker12></mat-datepicker>
+      </div>
+    </div>
+    <div class="col">
+      <label class="form-label"
+        >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+      </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker13"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="inquerylicensesuspendrecognizedate"
+          placeholder="วว/ดด/ปปปป"
+          [disabled]="false"
+          />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker13"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker13></mat-datepicker>
+      </div>
+    </div>
+
   </div>
 
-  <div class="form-label">จัดทำรายงานการสอบสวน (จ.บ.6)</div>
+  <div class="my-3 box-header">แจ้งข้อกล่าวหา/ข้อกล่าวโทษและสรุปพยานหลักฐาน</div>
+  <div class="row mb-2">
+    <div class="col-6">
+      <label class="form-label">วันที่แจ้ง </label>
+      <div class="d-flex align-items-center">
+        <input
+          matInput
+          [matDatepicker]="picker14"
+          autocomplete="off"
+          class="form-control form-date"
+          formControlName="inquerynotificationdate"
+          placeholder="วว/ดด/ปปปป"
+        />
+        <mat-datepicker-toggle
+          class="button-date"
+          matSuffix
+          [for]="picker14"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker14></mat-datepicker>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col">
+      <label class="form-label">รายงานผลการสอบสวน </label>
+      <textarea
+        class="form-control"
+        type="text"
+        rows="3"
+        formControlName="inqueryexaminereport"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="my-3 box-header">จัดทำรายงานการสอบสวน (จ.บ.6)</div>
   <div class="row mb-2">
     <div class="col-6">
       <label class="form-label">วันที่ </label>
       <div class="d-flex align-items-center">
         <input
           matInput
-          [matDatepicker]="picker3"
+          [matDatepicker]="picker15"
           autocomplete="off"
           class="form-control form-date"
           formControlName="inquiryjbdate"
@@ -217,9 +379,9 @@
         <mat-datepicker-toggle
           class="button-date"
           matSuffix
-          [for]="picker3"
+          [for]="picker15"
         ></mat-datepicker-toggle>
-        <mat-datepicker #picker3></mat-datepicker>
+        <mat-datepicker #picker15></mat-datepicker>
       </div>
     </div>
   </div>
@@ -236,13 +398,123 @@
     </div>
   </div>
 
-  <div class="bg-light px-3 py-2 mt-3" formGroupName="inquiryresult">
+  <!-- <div class="bg-light px-3 py-2 mt-3" formGroupName="inquiryresult"> -->
+  <div class="bg-light px-3 py-2 mt-3" >
     <div class="box-header">การพิจารณาดำเนินการ</div>
     <div class="form-label">
       คณะกรรมการวินิจฉัยระดับความผิดจรรยาบรรณของวิชาชีพ
       ตามมติคณะกรรมการมาตรฐานวิชาชีพในการประชุม
     </div>
-    <div class="row mb-2">
+
+    <div class="d-flex justify-content-end" *ngIf="mode !== 'view'">
+      <label
+        class="text-primary"
+        role="button"
+        (click)="openCondiserRecordDialog()"
+        *ngIf="meetings.length < 5"
+        >+ เพิ่มรายการ</label
+      >
+    </div>
+
+
+    <div class="mb-3">
+      <div class="table-responsive mb-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">ลำดับ</th>
+              <th scope="col">มติครั้งที่</th>
+              <th scope="col">วันที่</th>
+              <th scope="col">มติที่ประชุม</th>
+              <th scope="col">เอกสารแนบ</th>
+              <th scope="col">ดู</th>
+              <!-- <th scope="col">แก้ไข</th> -->
+              <th scope="col" *ngIf="mode !== 'view'">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container formArrayName="inquerymeetinghistory">
+              <ng-container *ngFor="let row of meetings.controls; let i = index">
+                <tr [formGroupName]="i">
+                  <th class="text-center">{{ i + 1 }}</th>
+                  <td>
+                    {{row.value.meetingtimes}}
+                  </td>      
+                  <td >
+                    {{row.value.meetingdate}}
+                  </td>
+                  <td>
+                    {{row.value.meetingreason}}
+                  </td>
+                  <td>
+                    {{row.value.meetingfile}}
+                  </td>
+                  <td>
+                    <i
+                    role="button"
+                    class="bi bi-eye fs-5 text-success"
+                    ></i>
+                    
+                  </td>
+                  <td *ngIf="mode !== 'view'">
+                    <!-- <div *ngIf="mode !== 'view'"> -->
+                        <i
+                        role="button"
+                        class="bi bi-trash fs-5 text-danger"
+                        (click)="deleteConsiderRow(i)"
+                      ></i>
+                    <!-- </div> -->
+                    <!-- <div class="d-flex justify-content-end" *ngIf="mode === 'view'">
+                      <i
+                        role="button"
+                        class="bi bi-trash fs-5 text-danger"
+                      ></i>
+                    </div> -->
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <br />
+  
+      <!-- <mat-tab-group class="tab-group" animationDuration="0ms">
+          <mat-tab label="ข้อมูลผู้ได้รับหนังสืออนุญาต" class="tab-content">
+                <e-service-person-info
+                    [personalInfo] = "selectId"
+                    [changeUpdate] = "updateStatus"
+                ></e-service-person-info>
+          </mat-tab>
+        
+  
+        <mat-tab label="ข้อมูลหนังสืออนุญาต">
+          <div class="box-header">
+            ข้อมูลหนังสืออนุญาตประกอบวิชาชีพทางการศึกษา (ยังไม่หมดอายุ)
+          </div>
+          <ksp-license-type-button-group 
+              [selecttab]="this.currentlictab" 
+              (clickLicenseTab)="onChangeLicTab($event)" 
+          ></ksp-license-type-button-group>
+          <ksp-license-info-card 
+              [selectedata]="selectId" 
+              [changeTab]="this.currentlictab"
+              (selectTab)="onChangeLicTab($event)" 
+          ></ksp-license-info-card>
+        </mat-tab>
+  
+        <mat-tab label="ที่อยู่">
+          <e-service-address-info
+            [addressInfo] = "addressId"
+          ></e-service-address-info>
+        </mat-tab>
+  
+        <mat-tab label="สถานที่ทำงาน">
+          <e-service-workplace-info></e-service-workplace-info>
+        </mat-tab>
+      </mat-tab-group> -->
+    </div>
+    <!-- <div class="row mb-2">
       <div class="col">
         <label class="form-label">ครั้งที่ </label>
         <input
@@ -284,9 +556,19 @@
         </textarea>
       </div>
     </div>
-    <ksp-file-upload></ksp-file-upload>
+    <ksp-file-upload></ksp-file-upload> -->
 
-    <div class="my-3">
+    <div class="my-3" formGroupName="inquiryresult">
+      <div class="d-flex align-items-center mb-2">
+        <input
+          type="radio"
+          class="form-check-input"
+          value="0"
+          formControlName="consider"
+        />
+        <label class="form-label ms-2">ไม่รับเรื่องพิจารณาและจำหน่ายออก เนื่องจากอายุความเกิน 1 ปี</label>
+      </div>
+
       <div class="d-flex align-items-center mb-2">
         <input
           type="radio"
@@ -324,17 +606,37 @@
           value="4"
           formControlName="consider"
         />
-
-        <label class="form-label ms-2">พักใช้</label>
-        <label class="form-label mx-3">ระยะเวลา</label>
-        <input
-          class="form-control"
-          style="width: 8rem"
-          type="number"
-          min="0"
-          formControlName="considerday"
-        />
-        <label class="form-label mx-3">วัน</label>
+        <div class="d-flex align-items-center mb-2" formGroupName="considerday">
+          <label class="form-label ms-2">พักใช้</label>
+          <label class="form-label mx-3">ระยะเวลา</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="year"
+            (keyup)="onChangeIDcardno($event)"
+          />
+          <label class="form-label mx-3">ปี</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="month"
+            (keyup)="onChangeIDcardno($event)"
+          />
+          <label class="form-label mx-3">เดือน</label>
+          <input
+            class="form-control"
+            style="width: 8rem"
+            type="text"
+            min="0"
+            formControlName="day"
+            (keyup)="onChangeIDcardno($event)"
+          />
+          <label class="form-label mx-3">วัน</label>
+        </div>
       </div>
 
       <div class="d-flex align-items-center mb-2">
@@ -345,7 +647,7 @@
         <div class="d-flex align-items-center">
           <input
             matInput
-            [matDatepicker]="picker5"
+            [matDatepicker]="picker16"
             autocomplete="off"
             class="form-control form-date"
             formControlName="considerdatefrom"
@@ -354,15 +656,15 @@
           <mat-datepicker-toggle
             class="button-date"
             matSuffix
-            [for]="picker5"
+            [for]="picker16"
           ></mat-datepicker-toggle>
-          <mat-datepicker #picker5></mat-datepicker>
+          <mat-datepicker #picker16></mat-datepicker>
         </div>
         <label class="form-label mx-3">ถึง วันที่</label>
         <div class="d-flex align-items-center">
           <input
             matInput
-            [matDatepicker]="picker6"
+            [matDatepicker]="picker17"
             autocomplete="off"
             class="form-control form-date"
             formControlName="considerdateto"
@@ -371,9 +673,9 @@
           <mat-datepicker-toggle
             class="button-date"
             matSuffix
-            [for]="picker6"
+            [for]="picker17"
           ></mat-datepicker-toggle>
-          <mat-datepicker #picker6></mat-datepicker>
+          <mat-datepicker #picker17></mat-datepicker>
         </div>
       </div>
 

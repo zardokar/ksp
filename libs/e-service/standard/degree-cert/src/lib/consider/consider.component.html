@@ -1,3 +1,7 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
 <ksp-top-nav><span header>ยื่นแบบคำขอ</span></ksp-top-nav>
 <fieldset [disabled]="!allowEdit">
   <form [formGroup]="form">
@@ -7,6 +11,7 @@
         <ksp-request-header-info
           [requestDate]="requestdate"
           [requestNumber]="requestNumber"
+          [showRequestDate]="false"
         ></ksp-request-header-info>
         <hr />
         <div class="detail__container">
@@ -20,9 +25,12 @@
           >
           </ksp-degree-cert-step-one>
 
-          <button class="btn btn-primary w-auto" (click)="toDetail()">
+          <a class="btn btn-primary w-auto" href="" [routerLink]="[
+            '/degree-cert',
+            'check',
+            requestKey]" target="_blank">
             กดเพื่อดูแบบคำขอรับรองปริญญาและประกาศนียบัตรทางการศึกษา
-          </button>
+          </a>
 
           <div class="d-flex my-3">
             <ng-container
@@ -81,7 +89,7 @@
                     {{ item?.verifyForm?.boardName || '' }}
                   </td>
                   <td class="detail__table">
-                    {{ result[item?.considerationResult?.result || ''] }}
+                    {{ result2[item?.considerationResult?.result || ''] }}
                   </td>
                   <td class="detail__table">
                     <label class="view__label" (click)="view(item?.verifyForm)" *ngIf="item?.verifyForm.file.files"

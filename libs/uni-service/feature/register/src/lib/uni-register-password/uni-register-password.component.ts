@@ -155,7 +155,8 @@ export class UniRegisterPasswordComponent implements OnInit {
           if (res) {
             this.savingData = replaceEmptyWithNull(this.savingData);
             const educationoccupy = {
-              permission: this.savingData.permission,
+              permission1: this.savingData.permission1,
+              permission2: this.savingData.permission2,
               other: this.savingData.other,
               ...this.uniData,
             };
@@ -185,11 +186,29 @@ export class UniRegisterPasswordComponent implements OnInit {
           return EMPTY;
         })
       )
-      .subscribe((res) => {
-        if (res) {
+      .subscribe((res: any) => {
+        if (res.returncode == '00') {
           this.submit = false;
           const requestNo = res?.requestno;
           this.showCompleteDialog(requestNo);
+        } else if (res.returncode == '409') {
+          this.dialog.open(CompleteDialogComponent, {
+            width: '375px',
+            data: {
+              header: `ยืนยันข้อมูลไม่สำเร็จ`,
+              content: `หมายเลขบัตรประชาชนซ้ำ`,
+              btnLabel: 'ปิด',
+            },
+          });
+        } else {
+          this.dialog.open(CompleteDialogComponent, {
+            width: '375px',
+            data: {
+              header: `ยืนยันข้อมูลไม่สำเร็จ`,
+              content: res?.returnmessage,
+              btnLabel: 'ปิด',
+            },
+          });
         }
       });
   }

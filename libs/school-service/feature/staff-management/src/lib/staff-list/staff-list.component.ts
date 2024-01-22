@@ -35,9 +35,9 @@ export class StaffListComponent implements AfterViewInit {
     'name',
     'startdate',
     'enddate',
-    'profession',
-    'tempLicense',
-    'teaching',
+    // 'profession',
+    // 'tempLicense',
+    // 'teaching',
     'edit',
     'view',
   ];
@@ -107,7 +107,7 @@ export class StaffListComponent implements AfterViewInit {
   }
 
   addStaff() {
-    this.router.navigate(['/staff-management', 'add-staff']);
+    this.router.navigate(['/staff-management', 'edit-staff', '']);
   }
 
   editStaff(staffId: number) {

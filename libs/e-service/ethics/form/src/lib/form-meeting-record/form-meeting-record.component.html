@@ -1,3 +1,7 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
 <div class="box-header text-primary" *ngIf="displayHeader">{{ showBoxHeader }}</div>
 
 <form [formGroup]="form">
@@ -13,7 +17,7 @@
         />
       </div>
       <div class="col-4">
-        <label class="form-label">ช่วงวันที่</label>
+        <label class="form-label">วันที่</label>
         <div class="d-flex align-items-center">
           <input
             matInput
@@ -32,7 +36,7 @@
         </div>
       </div>
       <div class="col-6">
-        <label class="form-label">ประเภทกรรมการ</label>
+        <label class="form-label">ประเภทคณะกรรมการ</label>
         <select class="search__content form-select" formControlName="boardType">
           <option value="null" selected hidden disabled>กรุณาเลือก</option>
           <option *ngFor="let item of boardOption" [value]="item.value">{{item?.label}}</option>
@@ -42,7 +46,7 @@
 
     <div class="row mb-2">
       <div class="col">
-        <label class="form-label">ชื่อกรรมการ</label>
+        <label class="form-label">ชื่อคณะกรรมการ</label>
         <input
           class="form-control"
           type="text"

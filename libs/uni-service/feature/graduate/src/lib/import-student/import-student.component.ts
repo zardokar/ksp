@@ -12,12 +12,11 @@ import {
   TrainingAddressComponent,
   ViewHistoryAdmissionComponent
 } from '@ksp/uni-service/dialog';
-import { SelectItem } from 'primeng/api';
-import { User } from './user';
 import { UserService } from './user.service';
 import { FormAddressTableComponent } from '@ksp/shared/form/others';
 import {
   GeneralInfoService,
+  LoaderService,
   UniInfoService,
   UniRequestService,
 } from '@ksp/shared/service';
@@ -25,20 +24,17 @@ import localForage from 'localforage';
 import {
   FormArray,
   FormBuilder,
-  FormControl,
-  FormGroup,
   Validators,
 } from '@angular/forms';
-import { EMPTY, switchMap } from 'rxjs';
+import { EMPTY, Subject, switchMap } from 'rxjs';
 import * as XLSX from 'xlsx';
 import {
   getCookie,
   idCardPattern,
   nameEnPattern,
   nameThPattern,
-  parseJson,
   phonePattern,
-  thaiDate,
+  toUpperCaseName,
   validatorMessages,
 } from '@ksp/shared/utility';
 import moment from 'moment';
@@ -83,6 +79,7 @@ export class ImportStudentComponent implements OnInit {
   studentStatusList = studentStatusList;
   submitted = false;
   validatorMessages = validatorMessages;
+  isLoading: Subject<boolean> = this.loaderService.isLoading;
 
   constructor(
     public dialog: MatDialog,
@@ -92,7 +89,8 @@ export class ImportStudentComponent implements OnInit {
     private generalInfoService: GeneralInfoService,
     private fb: FormBuilder,
     private requestService: UniRequestService,
-    private uniInfoService: UniInfoService
+    private uniInfoService: UniInfoService,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit() {
@@ -106,6 +104,7 @@ export class ImportStudentComponent implements OnInit {
     });
     const userId = Number(getCookie('userId'));
     localForage.getItem('courseData').then((res: any) => {
+      console.log(res)
       if (res) {
         this.courseData = res;
         this.payload = {
@@ -204,7 +203,8 @@ export class ImportStudentComponent implements OnInit {
               'YYYY-MM-DD'
             );
             user.birthdate = moment(user.birthdate).format('YYYY-MM-DD');
-            user.subjects = JSON.parse(user.subjects);
+            user.subjects = user.subjects ? JSON.parse(user.subjects) : null;
+            user.originaldegree = user.originaldegree ? JSON.parse(user.originaldegree) : null;
             this.user.push(this.edituser(user));
           });
           this.requestService
@@ -373,9 +373,9 @@ export class ImportStudentComponent implements OnInit {
   edituser(data: any) {
     let userAddress: any;
     if (this.pageType == 'admissionList') {
-      userAddress = JSON.parse(data.address);
+      userAddress = data.address ? JSON.parse(data.address) : null;
     } else {
-      const parsedata = JSON.parse(data.addressinfo);
+      const parsedata = data.addressinfo ? JSON.parse(data.addressinfo) : null;
       userAddress = parsedata?.addressInfo;
     }
     return this.fb.group({
@@ -405,8 +405,7 @@ export class ImportStudentComponent implements OnInit {
         this.pageType == 'admissionList' ? Validators.required : undefined,
       ],
       originaldegree: [
-        data.originaldegree,
-        this.pageType == 'admissionList' ? Validators.required : undefined,
+        data.originaldegree
       ],
       email: [
         data.email,
@@ -433,19 +432,19 @@ export class ImportStudentComponent implements OnInit {
         this.pageType == 'admissionList' ? Validators.required : undefined,
       ],
       firstnameen: [
-        data.firstnameen,
+        toUpperCaseName(data.firstnameen),
         this.pageType == 'admissionList'
           ? [Validators.required, Validators.pattern(nameEnPattern)]
           : undefined,
       ],
       middlenameen: [
-        data.middlenameen,
+        toUpperCaseName(data.middlenameen),
         this.pageType == 'admissionList'
           ? [Validators.pattern(nameEnPattern)]
           : undefined,
       ],
       lastnameen: [
-        data.lastnameen,
+        toUpperCaseName(data.lastnameen),
         this.pageType == 'admissionList'
           ? [Validators.required, Validators.pattern(nameEnPattern)]
           : undefined,
@@ -665,6 +664,24 @@ export class ImportStudentComponent implements OnInit {
     });
   }
 
+  checkdisableSave() {
+    if (this.pageType == 'admissionList') {
+      return this.formStudent.invalid || this.user.value.length == 0;
+    } else {
+      let invalidform = false;
+      let empytychecked = true;
+      this.user.controls.forEach((user) => {
+        if (user.value.checked && user.invalid) {
+          invalidform = true;
+        }
+        if (user.value.checked) {
+          empytychecked = false;
+        }
+      });
+      return invalidform || empytychecked;
+    }
+  }
+
   save(typeSave: string) {
     this.submitted = true;
     const invalidateData = this.checkdisableSave();
@@ -773,86 +790,81 @@ export class ImportStudentComponent implements OnInit {
   }
 
   searchByIdcard(params: any, index: any) {
-    if (params.idcardno || params.passportno) {
+    if (params) {
       const payload = {
-        idcardno: params.idcardno,
-        passportno: params.passportno,
-        offset: 0,
-        row: 10,
+        identity_no: params
       };
       this.uniInfoService.searchSelfStudent(payload).subscribe((response) => {
-        if (response.datareturn) {
-          response.datareturn.forEach((data: any) => {
-            data.addressinfo = JSON.parse(data.addressinfo);
-          });
+        if (response) {
+          response.addressinfo = response.addressinfo ? JSON.parse(response.addressinfo) : {};
           this.user.at(index).patchValue({
-            admissiondate: moment().format('YYYY-MM-DD') || null,
-            idcardno: response.datareturn[0].idcardno || null,
-            passportno: response.datareturn[0].passportno || null,
-            nationality: response.datareturn[0].nationality || null,
-            prefixth: response.datareturn[0].prefixth || null,
-            firstnameth: response.datareturn[0].firstnameth || null,
-            lastnameth: response.datareturn[0].lastnameth || null,
-            prefixen: response.datareturn[0].prefixen || null,
-            firstnameen: response.datareturn[0].firstnameen || null,
-            middlenameen: response.datareturn[0].middlenameen || null,
-            lastnameen: response.datareturn[0].lastnameen || null,
-            phone: response.datareturn[0].phone || null,
-            birthdate: response.datareturn[0].birthdate || null,
+            firstnameth: response.first_name_th || null,
+            lastnameth: response.last_name_th || null,
+            firstnameen: toUpperCaseName(response.first_name_en) || null,
+            lastnameen: toUpperCaseName(response.last_name_en) || null,
+            email: response.email || null,
+            phone: response.phone_number || null,
+            admissiondate: moment().format('YYYY-MM-DD'),
+            passportno: response.passportno || null,
+            nationality: response.nationality || null,
+            prefixth: response.prefixth || null,
+            prefixen: response.prefixen || null,
+            middlenameen: toUpperCaseName(response.middlenameen) || null,
+            birthdate: response.birthdate || null,
           });
           this.user
             .at(index)
             .get('address')
-            ?.patchValue(response.datareturn[0].addressinfo ? {
+            ?.patchValue(response.addressinfo ? {
               addressInfo: {
                 location: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].location
+                  response.addressinfo
+                    ? response.addressinfo.location
                     : null,
                 ],
                 housenumber: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].houseNo
+                  response.addressinfo
+                    ? response.addressinfo.houseNo
                     : null,
                 ],
                 villagenumber: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].moo
+                  response.addressinfo
+                    ? response.addressinfo.moo
                     : null,
                 ],
                 lane: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].alley
+                  response.addressinfo
+                    ? response.addressinfo.alley
                     : null,
                 ],
                 road: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].houseNo
+                  response.addressinfo
+                    ? response.addressinfo.houseNo
                     : null,
                 ],
                 zipcode: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].postcode
+                  response.addressinfo
+                    ? response.addressinfo.postcode
                     : null,
                 ],
                 provinceid: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].province
+                  response.addressinfo
+                    ? response.addressinfo.province
                     : null,
                 ],
                 districtid: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].amphur
+                  response.addressinfo
+                    ? response.addressinfo.amphur
                     : null,
                 ],
                 subdistrictid: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].tumbol
+                  response.addressinfo
+                    ? response.addressinfo.tumbol
                     : null,
                 ],
                 remark: [
-                  response.datareturn[0].addressinfo
-                    ? response.datareturn[0].addressinfo[0].remark
+                  response.addressinfo
+                    ? response.addressinfo.remark
                     : null,
                 ],
               },
@@ -870,24 +882,6 @@ export class ImportStudentComponent implements OnInit {
       'course-detail',
       this.payload.unidegreecertid,
     ]);
-  }
-
-  checkdisableSave() {
-    if (this.pageType == 'admissionList') {
-      return this.formStudent.invalid || this.user.value.length == 0;
-    } else {
-      let invalidform = false;
-      let empytychecked = true;
-      this.user.controls.forEach((user) => {
-        if (user.value.checked && user.invalid) {
-          invalidform = true;
-        }
-        if (user.value.checked) {
-          empytychecked = false;
-        }
-      });
-      return invalidform || empytychecked;
-    }
   }
 
   autoScroll() {
@@ -915,4 +909,21 @@ export class ImportStudentComponent implements OnInit {
       },
     });
   }
+
+  deleteUser(index: any) {
+    this.user.removeAt(index);
+  }
+
+  changeFirstName(event: any, index: any) {
+    this.user.at(index).patchValue({ firstnameen: toUpperCaseName(event.target.value) });
+  }
+
+  changeMiddleName(event:any, index: any) {
+    this.user.at(index).patchValue({ middlenameen: toUpperCaseName(event.target.value) });
+  }
+
+  changeLastName(event:any, index: any) {
+    this.user.at(index).patchValue({ lastnameen: toUpperCaseName(event.target.value) });
+  }
+
 }

@@ -49,12 +49,12 @@ export class CourseTypeBComponent
   ngOnInit(): void {
     this.addData();
     this.calculateSum();
-    const currYear = new Date().getFullYear()+5;
-    for (let index = 0; index < 15; index++) {
+    const currYear = new Date().getFullYear() + 10;
+    for (let index = 0; index <= 20; index++) {
       this.calendaryearList.push({
-        value: ((currYear - index) + 543).toString(),
-        label: ((currYear - index) + 543).toString()
-      })
+        value: (currYear - index + 543).toString(),
+        label: (currYear - index + 543).toString(),
+      });
     }
   }
 
@@ -67,7 +67,7 @@ export class CourseTypeBComponent
       student3: [''],
       planname1: [''],
       planname2: [''],
-      planname3: ['']
+      planname3: [''],
     });
   }
 
@@ -100,7 +100,8 @@ export class CourseTypeBComponent
           // for (const property in newData) {
           //   sum += Number(newData[property]);
           // }
-          this.yearSums[index] = Number(i.student1) + Number(i.student2) + Number(i.student3);
+          this.yearSums[index] =
+            Number(i.student1) + Number(i.student2) + Number(i.student3);
           //console.log(`res = ${index}`, sum);
         });
       }

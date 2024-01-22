@@ -303,9 +303,15 @@ export const ethicsMenu: MenuConfig[] = [
       },
       {
         path: '/inquiry',
-        label: 'บันทีกการสอบสวน',
+        label: 'บันทีกการสอบสวน/ผลการพิจารณา',
       },
     ],
+  },
+  {
+    icon: 'assets/images/icon-sidenav/paper.svg',
+    label: 'ยืนยันการกล่าวหา/กล่าวโทษ',
+    path: '/publish/confirmlist',
+    subMenuName: 'confirmation',
   },
   {
     icon: 'assets/images/icon-sidenav/paper.svg',
@@ -316,7 +322,23 @@ export const ethicsMenu: MenuConfig[] = [
   {
     icon: 'assets/images/icon-sidenav/paper.svg',
     label: 'รายงาน',
-    path: '/xxx',
+    path: '',
+    isExpanded: false,
+    subMenuName: 'ethicsreport',
+    subMenu: [
+      {
+        path: '/ethicsreport/recording',
+        label: 'รายงานการบันทึกข้อมูลจรรยาบรรณ',
+      },
+      {
+        path: '/ethicsreport/recordingstat',
+        label: 'รายงานสถิติการบันทึกข้อมูลจรรยาบรรณ (ขั้นตอน)',
+      },
+      {
+        path: '/ethicsreport/resultstat',
+        label: 'รายงานสถิติผลการพิจารณาและผลคำวินิจฉัย',
+      }
+    ]
   },
 ];
 

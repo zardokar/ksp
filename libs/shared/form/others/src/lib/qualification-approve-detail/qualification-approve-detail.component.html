@@ -1,9 +1,12 @@
 <div class="box-header text-center">จึงขอรับรองคุณวุฒิการศึกษา</div>
+<div *ngIf="es_tab4_comment !== '' " class="comment-officer">
+  {{es_tab4_comment}}
+</div>
 <form [formGroup]="form">
   <!-- <ng-container *ngIf="degreeLevelName"> -->
-  <div class="mb-2">
+  <div class="mb-2" class="fs-5 mt-3">
     <div class="d-flex align-items-center">
-      <input type="checkbox" class="me-2" formControlName="degree" />
+      <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="1" checked />
       <label class="fs-5">{{ degreeLevelName }}</label>
     </div>
   </div>
@@ -26,6 +29,88 @@
     </div>
   </div>
   <!-- </ng-container> -->
+  <!-- ------------------------------------------------------------ -->
+  <div *ngIf="edu2_degreename !== null" class="fs-5 mt-3">
+    <div class="mb-2">
+      <div class="d-flex align-items-center">
+        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="2" />
+        <label class="fs-5">วุฒิการศึกษาปริญญาโท</label>
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6">
+        <label class="form-label">ชื่อปริญญา/หลักสูตร</label>
+        <input type="text" formControlName="edu2_degreename" class="form-control" />
+      </div>
+  
+      <div class="col-6">
+        <label class="form-label">สาขา/วิชาเอก</label>
+        <input type="text" formControlName="edu2_major" class="form-control" />
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-6">
+        <label class="form-label">สถาบันการศึกษา</label>
+        <input type="text" formControlName="edu2_institute" class="form-control" />
+      </div>
+    </div>
+  </div>
+  <!-- ------------------------------------------------------------ -->
+  <div *ngIf="edu3_degreename !== null" class="fs-5 mt-3">
+    <div class="mb-2">
+      <div class="d-flex align-items-center">
+        <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="3" />
+        <label class="fs-5">วุฒิการศึกษาปริญญาเอก</label>
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div class="col-6">
+        <label class="form-label">ชื่อปริญญา/หลักสูตร</label>
+        <input type="text" formControlName="edu3_degreename" class="form-control" />
+      </div>
+  
+      <div class="col-6">
+        <label class="form-label">สาขา/วิชาเอก</label>
+        <input type="text" formControlName="edu3_major" class="form-control" />
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-6">
+        <label class="form-label">สถาบันการศึกษา</label>
+        <input type="text" formControlName="edu3_institute" class="form-control" />
+      </div>
+    </div>
+  </div>
+  <!-- ------------------------------------------------------------ -->
+    <div *ngIf="edu4_degreename !== null" class="fs-5 mt-3">
+      <div class="mb-2">
+        <div class="d-flex align-items-center">
+          <input type="radio" class="me-2 form-check-input" formControlName="degree" name="degree" value="4" />
+          <label class="fs-5">วุฒิการศึกษาปริญญาอื่นๆที่เทียบเท่าปริญญาตรี / ปริญญาทางการศึกษา</label>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-6">
+          <label class="form-label">ชื่อปริญญา/หลักสูตร</label>
+          <input type="text" formControlName="edu4_degreename" class="form-control" />
+        </div>
+    
+        <div class="col-6">
+          <label class="form-label">สาขา/วิชาเอก</label>
+          <input type="text" formControlName="edu4_major" class="form-control" />
+        </div>
+      </div>
+    
+      <div class="row">
+        <div class="col-6">
+          <label class="form-label">สถาบันการศึกษา</label>
+          <input type="text" formControlName="edu4_institute" class="form-control" />
+        </div>
+      </div>
+    </div>
+    <!-- ------------------------------------------------------------ -->
 
   <div class="fs-5 mt-3">
     เนื่องจาก เป็นสาขาวิชาที่ตรงกับความต้องการของหน่วยงาน และ
@@ -47,12 +132,35 @@
     และอุดมศึกษาที่ต่ำกว่าปริญญา
   </div>
 
-  <textarea
+  <div>
+    <div>
+      <input type="checkbox" formControlName="reason2_1" value="false" (click)="onClickCheckBox($event)" />
+      <span class="form-label">
+        (1) มีประสบการณ์เป็นที่ยอมรับและสามารถนำมาใช้ให้เกิดประโยชน์ต่อการศึกษาได้อย่างดียิ่ง เช่น ภูมิปัญญาท้องถิ่น วิชาชีพเฉพาะทางที่มีประสบการณ์เป็นที่ประจักษ์ ฯลฯ ไม่น้อยกว่า 10 ปี
+      </span>
+    </div>
+        <div>
+      <input type="checkbox" formControlName="reason2_2" value="false" (click)="onClickCheckBox($event)" />
+      <span class="form-label">
+        (2) เป็นบุคคากรที่ได้รับการยอมรับในสังคมว่า มีผลงานทางด้านการศึกษาเป็นที่ประจักษ์เกี่ยวกับการจัดการเรียนการสอน ซึ่งพิจารณาแล้วเห็นว่าสามารถใช้ผลงานดังกล่าวในการประกอบวิชาชีพครูให้เกิดประโยชน์ เช่น 
+        เป็นอาจารย์ในสถาบันผลิตครูและรับผิดชอบสอนในรายวิชาชีพครู หรือเป็นบุคลากรทางการศึกษาในระดับอุดมศึกษา ที่มีผลงานที่เกี่ยวข้องกับการส่งเสริมการศึกษา ในระดับการศึกษาขั้นพื้นฐานและอุมดศึกาษา 
+        ที่มีประสบการณ์ไม่น้อยกว่า 10 ปี
+      </span>
+    </div>
+        <div>
+      <input type="checkbox" formControlName="reason2_3" value="false" (click)="onClickCheckBox($event)" />
+      <span class="form-label">
+        (3) มีประสบการณ์ๆด้านการสอน การบริหารสถานศึกษา การบริหารการศึกษา หรือการนิเทศการศึกษาในระดับการศึกษาขั้นพื้นฐานและอุดมศึกษาที่ต่ำกว่าปริญยา ที่มีประสบการณ์ไม่น้อยกว่า 10 ปี
+      </span>
+    </div>
+  </div>
+
+  <!-- <textarea
     class="form-control"
     formControlName="reason2"
     rows="3"
     placeholder="กรุณากรอก"
-  ></textarea>
+  ></textarea> -->
 </form>
 
 <div class="d-flex justify-content-center mt-3" *ngIf="mode !== 'view'">

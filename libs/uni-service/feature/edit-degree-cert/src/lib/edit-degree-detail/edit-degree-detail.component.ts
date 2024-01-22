@@ -1,5 +1,5 @@
 import { FormBuilder } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -108,15 +108,19 @@ export class EditDegreeDetailComponent {
       .pipe(
         switchMap(() => {
           if (this.pageMode == 'create') {
-            return this.uniRequestService.uniRequestInsert(this._getRequest(saveType));
+            return this.uniRequestService.uniRequestInsert(
+              this._getRequest(saveType)
+            );
           } else {
-            return this.uniRequestService.uniRequestUpdate(this._getRequest(saveType));
+            return this.uniRequestService.uniRequestUpdate(
+              this._getRequest(saveType)
+            );
           }
         })
       )
-      .subscribe((res) => {
+      .subscribe((res: any) => {
         if (res) {
-          this.showConfirmDialog();
+          this.showConfirmDialog(res?.requestno);
         }
       });
   }
@@ -127,7 +131,7 @@ export class EditDegreeDetailComponent {
       data: {
         header: 'ยืนยันข้อมูลสำเร็จ',
         content: `วันที่ : ${this.date}
-        เลขที่แบบคำขอ : ${requestno || this.requestNo || '-'}`,
+        เลขที่แบบคำขอ : ${requestno || '-'}`,
         subContent: `กรุณาตรวจสอบสถานะแบบคำขอหรือรหัสเข้าใช้งาน
         ผ่านทางอีเมลผู้ที่ลงทะเบียนภายใน 3 วันทำการ`,
       },
@@ -142,7 +146,9 @@ export class EditDegreeDetailComponent {
   private _mappingResponseWithForm(res: any, uniData: any): any {
     this.requestNo = res?.requestno ?? '';
     this.requestId = res?.requestid;
-    const { formchange } = res.checkresult != null ? parseJson(res.checkresult) : {} as any;
+    const { formchange } =
+      res.checkresult != null ? parseJson(res.checkresult) : ({} as any);
+      console.log(formchange, res)
     this.step1Form.setValue({
       step1: {
         institutionsCode: res?.unicode,
@@ -188,29 +194,62 @@ export class EditDegreeDetailComponent {
         section6: formchange?.step1?.section6 ?? false,
       },
     });
-    this.step2Form.setValue({
-      step2: {
-        plan1: {
-          plans: res.coursestructure ? parseJson(res.coursestructure) : [],
-          subjects: res.courseplan ? parseJson(res.courseplan) : [],
-        },
-        teacher: {
-          teachers: res.courseteacher ? parseJson(res.courseteacher) : [],
-        },
-
-        nitet: {
-          nitets: res.courseinstructor ? parseJson(res.courseinstructor) : [],
-        },
-        advisor: {
-          advisors: res.courseadvisor ? parseJson(res.courseadvisor) : [],
-        },
-        section1: formchange?.step2?.section1 ?? false,
-        section2: formchange?.step2?.section2 ?? false,
-        section3: formchange?.step2?.section3 ?? false,
-        section4: formchange?.step2?.section4 ?? false,
-        section5: formchange?.step2?.section5 ?? false,
+    const parseCourseInstructor = res.courseinstructor
+      ? parseJson(res.courseinstructor)
+      : {};
+    const parseCourseAdvisor = res.courseadvisor
+      ? parseJson(res.courseadvisor)
+      : [];
+    const step2TeacherInfo = {
+      teacher: {
+        teachers: parseJson(res?.courseteacher),
       },
-    });
+      nitet: {
+        nitets: parseCourseInstructor.nitets,
+        nittetAmount: parseCourseInstructor.nittetAmount,
+      },
+      advisor: {
+        advisors: parseCourseAdvisor,
+      },
+      section1: formchange?.step2?.section1 ?? false,
+      section2: formchange?.step2?.section2 ?? false,
+      section3: formchange?.step2?.section3 ?? false,
+      section4: formchange?.step2?.section4 ?? false,
+      section5: formchange?.step2?.section5 ?? false,
+      plan1: {},
+      plan2: {},
+    };
+    if (['1', '2', '3', '4'].includes(res?.degreelevel)) {
+      this.step2Form.setValue({
+        step2: {
+          ...step2TeacherInfo,
+          plan1: {
+            plans: res.coursestructure ? parseJson(res.coursestructure) : [],
+            subjects: res.courseplan ? parseJson(res.courseplan) : [],
+          },
+        },
+      });
+    } else {
+      const subjectsdata = parseJson(res.courseplan);
+      this.step2Form.setValue({
+        step2: {
+          ...step2TeacherInfo,
+          plan2: {
+            plans: res.coursestructure ? parseJson(res.coursestructure) : [],
+            subjects: res.courseplan ? subjectsdata?.subjects : [],
+            subject1GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject1GroupName
+              : '',
+            subject2GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject2GroupName
+              : '',
+            subject3GroupName: subjectsdata?.subjectgroupname
+              ? subjectsdata?.subjectgroupname?.subject3GroupName
+              : '',
+          },
+        },
+      });
+    }
 
     this.step3Form.setValue({
       step3: {
@@ -292,7 +331,7 @@ export class EditDegreeDetailComponent {
     returnData['step2Section1'] = {
       ...(() => {
         const reqBody: any = {};
-        if (['a', 'b', 'c'].includes(this.step1DegreeType)) {
+        if (['1', '2', '3', '4'].includes(step1?.degreeTypeForm?.degreeType)) {
           reqBody['coursestructure'] = step2?.plan1?.plans
             ? JSON.stringify(step2?.plan1?.plans)
             : null;
@@ -305,7 +344,14 @@ export class EditDegreeDetailComponent {
             ? JSON.stringify(step2?.plan2?.plans)
             : null;
           reqBody['courseplan'] = step2?.plan2?.subjects
-            ? JSON.stringify(step2?.plan2?.subjects)
+            ? JSON.stringify({
+                subjects: step2?.plan2?.subjects,
+                subjectgroupname: {
+                  subject1GroupName: step2?.plan2?.subject1GroupName,
+                  subject2GroupName: step2?.plan2?.subject2GroupName,
+                  subject3GroupName: step2?.plan2?.subject3GroupName,
+                },
+              })
             : null;
         }
         return reqBody;
@@ -319,9 +365,7 @@ export class EditDegreeDetailComponent {
     };
 
     returnData['step2Section3'] = {
-      courseinstructor: step2?.nitet?.nitets
-        ? JSON.stringify(step2?.nitet?.nitets)
-        : null,
+      courseinstructor: step2?.nitet ? JSON.stringify(step2?.nitet) : null,
     };
 
     returnData['step2Section4'] = {
@@ -369,11 +413,13 @@ export class EditDegreeDetailComponent {
       uniprovince: step1?.provience || null,
       unicode: step1?.institutionsCode || null,
       tokenkey: getCookie('userToken') || null,
-      requestdate: moment().format("YYYY-MM-DD[T]HH:mm:ss"),
+      requestdate: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
       createdate: this.draftRequest.createdate,
-      unidegreecertid: this.pageMode == 'create' 
-        ? this.draftRequest.id : this.draftRequest.unidegreecertid,
-      degreeapprovecode: this.draftRequest.degreeapprovecode
+      unidegreecertid:
+        this.pageMode == 'create'
+          ? this.draftRequest.id
+          : this.draftRequest.unidegreecertid,
+      degreeapprovecode: this.draftRequest.degreeapprovecode,
     };
     const form1Section = this.step1Form.value.step1;
     const form2Section = this.step2Form.value.step2;
@@ -413,14 +459,14 @@ export class EditDegreeDetailComponent {
       ...(form2Section?.section5
         ? newData?.step2Section4
         : daftData?.step2Section4),
-      //form2 section
+      //form3 section
       ...(form3Section?.section1
         ? newData?.step3Section1
         : daftData?.step3Section1),
       ...(form3Section?.section2
         ? newData?.step3Section2
         : daftData?.step3Section2),
-      checkresult: JSON.stringify({ formchange : formChange })
+      checkresult: JSON.stringify({ formchange: formChange }),
     };
     return reqBody;
   }
@@ -429,7 +475,7 @@ export class EditDegreeDetailComponent {
     const changedata = {
       step1: {},
       step2: {},
-      step3: {}
+      step3: {},
     } as any;
     const form1Section = this.step1Form.value.step1;
     const form2Section = this.step2Form.value.step2;
@@ -449,8 +495,7 @@ export class EditDegreeDetailComponent {
     if (form2Section?.section5) changedata.step2.section5 = true;
 
     if (form3Section?.section1) changedata.step3.section1 = true;
-    if (form2Section?.section2) changedata.step3.section2 = true;
-    
+    if (form3Section?.section2) changedata.step3.section2 = true;
 
     return changedata;
   }

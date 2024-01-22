@@ -4,9 +4,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { requestStatus } from '@ksp/shared/constant';
-import { EUniService, LoaderService, UniInfoService, UniRequestService } from '@ksp/shared/service';
-import { formatRequestNo, providerFactory, replaceEmptyWithNull, thaiDate } from '@ksp/shared/utility';
-import { HistoryRequestDialogComponent, PrintRequestDialogComponent } from '@ksp/uni-service/dialog';
+import {
+  EUniService,
+  LoaderService,
+  UniInfoService,
+  UniRequestService,
+} from '@ksp/shared/service';
+import {
+  formatRequestNo,
+  providerFactory,
+  replaceEmptyWithNull,
+  thaiDate,
+} from '@ksp/shared/utility';
+import {
+  HistoryRequestDialogComponent,
+  PrintRequestDialogComponent,
+} from '@ksp/uni-service/dialog';
 import { KspPaginationComponent, ListData } from '@ksp/shared/interface';
 import _ from 'lodash';
 import { lastValueFrom, map, Subject } from 'rxjs';
@@ -25,8 +38,10 @@ const mapOption = () =>
   templateUrl: './edit-student-list.component.html',
   styleUrls: ['./edit-student-list.component.scss'],
 })
-export class EserviceEditStudentListComponent extends KspPaginationComponent implements OnInit {
-
+export class EserviceEditStudentListComponent
+  extends KspPaginationComponent
+  implements OnInit
+{
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = column;
   degreeLevelOptions: ListData[] = [];
@@ -41,32 +56,33 @@ export class EserviceEditStudentListComponent extends KspPaginationComponent imp
   uniUniversityTypeOption: ListData[] = [];
 
   constructor(
-    private router: Router, 
+    private router: Router,
     public dialog: MatDialog,
     private fb: FormBuilder,
     private uniInfoService: UniInfoService,
     private uniRequestService: EUniService,
-    private loaderService: LoaderService) {
-      super();
-    }
+    private loaderService: LoaderService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.getAll();     
-    this.searchdata(); 
+    this.getAll();
+    this.searchdata();
   }
 
   print(row: any) {
     const payload = {
-      unirequestadmissionid: row.id
+      unirequestadmissionid: row.id,
     };
-    this.uniInfoService.uniRequestEditHistory(payload).subscribe((response => {
+    this.uniInfoService.uniRequestEditHistory(payload).subscribe((response) => {
       if (response) {
         this.dialog.open(PrintRequestDialogComponent, {
           width: '600px',
-          data: response.datareturn
+          data: response.datareturn,
         });
       }
-    }));
+    });
   }
 
   private _findOptions(dataSource: any, key: any) {
@@ -75,35 +91,34 @@ export class EserviceEditStudentListComponent extends KspPaginationComponent imp
 
   history(row: any) {
     const payload = {
-      unirequestadmissionid: row.id
+      unirequestadmissionid: row.id,
     };
-    this.uniInfoService.uniRequestEditHistory(payload).subscribe((response => {
+    this.uniInfoService.uniRequestEditHistory(payload).subscribe((response) => {
       if (response) {
         this.dialog.open(HistoryRequestDialogComponent, {
           width: '600px',
           data: response.datareturn.map((data: any) => {
             data.requestprocess = data.process;
             return data;
-          })
+          }),
         });
       }
-    }));
+    });
   }
 
   async getAll() {
     this.uniInfoService
-    .uniDegreeLevel()
-    .pipe(mapOption())
-    .subscribe((res) => {
-      this.degreeLevelOptions = res;
-    });
-    const [university, universityTypes] =
-      await Promise.all([
-        lastValueFrom(this.uniInfoService.getUniuniversity()),
-        lastValueFrom(this.uniInfoService.getUniversityType()),
-      ]);
+      .uniDegreeLevel()
+      .pipe(mapOption())
+      .subscribe((res) => {
+        this.degreeLevelOptions = res;
+      });
+    const [university, universityTypes] = await Promise.all([
+      lastValueFrom(this.uniInfoService.getUniuniversity()),
+      lastValueFrom(this.uniInfoService.getUniversityType()),
+    ]);
     this.uniUniversityOption = university.datareturn.map((data: any) => {
-      data.name = data.name + (data.campusname ? `, ${data.campusname}` : '')
+      data.name = data.name + (data.campusname ? `, ${data.campusname}` : '');
       return data;
     });
     this.uniUniversityTypeOption = universityTypes;
@@ -112,8 +127,8 @@ export class EserviceEditStudentListComponent extends KspPaginationComponent imp
   getRequest() {
     const form = this.form.controls.search.value as any;
     if (form.requestsubmitDate) {
-      form.requestsubmitDate = new Date(form.requestsubmitDate)
-      form.requestsubmitDate.setHours(form.requestsubmitDate.getHours() + 7)
+      form.requestsubmitDate = new Date(form.requestsubmitDate);
+      form.requestsubmitDate.setHours(form.requestsubmitDate.getHours() + 7);
     }
     return {
       uniid: form.institution,
@@ -122,47 +137,65 @@ export class EserviceEditStudentListComponent extends KspPaginationComponent imp
       fulldegreename: form.degreeName,
       degreelevel: form.degreeLevel,
       courseacademicyear: form.openYear,
-      requestno: form.requestNumber ? form.requestNumber.replaceAll('-','') : '',
+      requestno: form.requestNumber
+        ? form.requestNumber.replaceAll('-', '')
+        : '',
       requestdate: form.requestsubmitDate,
-      ...this.tableRecord
+      ...this.tableRecord,
     };
   }
 
   getUniversity(unitype: any) {
-    this.uniInfoService.getUniversity(unitype).subscribe(response=>{
+    this.uniInfoService.getUniversity(unitype).subscribe((response) => {
       if (response) {
         this.uniUniversityOption = response;
       }
-    })
+    });
   }
 
   searchdata() {
     const formSearch = this.getRequest();
-    this.uniRequestService.getEditRequestAdmision(replaceEmptyWithNull(formSearch))
-    .subscribe((response: any) => {
-      if (response.datareturn) {
-        this.pageEvent.length = response.countrow;
-        this.dataSource.data = response.datareturn.map(((data: any)=>{
-          data.requestno = formatRequestNo(data.requestno);
-          const parsedata = JSON.parse(data.admissionlist);
-          data.studentdetail = parsedata;
-          data.nameshow = `${data.studentdetail.firstnameth ? data.studentdetail.firstnameth : ''}`+
-                          ` ${data.studentdetail.lastnameth ? data.studentdetail.lastnameth : ''}`;
-          data.requestdate = thaiDate(new Date(data?.requestdate));
-          if (data.updatedate) data.updatedate = thaiDate(new Date(data?.updatedate));
-          const finddegreelevel = this.degreeLevelOptions.find((level=>{
-            return data.degreelevel == level.value;
-          }))
-          data.degreelevelname = finddegreelevel?.label || '';
-          data.requeststatusname = data.status == '1' ? 'รอตรวจสอบ' :
-                               data.status == '2' ? 'ผ่านการตรวจสอบ' :
-                               data.status == '3' ? 'ไม่ผ่านการตรวจสอบ' : '';
-          return data;
-        }));
-      } else {
-        this.dataSource.data = [];
-      }
-    })
+    this.uniRequestService
+      .getEditRequestAdmision(replaceEmptyWithNull(formSearch))
+      .subscribe((response: any) => {
+        if (response.datareturn) {
+          this.pageEvent.length = response.countrow;
+          this.dataSource.data = response.datareturn.map((data: any) => {
+            data.requestno = formatRequestNo(data.requestno);
+            const parsedata = JSON.parse(data.admissionlist);
+            data.studentdetail = parsedata;
+            data.nameshow =
+              `${
+                data.studentdetail.firstnameth
+                  ? data.studentdetail.firstnameth
+                  : ''
+              }` +
+              ` ${
+                data.studentdetail.lastnameth
+                  ? data.studentdetail.lastnameth
+                  : ''
+              }`;
+            data.requestdate = thaiDate(new Date(data?.requestdate));
+            if (data.updatedate)
+              data.updatedate = thaiDate(new Date(data?.updatedate));
+            const finddegreelevel = this.degreeLevelOptions.find((level) => {
+              return data.degreelevel == level.value;
+            });
+            data.degreelevelname = finddegreelevel?.label || '';
+            data.requeststatusname =
+              data.status == '1'
+                ? 'รอตรวจสอบ'
+                : data.status == '2'
+                ? 'ผ่านการตรวจสอบ'
+                : data.status == '3'
+                ? 'ไม่ผ่านการตรวจสอบ'
+                : '';
+            return data;
+          });
+        } else {
+          this.dataSource.data = [];
+        }
+      });
   }
 
   clear() {

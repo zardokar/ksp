@@ -8,7 +8,11 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { DynamicComponentDirective } from '@ksp/shared/directive';
-import { FormMode, KspFormBaseComponent, ListData } from '@ksp/shared/interface';
+import {
+  FormMode,
+  KspFormBaseComponent,
+  ListData,
+} from '@ksp/shared/interface';
 import { providerFactory } from '@ksp/shared/utility';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
@@ -27,6 +31,7 @@ export class DegreeCertStepOneComponent
   implements OnInit
 {
   courseTypes: ListData[] = [];
+  courseTypesFilter: ListData[] = [];
   degreeTypes: ListData[] = [];
   universityTypes: ListData[] = [];
   provinces: ListData[] = [];
@@ -125,6 +130,7 @@ export class DegreeCertStepOneComponent
     this.universityTypes = universityTypes;
     this.provinces = provinces;
     this.courseTypes = courseTypes;
+    this.courseTypesFilter = courseTypes;
     this.degreeTypes = degreeTypes;
   }
   setDefaulFormValue() {
@@ -145,6 +151,13 @@ export class DegreeCertStepOneComponent
   }
   onDegreeTypeChanged(degreeType: string) {
     this.degreeType.emit(degreeType);
+    if (degreeType === 'a' || degreeType === 'b') {
+      this.courseTypesFilter = this.courseTypes;
+    } else {
+      this.courseTypesFilter = this.courseTypes.filter((data: any) => {
+        return data.value === '1' || data.value === '2';
+      });
+    }
   }
 
   addFormArray(form: FormArray<any>, value = { title: [''] }) {

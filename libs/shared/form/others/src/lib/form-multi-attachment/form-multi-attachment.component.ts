@@ -7,6 +7,8 @@ import {
 } from '@ksp/shared/dialog';
 import { FileService } from '@ksp/shared/form/file-upload';
 
+import { FilesReviewerComponent } from '@ksp/shared/dialog';
+
 @Component({
   selector: 'ksp-form-multi-attachment',
   templateUrl: './form-multi-attachment.component.html',
@@ -27,10 +29,36 @@ export class FormMultiAttachmentComponent {
   @Output() downloadClick = new EventEmitter<any>();
   @Output() uploadComplete = new EventEmitter<any>();
   @Output() confirmChoice = new EventEmitter<any>();
+  @Input() maxSize = 10097152;
   @Input() showLicense = true;
 
   constructor(public dialog: MatDialog, private fileService: FileService) {}
 
+  openReviewer(group: FileGroup){
+
+    const dialogRef = this.dialog.open(FilesReviewerComponent, {
+      width: '85vw',
+      height: '100vh',
+      position: {
+        top: '0px',
+        right: '0px',
+      },
+      data: {
+        title: group.name,
+        files: group.files,
+        systemtype: this.systemType,
+        checkresult: group?.checkresult ?? [],
+        mode: this.viewFileMode,
+        showLicense: this.showLicense
+      }
+    })
+
+    // Get Result from FilesReviewerComponent
+    dialogRef.afterClosed().subscribe( (result) => { 
+      console.log( result )
+    })
+  }
+  
   view(group: FileGroup) {
     if (this.systemType != 'uni' && this.systemType != 'e-service-uni') {
       const dialogRef = this.dialog.open(PdfViewerComponent, {

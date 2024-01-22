@@ -1,3 +1,7 @@
+<div *ngIf="isLoading | async" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate">
+  </mat-progress-spinner>
+</div>
 <ksp-top-nav
   ><span header>ยื่นแบบคำขอ </span>
   <span subHeader>ขอรับรองปริญญาและประกาศนียบัตร</span></ksp-top-nav
@@ -68,9 +72,9 @@
         </form>
       </mat-step>
 
-      <mat-step [completed]="false">
+      <!-- <mat-step [completed]="false">
         <ng-template matStepLabel>ตรวจสอบและยื่นคำขอ</ng-template>
-      </mat-step>
+      </mat-step> -->
     </mat-stepper>
   </div>
 </div>
@@ -85,10 +89,10 @@
     [showTempSaveButton]="mode === 'edit'"
     [showAllPageTempsave]="mode === 'edit' && stepper.selectedIndex < 3"
     [disableTempSaveButton]="mode !== 'edit'"
-    (saveClicked)="save('1')"
+    (saveClicked)="validateCredit('1')"
     (nextClicked)="goForward()"
     (prevClicked)="goBack()"
     (cancelClicked)="navigateBack()"
-    (tempSaveClicked)="save('99')"
+    (tempSaveClicked)="validateCredit('99')"
   ></ksp-bottom-nav>
 </div>

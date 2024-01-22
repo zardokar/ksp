@@ -15,3 +15,5 @@ export * from './lib/pdf-viewer/pdf-viewer.component';
 export * from './lib/pdf-viewer-no-license/pdf-viewer-no-license.component';
 
 export * from './lib/pdf-render/pdf-render.component';
+
+export * from './lib/files-reviewer/files-reviewer.component';

@@ -41,7 +41,7 @@
 
   <div class="d-flex justify-content-between">
     <div class="form-label">คณะอนุกรรมการสืบสวนข้อเท็จจริง</div>
-    <div role="button" class="text-primary" (click)="addRow()">
+    <div role="button" class="text-primary" (click)="addRow()" *ngIf="mode !== 'view'">
       + เพิ่มรายการ
     </div>
   </div>
@@ -59,7 +59,7 @@
           <th scope="col">ตำแหน่ง</th>
           <th scope="col">สังกัด - หน่วยงาน/สถานศึกษา</th>
           <!-- <th scope="col">แก้ไข</th> -->
-          <th scope="col">ลบ</th>
+          <th scope="col" *ngIf="mode !== 'view'">ลบ</th>
         </tr>
       </thead>
       <tbody>
@@ -71,6 +71,7 @@
                 <input
                   type="text"
                   class="form-control"
+                  maxlength="13"
                   formControlName="idcardno"
                 />
               </td>
@@ -130,11 +131,7 @@
                 />
               </td>
               <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="bureau"
-                />
+                <input type="text" class="form-control" formControlName="bureauname" (click)="searchSchool($event.target)" [attr.grpind]="i" />
               </td>
               <!-- <td>
                 <i
@@ -142,7 +139,7 @@
                   class="bi bi-pencil-square fs-5 text-primary"
                 ></i>
               </td> -->
-              <td>
+              <td *ngIf="mode !== 'view'">
                 <i
                   (click)="deleteRow(i)"
                   role="button"
@@ -159,14 +156,14 @@
   <div class="bg-white">
     <div class="row mb-2">
       <div class="col">
-        <label class="form-label">วันที่ดำเนินการสืบสวนข้อเท็จจริง </label>
+        <label class="form-label">วันที่ผู้ถูกกล่าวหารับทราบ </label>
         <div class="d-flex align-items-center">
           <input
             matInput
             [matDatepicker]="picker2"
             autocomplete="off"
             class="form-control form-date"
-            formControlName="investigationdate"
+            formControlName="investigationrecognizedate"
             placeholder="วว/ดด/ปปปป"
           />
           <mat-datepicker-toggle
@@ -179,7 +176,7 @@
       </div>
       <div class="col">
         <label class="form-label"
-          >วันที่จัดทำรายงานสืบสวนข้อเท็จจริงเสนอเลขาธิการคุรุสภา
+          >วันที่ผู้ถูกกล่าวหาชี้แจ้งข้อเท็จจริง
         </label>
         <div class="d-flex align-items-center">
           <input
@@ -187,7 +184,7 @@
             [matDatepicker]="picker3"
             autocomplete="off"
             class="form-control form-date"
-            formControlName="investigationreportdate"
+            formControlName="investigationexplaindate"
             placeholder="วว/ดด/ปปปป"
           />
           <mat-datepicker-toggle
@@ -196,6 +193,49 @@
             [for]="picker3"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker3></mat-datepicker>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col">
+        <label class="form-label">วันที่ดำเนินการสืบสวนข้อเท็จจริง </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker4"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationdate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker4"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker4></mat-datepicker>
+        </div>
+      </div>
+      <div class="col">
+        <label class="form-label"
+          >วันที่จัดทำรายงานสืบสวนข้อเท็จจริงเสนอเลขาธิการคุรุสภา
+        </label>
+        <div class="d-flex align-items-center">
+          <input
+            matInput
+            [matDatepicker]="picker5"
+            autocomplete="off"
+            class="form-control form-date"
+            formControlName="investigationreportdate"
+            placeholder="วว/ดด/ปปปป"
+          />
+          <mat-datepicker-toggle
+            class="button-date"
+            matSuffix
+            [for]="picker5"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker5></mat-datepicker>
         </div>
       </div>
     </div>
@@ -220,14 +260,93 @@
     <div formGroupName="investigationresult" class="d-flex flex-column">
       <ng-container *ngFor="let item of decisions">
         <div class="d-flex flex-row align-items-center mb-2">
-          <input
+          <input #decisionsType
             type="radio"
             class="form-check-input"
             value="{{ item.value }}"
             formControlName="{{ item.name }}"
+            [(ngModel)]="selecteddecisions"
           />
           <label class="form-label ms-2">{{ item.label }}</label>
         </div>
+
+      </ng-container>
+
+      <ng-container *ngIf="selecteddecisions != 0 && selecteddecisions != 3">
+        <div class="row mb-2">
+          <div class="col">
+            <label class="form-label">วันที่แจ้งผู้ถูกกล่าวหา/กล่าวโทษ </label>
+            <div class="d-flex align-items-center">
+              <input
+                matInput
+                [matDatepicker]="picker6"
+                autocomplete="off"
+                class="form-control form-date"
+                formControlName="informaccused"
+                placeholder="วว/ดด/ปปปป"
+                [disabled]=false
+                />
+              <mat-datepicker-toggle
+                class="button-date"
+                matSuffix
+                [for]="picker6"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker6></mat-datepicker>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label"
+              >วันที่ผู้ถูกกล่าวหา/กล่าวโทษรับทราบ
+            </label>
+            <div class="d-flex align-items-center">
+              <input
+                matInput
+                [matDatepicker]="picker7"
+                autocomplete="off"
+                class="form-control form-date"
+                formControlName="confirminformaccused"
+                placeholder="วว/ดด/ปปปป"
+                [disabled]="false"
+                />
+              <mat-datepicker-toggle
+                class="button-date"
+                matSuffix
+                [for]="picker7"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker7></mat-datepicker>
+            </div>
+          </div>
+
+          <ng-container *ngIf="selecteddecisions >= 4">
+            <div class="col">
+                <label class="form-label"
+                  >วันที่จดหมายถูกตีกลับ
+                </label>
+              <div class="d-flex align-items-center">
+                  <input
+                    matInput
+                    [matDatepicker]="picker8"
+                    autocomplete="off"
+                    class="form-control form-date"
+                    formControlName="rejectinformaccused"
+                    placeholder="วว/ดด/ปปปป"
+                    [disabled]="false"
+                    />
+                  <mat-datepicker-toggle
+                    class="button-date"
+                    matSuffix
+                    [for]="picker8"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker8></mat-datepicker>
+                </div>
+              </div>
+            
+            </ng-container>
+
+        </div>
+
+
+        
       </ng-container>
 
       <div class="row">

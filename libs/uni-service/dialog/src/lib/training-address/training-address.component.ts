@@ -23,6 +23,21 @@ export class TrainingAddressComponent {
     term: [],
     year: []
   });
+  calendaryearList: Array<any> = [];
+  termList: Array<any> = [
+    {
+      value: '1',
+      label: '1'
+    },
+    {
+      value: '2',
+      label: '2'
+    },
+    {
+      value: '3',
+      label: '3'
+    }
+  ]
 
   form = this.fb.group({
     addresses: this.fb.array([]),
@@ -35,6 +50,13 @@ export class TrainingAddressComponent {
     private generalInfoService: GeneralInfoService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    const currYear = new Date().getFullYear() -5;
+    for (let index = 0; index <= 15; index++) {
+      this.calendaryearList.push({
+        value: (currYear + index + 543).toString(),
+        label: (currYear + index + 543).toString(),
+      });
+    }
     if (this.data.teachingpracticeschool && this.data.teachingpracticeschool.length) {
       this.setData(this.data.teachingpracticeschool);
     } else {

@@ -36,7 +36,7 @@
                 <ng-container [formGroupName]="j">
                   <div class="row">
                     <div class="col-10 mb-3">
-                      <label class="form-label">หลักสูตร {{ j + 2 }}</label>
+                      <label class="form-label">หลักสูตร {{ j + 2 }} ชื่อหลักสูตรตามที่ปรากฎบนหน้าปก มคอ.2</label>
 
                       <input
                         class="form-control"
@@ -75,8 +75,8 @@
   </ng-container>
 </form>
 
-<ng-container *ngIf="teachers.length < 5">
-  <ksp-add-row-button *hideInViewMode (addRowClick)="addTeacher()" class="blue"
+<ng-container  *ngIf="mode !== 'view'">
+  <ksp-add-row-button  *ngIf="teachers.length < 5" (addRowClick)="addTeacher()" class="blue"
     >เพิ่มอาจารย์ประจำหลักสูตร/ ผู้รับผิดชอบหลักสูตร</ksp-add-row-button
   >
 </ng-container>

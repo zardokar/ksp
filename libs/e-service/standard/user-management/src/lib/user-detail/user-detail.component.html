@@ -89,6 +89,31 @@
       <div class="box-header">
         {{ headerRequest[requestType] }}
       </div>
+      <div class="col-6 mb-3">
+        <label class="form-label required">สิทธิสำหรับการเข้าใช้งาน</label>
+        <div class="row mt-2">
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <input
+                class="form-check-input my-0 radio"
+                type="checkbox"
+                formControlName="permission1"
+              />
+              <label class="ms-4">เจ้าหน้าที่ประสานงาน (รับรองปริญญาและประกาศนียบัตรทางการศึกษา)</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <input
+                class="form-check-input my-0 radio"
+                type="checkbox"
+                formControlName="permission2"
+              />
+              <label class="ms-4">เจ้าหน้าที่ประสานงาน (นำส่งรายชื่อผู้เข้าศึกษาและผู้สำเร็จการศึกษา)</label>
+            </div>
+          </div>
+        </div>
+      </div>
       <ksp-form-coordinator-info
         [mode]="'view'"
         [displayMode]="[0]"

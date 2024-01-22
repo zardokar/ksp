@@ -79,10 +79,10 @@
     </div>
     <fieldset [disabled]="section2">
       <div class="bg-light px-3 pt-2 mb-3">
-        <div class="box-header">การจัดการหลักสูตร หรือลักษณะหลักสูตร</div>
+        <div class="box-header">การจัดการหลักสูตร หรือหลักสูตร</div>
         <div class="row mb-3">
           <label class="form-label"
-            >กรุณาเลือกประเภทการจัดการหลักสูตร หรือลักษณะหลักสูตร<span
+            >กรุณาเลือกประเภทการจัดการหลักสูตร หรือหลักสูตร<span
               class="text-danger fs-6"
             >
               *เลือกข้อมูลของท่านได้เพียง 1 ข้อเท่านั้น</span
@@ -95,7 +95,7 @@
               class="search__content form-select"
             >
               <option value="null" selected hidden disabled>กรุณาเลือก</option>
-              <option *ngFor="let item of courseTypes" [value]="item.value">
+              <option *ngFor="let item of courseTypesFilter" [value]="item.value">
                 {{ item.label }}
               </option>
             </select>
@@ -225,7 +225,7 @@
           >
             <div class="row mb-2" [formGroupName]="i">
               <div class="col-11">
-                <label class="form-label">สถานที่เปิดสอน {{ i + 1 }} </label>
+                <label class="form-label">สถานที่ที่ต้องประเมินสภาพจริง / ติดตามผลเชิงประจักษ์ {{ i + 1 }} </label>
                 <input
                   class="form-control"
                   type="text"
@@ -249,7 +249,7 @@
           (addRowClick)="addFormArray(locations2)"
           *ngIf="mode === 'edit'"
           [disabled]="section5"
-          >เพิ่มสถานที่เปิดสอน</ksp-add-row-button
+          >เพิ่มสถานที่ที่ต้องประเมินสภาพจริง / ติดตามผลเชิงประจักษ์</ksp-add-row-button
         >
       </div>
     </fieldset>

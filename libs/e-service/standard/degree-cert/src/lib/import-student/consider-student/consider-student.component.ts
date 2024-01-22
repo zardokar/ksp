@@ -158,7 +158,6 @@ export class ConsiderStudentComponent implements OnInit {
   }
 
   save() {
-    console.log(this.payload.studentlist);
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -177,15 +176,17 @@ export class ConsiderStudentComponent implements OnInit {
         const formvalue = this.form.value;
         if (formvalue.result === '1') {
           //ครบถ้วน และถูกต้อง
-          if (formvalue.nextprocess === '1') {
-            //ส่งเรื่องพิจารณา
-            process = '3';
-            status = '3';
-          } else if (formvalue.nextprocess === '2') {
-            //ยกเลิก
-            process = '3';
-            status = '0';
-          }
+          process = '3';
+          status = '3';
+          // if (formvalue.nextprocess === '1') {
+          //   //ส่งเรื่องพิจารณา
+          //   process = '3';
+          //   status = '3';
+          // } else if (formvalue.nextprocess === '2') {
+          //   //ยกเลิก
+          //   process = '3';
+          //   status = '0';
+          // }
         } else if (formvalue.result === '2') {
           //ขอแก้ไข / เพิ่มเติม
           process = '3';
@@ -261,6 +262,7 @@ export class ConsiderStudentComponent implements OnInit {
         }
         delete data.index;
         data.address = JSON.stringify(data.address.addressInfo);
+        data.originaldegree = JSON.stringify(data.originaldegree);
         data.subjects = JSON.stringify(data.subjects);
         return data;
       });
@@ -272,6 +274,7 @@ export class ConsiderStudentComponent implements OnInit {
         }
         data.address = JSON.stringify(data.address.addressInfo);
         data.subjects = JSON.stringify(data.subjects);
+        data.originaldegree = JSON.stringify(data.originaldegree);
         data.teachingpracticeschool = JSON.stringify(
           data.teachingpracticeschool
         );
