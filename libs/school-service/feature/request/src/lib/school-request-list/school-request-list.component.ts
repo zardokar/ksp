@@ -39,6 +39,9 @@ import {
 } from '@ksp/shared/utility';
 import { Subject } from 'rxjs';
 // ------------------------------------------------------------------------
+import { ZNGViewerComponent } from '@ksp/shared/dialog';
+import { PDFMAP_TEMPLIC } from '@ksp/shared/constant';
+// ------------------------------------------------------------------------
 const CONVERTPDF_SYSTYPE: any[any] = {
     '3': {
       systemtype: 1, subsystype: 3
@@ -219,143 +222,105 @@ export class SchoolRequestListComponent implements AfterViewInit, OnInit {
       return false;
     }
   }
-
+  // -------------------------------------------------------------------------------------
   getTempLicense(request: KspRequest) {
     
     this.requestService.getKspRequest(request.id).subscribe( (histres:any) => {
       
       this.requestService.getTempLicense(request.id).subscribe((res) => {
-        this.genPdf(  { ...res, 
-                        history: histres.data.history.length > 0 ? histres.data.history : null 
-                      }
-                  );
+
+        const element : any = { ...res, 
+                                history: histres.data.history.length > 0 ? histres.data.history : null 
+                              }
+        console.log( element.history )
+        const systemtype    = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
+        const subsystype    = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
+
+        if( parseInt(systemtype) === 1 && parseInt(subsystype) === 3)
+        {
+          this.openApprovedPdf(element)
+        }else{
+          this.genPdf(  element )
+        }
       });
     } )
   }
 
-  genPdf(element: any) {
+  // -------------------------------------------------------------------------------------
+  openApprovedPdf(element: any){
     console.log('element = ', element);
     console.log('CONVERTPDF_SYSTYPE = ', CONVERTPDF_SYSTYPE[element.requesttype] );
     const approveDetail = this.getApproveDetail(element.history)
-    console.log(approveDetail)
-    const systemtype    = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
-    const subsystype    = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
-    const position      = element?.position;
-    const licstartdate  = element.requestdate
-    const licenddate    = approveDetail.approveDate
-    const startDate     = new Date(licstartdate || '');
-    const endDate       = new Date(licenddate || '');
-          endDate.setFullYear(endDate.getFullYear() + 2)
-    const date          = new Date(licstartdate || '');
-    const thai          = thaiDate(date);
-    const [day, month, year] = thai.split(' ');
-    const fulldateth = `${changeToThaiNumber(
-      day
-    )} เดือน ${month} พ.ศ. ${changeToThaiNumber(year)}`;
-    const fulldateen = `${day} Day of ${changeToEnglishMonth(month)} B.E. ${
-      parseInt(year) - 543
-    }`;
-
-    let prefixen = '';
-    let prefixth = '';
-
-    if (element.prefixen === '1') {
-      prefixen = 'MR.';
-    } else if (element.prefixen === '2') {
-      prefixen = 'MRS.';
-    } else if (element.prefixen === '3') {
-      prefixen = 'MISS.';
-    } else if (element.prefixen === '4') {
-      prefixen = 'MS.';
-    } else if (element.prefixen === '5') {
-      prefixen = 'LADY';
-    } else if (element.prefixen === '6') {
-      prefixen = 'M.L.';
-    } else if (element.prefixen === '7') {
-      prefixen = 'M.R.';
-    } else if (element.prefixen === '8') {
-      prefixen = 'M.C.';
-    } else {
-      prefixen = 'Not Indentified';
-    }
-    const nameen =
-      prefixen + ' ' + element.firstnameen + ' ' + element.lastnameen;
-
-    if (element.prefixth === '1') {
-      prefixth = 'นาย';
-    } else if (element.prefixth === '2') {
-      prefixth = 'นาง';
-    } else if (element.prefixth === '3') {
-      prefixth = 'นางสาว';
-    } else if (element.prefixth === '4') {
-      prefixth = 'นางหรือนางสาว';
-    } else if (element.prefixth === '5') {
-      prefixth = 'ท่านผู้หญิง';
-    } else if (element.prefixth === '6') {
-      prefixth = 'หม่อมหลวง';
-    } else if (element.prefixth === '7') {
-      prefixth = 'หม่อมราชวงศ์';
-    } else if (element.prefixth === '8') {
-      prefixth = 'หม่อมเจ้า';
-    } else {
-      prefixth = 'ไม่ระบุ';
-    }
-    const name =
-      prefixth + ' ' + element.firstnameth + ' ' + element.lastnameth;
-
-    const start = thaiDate(startDate);
-    const end = thaiDate(endDate);
-    const startth = changeToThaiNumber(start);
-    const endth = changeToThaiNumber(end);
-    const starten = changeToEnglishMonth(start);
-    const enden = changeToEnglishMonth(end);
-    const careertype = SchoolRequestSubType[+(element?.licensetype ?? '1')];
-    const careertypeen = SchoolLangMapping[careertype ?? 'ครู'] ?? '';
-    const requestno = element.licenseno ?? '';
-    const prefix = `${element.careertype !== '5' ? 'ท.' : 'อ.'}${ zutils.converttoTHNumber(approveDetail.approveNo) }` ;
+    //console.log(approveDetail)
+    
     const payload = {
       schoolid: this.schoolId,
     };
 
     this.schoolInfoService.getSchoolInfo(payload).subscribe((res: any) => {
-      const schoolname = res.schoolname;
-      const bureauname = res.bureauname;
-      const schoolapprovename = 'ผู้อํานวยการสถานศึกษา';
-      const schoolapprovenameen = 'Director of the Educational Institution';
 
-      this.dialog.open(PdfRenderComponent, {
+      const collect = collectTempLicData(element, approveDetail , res.schoolname , res.bureauname )
+
+      this.dialog.open(ZNGViewerComponent, {
+        width: '1200px',
+        height: '90vh',
+        data: {
+          pdfSrcUrl: 'assets/pdf/school-temp-approve-license.pdf',
+          pdfMapper: PDFMAP_TEMPLIC,
+          input: { 
+            approve_no: collect.prefix,
+            fullname_th: collect.name,
+            fullname_en: collect.nameen,
+            position_th_1: collect.careertype,
+            position_en_1: collect.careertypeen,
+            startdate_th: collect.startth,
+            enddate_th: collect.endth,
+            startdate_en: collect.starten,
+            enddate_en: collect.enden,
+            orgname_th: collect.schoolname,
+            orgname_en: '',
+            approver_th: collect.schoolapprovename,
+            approver_en: collect.schoolapprovenameen,
+            position_th_2: collect.careertype,
+            position_en_2: collect.careertypeen,
+            senddate_th: collect.fulldateth,
+            senddate_en: collect.fulldateen
+          }
+        },
+      });
+    });
+    
+  }
+  // -------------------------------------------------------------------------------------
+
+  genPdf(element: any) {
+    
+    const approveDetail = this.getApproveDetail(element.history)
+
+    const systemtype    = CONVERTPDF_SYSTYPE[element.requesttype].systemtype
+    const subsystype    = CONVERTPDF_SYSTYPE[element.requesttype].subsystype
+    
+    const payload = {
+      schoolid: this.schoolId,
+    };
+
+    this.schoolInfoService.getSchoolInfo(payload).subscribe((res: any) => {
+
+    const collect = collectTempLicData(element, approveDetail , res.schoolname , res.bureauname )
+
+    this.dialog.open(PdfRenderComponent, {
         width: '1200px',
         height: '100vh',
         data: {
           pdfType: systemtype,
           pdfSubType: subsystype,
-          input: {
-            prefix,
-            schoolapprovename,
-            schoolapprovenameen,
-            requestno,
-            careertype,
-            careertypeen,
-            name,
-            nameen,
-            startth,
-            endth,
-            starten,
-            enden,
-            schoolname,
-            bureauname,
-            day,
-            month,
-            year,
-            position,
-            fulldateth,
-            fulldateen,
-          },
+          input: { ...collect },
         },
       });
     });
   }
 
+  // -------------------------------------------------------------------------------------
   clear() {
     this.form.reset();
     this.searchNotFound = false;
@@ -1313,3 +1278,101 @@ export const displayedColumnsKSP = [
   'updatedate',
   'requestdate',
 ];
+
+// --------------------------------------------------------------------
+function getPrefix(data : any, lang : string = 'th')
+{
+  const notfound : any[any] = {
+                                  th : 'ไม่ระบุ',
+                                  en : 'Not Indentified'
+                              }
+  const prefix : any[any]   = {
+                      en : {
+                        '1' : 'MR.',
+                        '2' : 'MRS.',
+                        '3' : 'MISS.',
+                        '4' : 'MS.',
+                        '5' : 'LADY',
+                        '6' : 'M.L.',
+                        '7' : 'M.R.',
+                        '8' : 'M.C.'
+                      },
+                      th : {
+                        '1' : 'นาย',
+                        '2' : 'นาง',
+                        '3' : 'นางสาว',
+                        '4' : 'นางหรือนางสาว',
+                        '5' : 'ท่านผู้หญิง',
+                        '6' : 'หม่อมหลวง',
+                        '7' : 'หม่อมราชวงศ์',
+                        '8' : 'หม่อมเจ้า'
+                      }
+                   }
+
+  let   result    : any     = prefix[lang][data]
+
+  if( prefix[lang][data] === undefined )
+  {
+    result = notfound[lang]
+  }
+          
+  return result
+}
+// --------------------------------------------------------------------
+function collectTempLicData(data : any, approveDetail: any , schoolname : string, bureauname : string)
+{
+    const position      = data?.position;
+    const licstartdate  = data.requestdate
+    const approveDate   = approveDetail.approveDate
+    const startDate     = new Date(licstartdate || '')
+    const endDate       = new Date(licstartdate || '');
+          endDate.setFullYear(startDate.getFullYear() + 2)
+    const date          = new Date(approveDate || '');
+    const thai          = thaiDate(date);
+    const [day, month, year] = thai.split(' ');
+    const fulldateth = `${changeToThaiNumber( day )} ${month} พ.ศ. ${changeToThaiNumber(year)}`;
+    const fulldateen = `${day} ${changeToEnglishMonth(month)} B.E. ${
+      parseInt(year) - 543
+    }`;
+
+    const prefixen     = getPrefix(data.prefixen, 'en')
+    const prefixth     = getPrefix(data.prefixth, 'th')
+
+    const nameen       = prefixen + ' ' + data.firstnameen + ' ' + data.lastnameen
+    const name         = prefixth + ' ' + data.firstnameth + ' ' + data.lastnameth
+
+    const start = thaiDate(startDate);
+    const end = thaiDate(endDate);
+    const startth = changeToThaiNumber(start);
+    const endth = changeToThaiNumber(end);
+    const starten = changeToEnglishMonth(start);
+    const enden = changeToEnglishMonth(end);
+    const careertype = SchoolRequestSubType[+(data?.licensetype ?? '1')];
+    const careertypeen = SchoolLangMapping[careertype ?? 'ครู'] ?? '';
+    const requestno = data.licenseno ?? '';
+    // const prefix = `${data.careertype !== '5' ? 'ท.' : 'อ.'}${ zutils.converttoTHNumber(approveDetail.approveNo) }` ;
+    const prefix = `${data.careertype !== '5' ? 'ท.' : 'อ.'}${ approveDetail.approveNo }` ;
+
+  return {
+            prefix: prefix,
+            position: position,
+            requestno: requestno,
+            careertype :     careertype,
+            careertypeen :  careertypeen,
+            name :          name,
+            nameen :        nameen,
+            startth :       startth,
+            endth :         endth,
+            starten :       starten,
+            enden :         enden,
+            day :           day,
+            month :         month,
+            year :          year,
+            fulldateth :    fulldateth,
+            fulldateen :    fulldateen,
+            schoolname: schoolname,
+            bureauname: bureauname,
+            schoolapprovename: 'ผู้อํานวยการสถานศึกษา',
+            schoolapprovenameen: 'Director of the Educational Institution'
+  }
+}
