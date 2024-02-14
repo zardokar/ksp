@@ -168,11 +168,13 @@ export class SchoolRequestComponent implements OnInit {
     }
   }
 
-  duplicateRequestDialog() {
+  duplicateRequestDialog(res : any) {
+    console.log(res)
     const completeDialog = this.dialog.open(CompleteDialogComponent, {
       data: {
-        header: `หมายเลขบัตรประชาชนนี้ได้ถูกใช้ยื่นแบบคำขอ
-        และกำลังอยู่ในระหว่างดำเนินการ !`,
+        header: `หมายเลขบัตรประชาชนนี้ได้ถูกใช้ยื่นแบบคำขอ \n
+        หมายเลข ${ formatRequestNo(res.data.kspreq.REQUEST_NO) }
+        \nกำลังอยู่ในระหว่างดำเนินการ !`,
       },
     });
     completeDialog.componentInstance.completed.subscribe((res) => {
@@ -181,6 +183,35 @@ export class SchoolRequestComponent implements OnInit {
       }
     });
   }
+
+  somethingWrongDialog(res : any)
+  {
+    const completeDialog = this.dialog.open(CompleteDialogComponent, {
+      data: {
+        header: `เกิดข้อผิดพลาดในการบันทึก กรุณาแจ้งผู้ดูแลระบบ! \n Error Code: ${res.returncode}`,
+      },
+    });
+    completeDialog.componentInstance.completed.subscribe((res) => {
+      if (res) {
+        this.backToListPage();
+      }
+    });
+  }
+
+  TokenExpiredDialog(res : any)
+  {
+    const completeDialog = this.dialog.open(CompleteDialogComponent, {
+      data: {
+        header: `Token หมดอายุ กรุณา Login ใหม่อีกครั้ง \n Error Code: ${res.returncode}`,
+      },
+    });
+    completeDialog.componentInstance.completed.subscribe((res) => {
+      if (res) {
+        this.backToListPage();
+      }
+    });
+  }
+
 
   checkCareerType() {
     this.route.queryParams.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -284,30 +315,62 @@ export class SchoolRequestComponent implements OnInit {
     };
 
     baseForm.patchValue(payload);
-    //console.log('current form = ', baseForm.value);
-    this.requestService.schCreateRequest(baseForm.value).subscribe((res) => {
-      // บันทึกและยื่น
 
-      if (res.returncode === '409') {
-        this.duplicateRequestDialog();
-        return;
+    // ----------------------------------------------------------------
+    // Send check license in first
+    const searchpayload = {
+                            systemtype:"2",
+                            requesttype:"3",
+                            careertype : userInfo.careertype,
+                            idcardno : payload.idcardno,
+    }
+    // ----------------------------------------------------------------
+    this.requestService.schKSPXSearchRequest(searchpayload).subscribe((searchres) => {
+      if( searchres.returncode === "98" )
+      {
+          this.requestService.schKSPXCreateRequest(baseForm.value).subscribe((res) => {
+            // บันทึกและยื่น
+      
+            let completed = false
+            
+            if (process === 2 ) {
+              completed = true
+              this.completeDialog2(
+              `บันทึกข้อมูลสำเร็จ`,
+              `เลขที่รายการ : ${formatRequestNo(res.requestno)}
+              วันที่ : ${thaiDate(new Date())}`);
+              /* this.completeDialog(`ระบบทำการบันทึกเรียบร้อยแล้ว
+              สามารถตรวจสอบสถานะภายใน
+              3 - 15 วันทำการ`); */
+      
+            } else if (process === 1) {
+      
+              completed = true
+              // บันทึกชั่วคราว
+              this.completeDialog(`ระบบทำการบันทึกชั่วคราวเรียบร้อยแล้ว`);
+            }
+      
+            if(completed === false){
+              completed = true
+              this.somethingWrongDialog(res);
+              return;
+            }
+          })
+
+      }else if( searchres.returncode === "00" ) {
+        this.duplicateRequestDialog(searchres)
+        return
+      }else if( searchres.returncode === "99" ) {
+        this.TokenExpiredDialog(searchres)
+        return
+      }else{
+        this.somethingWrongDialog(searchres)
+        return
       }
-
-      if (process === 2) {
-        this.completeDialog2(
-        `บันทึกข้อมูลสำเร็จ`,
-        `เลขที่รายการ : ${formatRequestNo(res.requestno)}
-        วันที่ : ${thaiDate(new Date())}`);
-        /* this.completeDialog(`ระบบทำการบันทึกเรียบร้อยแล้ว
-        สามารถตรวจสอบสถานะภายใน
-        3 - 15 วันทำการ`); */
-
-      } else if (process === 1) {
-        // บันทึกชั่วคราว
-        this.completeDialog(`ระบบทำการบันทึกชั่วคราวเรียบร้อยแล้ว`);
-      }
-    });
+    })
   }
+
+  // --------------------------------------------------------------------------------------------------------
 
   updateRequest(process: number) {
     const baseForm = this.fb.group(new KspRequest());
@@ -696,7 +759,7 @@ export class SchoolRequestComponent implements OnInit {
   }
 
   checkStaffAnotherRequest(saveType: 'tempSave' | 'submitSave') {
-    //console.log('staff data = ', this.staffData);
+    // Parameters for search school request 
     const payload: SchRequestSearchFilter = {
       schoolid: `${this.schoolId}`,
       requesttype: '3',
@@ -733,6 +796,8 @@ export class SchoolRequestComponent implements OnInit {
     });
   }
 
+  // --------------------------------------------------------------------------
+  // Forbidden Dialog 
   forbiddenDialog() {
     const dialogRef = this.dialog.open(ForbiddenPropertyFormComponent, {
       width: '850px',
@@ -745,12 +810,14 @@ export class SchoolRequestComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         this.forbidden = res;
+        console.log( '*** res : ', res )
         if (res) {
           // confirm เพื่อ บันทึกและยื่นแบบคำขอ
           this.confirmDialog(2);
         }
       });
   }
+  // --------------------------------------------------------------------------
 
   /**
    *
