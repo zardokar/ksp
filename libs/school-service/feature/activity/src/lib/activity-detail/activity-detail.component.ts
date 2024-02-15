@@ -32,6 +32,7 @@ import {
   SchoolInfoService,
   SchoolRequestService,
   SelfDevelopService,
+  UniInfoService,
   StaffService,
 } from '@ksp/shared/service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -59,7 +60,7 @@ export class ActivityDetailComponent implements OnInit {
   activityTypes: ListData[] = SchoolSelfDevelopActivityTies;
   selectedStaffId = '';
   selectedRequestId = '';
-  mode: 'view' | 'edit' = 'edit';
+  mode: 'add' | 'view' | 'edit' = 'edit';
   pdfTempLicense: any;
 
   staffSelfDev: any[] = [];
@@ -88,7 +89,8 @@ export class ActivityDetailComponent implements OnInit {
     private loaderService: LoaderService,
     private license: SchoolRequestService,
     private location: Location,
-    private schoolInfoService: SchoolInfoService
+    private schoolInfoService: SchoolInfoService,
+    private uniserv : UniInfoService
   ) {}
 
   ngOnInit(): void {
@@ -101,8 +103,12 @@ export class ActivityDetailComponent implements OnInit {
       if (this.pageType === 0) {
         this.form.controls.type.disable();
         this.mode = 'view';
+      }else if(this.pageType === 2){
+        this.mode = 'add';
       }
     });
+
+    this.getUniRequestDegree()
   }
 
   checkStaffId() {
@@ -324,6 +330,14 @@ export class ActivityDetailComponent implements OnInit {
         this.router.navigate(['/activity']);
       }
     });
+  }
+
+  getUniRequestDegree()
+  {
+    this.uniserv.getUniuniversity().subscribe((res) => {
+      console.log('getUniRequestDegree : ',res)
+    })
+    
   }
 }
 

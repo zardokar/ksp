@@ -109,4 +109,5 @@ export class ActivityListComponent implements AfterViewInit {
 enum activityPageMode {
   view,
   edit,
+  add,
 }
