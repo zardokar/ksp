@@ -62,6 +62,8 @@ export class ActivityDetailComponent implements OnInit {
   selectedRequestId = '';
   mode: 'add' | 'view' | 'edit' = 'edit';
   pdfTempLicense: any;
+  universities: any[any] = []
+  unidegree: any[any] = []
 
   staffSelfDev: any[] = [];
   tempLicense: any;
@@ -108,7 +110,8 @@ export class ActivityDetailComponent implements OnInit {
       }
     });
 
-    this.getUniRequestDegree()
+    this.getUniversities()
+    this.getUniDegree()
   }
 
   checkStaffId() {
@@ -332,12 +335,18 @@ export class ActivityDetailComponent implements OnInit {
     });
   }
 
-  getUniRequestDegree()
+  getUniversities()
   {
     this.uniserv.getUniuniversity().subscribe((res) => {
-      console.log('getUniRequestDegree : ',res)
+      this.universities = res.datareturn
     })
-    
+  }
+
+  getUniDegree()
+  {
+    this.uniserv.getUniDegreelevel().subscribe((res) => {
+      this.unidegree = res.datareturn
+    })
   }
 }
 

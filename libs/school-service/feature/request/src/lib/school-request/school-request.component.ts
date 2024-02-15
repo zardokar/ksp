@@ -109,6 +109,7 @@ export class SchoolRequestComponent implements OnInit {
   selectedTabIndex = 0;
   kspComment = new KspComment()
   universityList$!: Observable<University[]>
+  majorfields!: Observable<any[any]>
 
   form = this.fb.group({
     userInfo: [],
@@ -743,6 +744,7 @@ export class SchoolRequestComponent implements OnInit {
     this.positionTypes$ = this.staffService.getPositionTypes();
     this.academicTypes$ = this.staffService.getAcademicStandingTypes();
     this.universityList$ = this.licenseService.getUniversityList();
+    this.majorfields
     this.getSchoolInfo();
   }
 
