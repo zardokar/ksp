@@ -46,6 +46,7 @@ import { Location } from '@angular/common';
   styleUrls: ['./activity-detail.component.scss'],
 })
 export class ActivityDetailComponent implements OnInit {
+  gotdetails = false
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   schoolId = getCookie('schoolId');
   staffId!: number;
@@ -156,7 +157,7 @@ export class ActivityDetailComponent implements OnInit {
 
   patchData(res: any) {
     const data = parseJson(res[this.activityId].selfdevelopdetail || '');
-    //console.log('data = ', data);
+    // console.log('data = ', data);
 
     this.form.controls.type.patchValue(res[this.activityId].selfdeveloptype);
     if (this.form.controls.type.value) {
@@ -168,6 +169,8 @@ export class ActivityDetailComponent implements OnInit {
           (group, index) => (group.files = fileinfo[index])
         );
       }
+
+      this.gotdetails = true
     }
   }
 
