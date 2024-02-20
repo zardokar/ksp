@@ -95,10 +95,10 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   detail: any;
   otherreason: any;
   refperson: any = {
-    prefixth1: getCookie('prefixId'),
-    firstnameth1: getCookie('firstNameTh'),
-    lastnameth1: getCookie('lastNameTh'),
-    position1: getCookie('position')
+    prefixth1: '',
+    firstnameth1: '',
+    lastnameth1: '',
+    position1: ''
   };
   evidenceFiles: FileGroup[] = files;
   mode: FormMode = 'edit';
@@ -457,6 +457,16 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   }
 
   saved(reasonForm: any) {
+    const formData: any = this.form.getRawValue();
+
+    this.refperson = {
+      prefixth1: formData.userInfo.prefixth,
+      firstnameth1: formData.userInfo.firstnameth,
+      lastnameth1: formData.userInfo.lastnameth,
+      position1: formData.userInfo.position
+    }
+
+
     const hascomment     = zutils.exist(this.detail,'checkdetail')
     const completeDialog = this.dialog.open(
       QualificationApprovePersonComponent,
