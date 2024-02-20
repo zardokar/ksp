@@ -94,7 +94,12 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   requestData = new KspRequest();
   detail: any;
   otherreason: any;
-  refperson: any;
+  refperson: any = {
+    prefixth1: getCookie('prefixId'),
+    firstnameth1: getCookie('firstNameTh'),
+    lastnameth1: getCookie('lastNameTh'),
+    position1: getCookie('position')
+  };
   evidenceFiles: FileGroup[] = files;
   mode: FormMode = 'edit';
   bureauName!: string;
