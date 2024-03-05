@@ -61,6 +61,12 @@
       <div class="bg-light px-3 py-3">
         <form [formGroup]="form">
           <div class="box-header mb-2">กิจกรรมการพัฒนาตนเอง</div>
+           <div *ngIf="pageType !== 2">
+              <ng-container *ngIf="!gotdetails">
+                <mat-progress-spinner class="spinner" mode="indeterminate">
+                </mat-progress-spinner>
+              </ng-container>
+           </div>
           <div class="row">
             <div class="col-8 mb-2">
               <select
@@ -85,6 +91,8 @@
 
           <ksp-activity-add-degree
             [mode]="mode"
+            [universities]="universities"
+            [unidegree]="unidegree"
             *ngIf="selector.value === '0'"
             formControlName="detail"
           ></ksp-activity-add-degree>

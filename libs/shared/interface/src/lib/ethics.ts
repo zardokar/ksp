@@ -186,6 +186,11 @@ export const defaultMeeting:EhicsMeeting = {
   meetingfile: null,
 }
 
+export const uploadFiles:UPLOAD_FILES ={
+  fileid: null,
+  filename:  null
+};
+
 export interface EhicsMember {
   idcardno: string | null;
   accusertype: string | null;
@@ -249,6 +254,11 @@ export const ACCUSATION_FILES: FileGroup[] = [
   { name: '1. เอกสารกล่าวหา/กล่าวโทษ', files: [] },
   { name: '2. สำเนาบัตรประชาชน	', files: [] },
 ];
+
+export interface UPLOAD_FILES{
+  fileid: string | null;
+  filename: string | null;
+};
 
 export const columns = [
   'order',

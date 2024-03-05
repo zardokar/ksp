@@ -65,11 +65,15 @@
         <input
           class="form-control"
           type="text"
+          list="unilist"
           formControlName="institution"
           [attr.disabled]="readonly ? true : null"
           defaultValue="''"
           (change)="onInstitutionUpdate($event)"
         />
+        <datalist id="unilist">
+          <option *ngFor="let university of universityList" [value]="university.name+' '+university.campusname"></option>
+        </datalist>
       </div>
       <div class="col mb-2">
         <label class="form-label">ประเทศ</label>

@@ -112,8 +112,15 @@
         </tbody>
       </table>
       <ng-container *ngIf="!staffSelfDev.length">
-        <div class="text-center fs-5 py-5">ไม่พบข้อมูล</div></ng-container
-      >
+        <div class="text-center fs-5 py-5">
+          <ng-container *ngIf="gotdata===0">
+            <mat-progress-spinner class="spinner" mode="indeterminate">
+            </mat-progress-spinner>
+          </ng-container>
+          <ng-container *ngIf="gotdata===2">
+            ไม่พบข้อมูล
+          </ng-container>
+        </div></ng-container>
     </div>
   </div>
 </div>

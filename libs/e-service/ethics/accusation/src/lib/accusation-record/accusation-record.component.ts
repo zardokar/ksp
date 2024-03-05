@@ -92,6 +92,7 @@ export class AccusationRecordComponent
   sellictypetab: any;
   isActionBox= false;
   arrayType : typeList[] = []
+  actionSelected : any;
 
   override form = this.fb.group({
     accusationblackno: [null, Validators.required],
@@ -159,8 +160,25 @@ export class AccusationRecordComponent
         }else if(isArray(values.accusationaction) === false){
           values.accusationaction  = this.arrayType as any
         }else{
+
           this.arrayType = values.accusationaction as any
+          if(this.arrayType[0].hasOwnProperty('label') == false){
+            this.arrayType = []
+            for(let index=0 ; index < accusationtypeList.length ; index++ ){
+              let { label , value } = accusationtypeList[index]
+              this.actionSelected  = values.accusationaction 
+              this.arrayType.push({
+                              label:label,
+                              value:value,
+                              selected: this.actionSelected[index]
+                            })
+
+            }
+            values.accusationaction  = this.arrayType as any
+          }
+
         }
+
         this.onChange(values);
         this.onTouched();
       })
