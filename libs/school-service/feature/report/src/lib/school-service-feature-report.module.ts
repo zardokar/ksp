@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TempLicenseReportComponent } from './temp-license-report/temp-license-report.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SchoolContainerPageComponent } from '@ksp/school-service/feature/container-page';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -8,6 +7,9 @@ import { TopNavComponent } from '@ksp/shared/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
+
+import { TestReportComponent } from './test-report/test-report.component';
+import { TempLicenseReportComponent } from './temp-license-report/temp-license-report.component';
 
 const routes: Routes = [
   {
@@ -23,6 +25,7 @@ const routes: Routes = [
         path: 'temp-license',
         component: TempLicenseReportComponent,
       },
+      { path: 'test-report', component: TestReportComponent },
     ],
   },
 ];
@@ -37,7 +40,13 @@ const routes: Routes = [
     MatPaginatorModule,
     ReactiveFormsModule,
   ],
-  declarations: [TempLicenseReportComponent],
-  exports: [TempLicenseReportComponent],
+  declarations: [
+    TestReportComponent,
+    TempLicenseReportComponent
+  ],
+  exports: [
+    TestReportComponent,
+    TempLicenseReportComponent
+  ],
 })
 export class SchoolServiceFeatureReportModule {}
