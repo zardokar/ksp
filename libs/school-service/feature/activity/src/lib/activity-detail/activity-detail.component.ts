@@ -165,14 +165,17 @@ export class ActivityDetailComponent implements OnInit {
   }
 
   patchData(res: any) {
+
+    console.log(res)
     const data = parseJson(res[this.activityId].selfdevelopdetail || '');
-    // console.log('data = ', data);
+    //console.log('data = ', data);
+    //console.log( res[this.activityId].selfdevelopfiles )
 
     this.form.controls.type.patchValue(res[this.activityId].selfdeveloptype);
     if (this.form.controls.type.value) {
       this.form.controls.detail.patchValue(data);
 
-      const fileinfo = parseJson(res.selfdevelopfiles || '');
+      const fileinfo = parseJson(res[this.activityId].selfdevelopfiles || '');
       if (fileinfo) {
         this.attachFiles.forEach(
           (group, index) => (group.files = fileinfo[index])
