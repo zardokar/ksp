@@ -167,12 +167,12 @@
 
       <ng-container *ngIf="selector.value !== 'null'">
         <div class="mt-3">
-          <ksp-form-multi-attachment
+          <ksp-zform-multi-attachment
             [mode]="mode"
             [uniqueTimestamp]="uniqueNo"
             title="กรุณาแนบหลักฐานประกอบการปฏิบัติงาน"
             [groups]="attachFiles"
-          ></ksp-form-multi-attachment></div></ng-container
+          ></ksp-zform-multi-attachment></div></ng-container
     ></ng-container>
   </div>
 </div>
@@ -183,7 +183,7 @@
     [isLastPage]="true"
     [showCenterButtons]="true"
     [showCancelButton]="true"
-    [showSaveButton]="pageType === 1"
+    [showSaveButton]="pageType === 1 || pageType === 2"
     [disableSaveButton]="!form.valid"
     (saveClicked)="confirmDialog()"
     (cancelClicked)="pageType === 1 ? cancel() : back()"
