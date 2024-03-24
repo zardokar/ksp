@@ -114,6 +114,14 @@ const routes: Routes = [
       ),
   }, */
   {
+    path: 'report',
+    loadChildren: () =>
+      import('../../../../libs/uni-service/feature/report/src/lib/uni-service-feature-report.module').then(
+        (m) => m.UniServiceFeatureReportModule
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full',
