@@ -91,13 +91,13 @@ export const menu: MenuConfig[] = [
   },
   {
     icon: 'assets/images/icon-sidenav/display.svg',
-    label: 'ทะเบียนหนังสืออนุญาตประกอบวิชาชีพโดยไม่มีหนังสืออนุญาต',
+    label: 'ทะเบียนหนังสืออนุญาตให้ประกอบวิชาชีพทางการศึกษาโดยไม่มีใบอนุญาตประกอบวิชาชีพ',
     path: '/temp-license-register/list',
   },
   {
     icon: 'assets/images/icon-sidenav/display.svg',
     label:
-      'กิจกกรมพัฒนาตนเอง (หนังสืออนุญาตประกอบวิชาชีพโดยไม่มีหนังสืออนุญาต)',
+      'กิจกกรมพัฒนาตนเอง (หนังสืออนุญาตให้ประกอบวิชาชีพทางการศึกษาโดยไม่มีใบอนุญาตประกอบวิชาชีพ)',
     path: '/activity/list',
   },
   {
