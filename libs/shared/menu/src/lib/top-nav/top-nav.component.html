@@ -21,7 +21,8 @@
       <div class="d-flex flex-column align-items-end">
         <div class="user__name">{{ firstName }} {{ lastName }}</div>
         <!-- <div class="login__time">เข้าใช้งานเมื่อวันที่ {{ today }}</div> -->
-        <div class="login__time">เจ้าหน้าที่ส่วน{{ permission === '1' ? 'กลาง' : 'ภูมิภาค' }}</div>
+        <!-- <div class="login__time">เจ้าหน้าที่ส่วน{{ permission === '1' ? 'กลาง' : 'ภูมิภาค' }}</div> -->
+        <div class="login__time">{{ position }}</div>
       </div>
       <div class="ms-2" (click)="logout()" role="button" matTooltip="ออกจากระบบ">
         <img src="/assets/images/profile.png" />

@@ -14,10 +14,11 @@ import { deleteCookie, getCookie, thaiDate } from '@ksp/shared/utility';
 })
 export class TopNavComponent {
   @Input() isSelfService = false;
+  @Input() position      = getCookie('positionHeader')
 
-  today = thaiDate(new Date());
-  firstName = getCookie('firstNameTh');
-  lastName = getCookie('lastNameTh');
+  today      = thaiDate(new Date());
+  firstName  = getCookie('firstNameTh');
+  lastName   = getCookie('lastNameTh');
   permission = getCookie('permissionRight');
 
   constructor(private router: Router) {}
