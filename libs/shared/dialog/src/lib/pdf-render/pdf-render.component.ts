@@ -47,7 +47,7 @@ export class PdfRenderComponent implements OnInit {
     );
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
     const fontBytes = await fetch(
-      this.data.fontSrc || 'assets/font/ksp/ksp-regular.ttf'
+      this.data.fontSrc || 'assets/font/th_sarabun_new/THSarabunNew.ttf'
     ).then((res) => res.arrayBuffer());
     pdfDoc.registerFontkit(fontkit);
     const customFont = await pdfDoc.embedFont(fontBytes, { subset: false });

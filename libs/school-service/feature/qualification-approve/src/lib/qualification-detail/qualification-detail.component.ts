@@ -94,7 +94,12 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   requestData = new KspRequest();
   detail: any;
   otherreason: any;
-  refperson: any;
+  refperson: any = {
+    prefixth1: '',
+    firstnameth1: '',
+    lastnameth1: '',
+    position1: ''
+  };
   evidenceFiles: FileGroup[] = files;
   mode: FormMode = 'edit';
   bureauName!: string;
@@ -452,6 +457,16 @@ export class QualificationDetailComponent implements OnInit, AfterViewInit, Afte
   }
 
   saved(reasonForm: any) {
+    const formData: any = this.form.getRawValue();
+
+    this.refperson = {
+      prefixth1: formData.userInfo.prefixth,
+      firstnameth1: formData.userInfo.firstnameth,
+      lastnameth1: formData.userInfo.lastnameth,
+      position1: formData.userInfo.position
+    }
+
+
     const hascomment     = zutils.exist(this.detail,'checkdetail')
     const completeDialog = this.dialog.open(
       QualificationApprovePersonComponent,

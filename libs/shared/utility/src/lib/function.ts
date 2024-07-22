@@ -16,7 +16,7 @@ import moment from 'moment';
 
 export function schoolHasRejectedRequest(requests: KspRequest[]): KspRequest[] {
   return requests.filter((req) => {
-    //ขอหนังสืออนุญาตประกอบวิชาชีพ โดยไม่มีใบอนุญาตประกอบวิชาชีพ
+    //ขอหนังสืออนุญาตให้ประกอบวิชาชีพทางการศึกษาโดยไม่มีใบอนุญาตประกอบวิชาชีพ
     const condition1 =
       req.requesttype === '3' && req.process === '3' && req.status === '2';
 

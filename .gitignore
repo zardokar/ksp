@@ -44,3 +44,5 @@ Thumbs.db
 .env
 deploy
 deploy-dev
+
+.bat

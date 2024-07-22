@@ -53,6 +53,13 @@ export class SchoolRequestService {
       .pipe(map((data: any) => data.datareturn));
   }
 
+  schKSPXSearchRequest(payload: any): Observable<any> {
+    return this.http.post(
+        `${environment.shortApiUrl}/kspx/kspreq_search.php`,
+        payload
+      )
+  }
+
   schCreateRequest(payload: Partial<KspRequest>): Observable<any> {
     return this.http.post(
       `${environment.apiUrl}/kspstaff/ksprequestinsert`,

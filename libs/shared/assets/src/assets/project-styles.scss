@@ -13,12 +13,14 @@ Project scope style , used widely across all apps
 
 @font-face {
   font-family: 'ksp regular';
-  src: URL('/assets/font/ksp/ksp-regular.ttf') format('truetype');
+  src: URL('/assets/font/th_sarabun_new/THSarabunNew.ttf') format('truetype');
+  //src: URL('/assets/font/ksp/ksp-regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'ksp bold';
-  src: URL('/assets/font/ksp/ksp-bold.ttf') format('truetype');
+  src: URL('/assets/font/th_sarabun_new/THSarabunNew_Bold.ttf') format('truetype');
+  //src: URL('/assets/font/ksp/ksp-bold.ttf') format('truetype');
 }
 
 table {

@@ -23,6 +23,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { QualificationExperienceInfoComponent } from './qualification-experience-info/qualification-experience-info.component';
 import { FileCommentPipe } from '@ksp/shared/pipe';
 
+import { ZFormMultiAttachmentComponent } from './zform-multi-attachment/zform-multi-attachment.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -43,6 +45,7 @@ import { FileCommentPipe } from '@ksp/shared/pipe';
     FormReasonInfoComponent,
     FormAttachmentComponent,
     FormMultiAttachmentComponent,
+    ZFormMultiAttachmentComponent,
     FormUserInfoComponent,
     FormForeignIdComponent,
     FormHiringInfoComponent,
@@ -62,6 +65,7 @@ import { FileCommentPipe } from '@ksp/shared/pipe';
     FormHiringInfoComponent,
     FormVisaInfoComponent,
     QualificationExperienceInfoComponent,
+    ZFormMultiAttachmentComponent,
   ],
 })
 export class SharedFormOthersModule {}

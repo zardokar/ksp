@@ -10,6 +10,9 @@ import {
   ForgotPasswordSearchPersonComponent,
   ForgotPasswordSetNewPasswordComponent,
 } from '@ksp/shared/dialog';
+import {
+  UniInfoService
+} from '@ksp/shared/service';
 import { LoginFormComponent } from '@ksp/shared/form/login';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UniLoginService } from './uni-login.service';
@@ -35,7 +38,8 @@ export class UniLoginComponent {
     private router: Router,
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private uniLoginService: UniLoginService
+    private uniLoginService: UniLoginService,
+    private uniInfoService: UniInfoService
   ) {}
 
   /* showWarningDialog(title: string) {
@@ -67,6 +71,15 @@ export class UniLoginComponent {
       setCookie('uniType', res?.unitype || '', 1);
       setCookie('userId', res?.id, 1);
       setCookie('permission', res?.permissionright, 1);
+
+      this.uniInfoService.getUniuniversity().subscribe(async (ures) => {
+        if(ures.datareturn.length > 0)
+        {
+          const uni = ures.datareturn.find( (uni : any) => { return uni.id === res?.uniid && uni.typeid === res?.unitype })
+          const unifullname = uni.campusname ? `${uni.name} (${uni.campusname})` : uni.name
+          setCookie('positionHeader', unifullname , 1)
+        }
+      })
 
       this.router.navigate(['/home']);
     } catch (error: any) {

@@ -5,7 +5,7 @@
 
 <ksp-top-nav>
   <span header>
-    กิจกรรมพัฒนาตนเอง (หนังสืออนุญาตให้ประกอบวิชาชีพ โดยไม่มีหนังสืออนุญาต)
+    กิจกรรมพัฒนาตนเอง (หนังสืออนุญาตให้ประกอบวิชาชีพ โดยไม่มีใบอนุญาต)
   </span>
   <span subHeader>เพิ่มกิจกรรมการพัฒนาตนเอง</span>
 </ksp-top-nav>
@@ -23,7 +23,7 @@
 
     <div class="bg-light px-3 py-3 mb-3">
       <div class="box-header">
-        ข้อมูลหนังสืออนุญาตให้ประกอบวิชาชีพ โดยไม่มีหนังสืออนุญาต
+        ข้อมูลหนังสืออนุญาตให้ประกอบวิชาชีพ โดยไม่มีใบอนุญาต
       </div>
 
       <table class="table" *ngIf="requestId">
@@ -61,6 +61,12 @@
       <div class="bg-light px-3 py-3">
         <form [formGroup]="form">
           <div class="box-header mb-2">กิจกรรมการพัฒนาตนเอง</div>
+           <div *ngIf="pageType !== 2">
+              <ng-container *ngIf="!gotdetails">
+                <mat-progress-spinner class="spinner" mode="indeterminate">
+                </mat-progress-spinner>
+              </ng-container>
+           </div>
           <div class="row">
             <div class="col-8 mb-2">
               <select
@@ -85,6 +91,8 @@
 
           <ksp-activity-add-degree
             [mode]="mode"
+            [universities]="universities"
+            [unidegree]="unidegree"
             *ngIf="selector.value === '0'"
             formControlName="detail"
           ></ksp-activity-add-degree>
@@ -159,12 +167,12 @@
 
       <ng-container *ngIf="selector.value !== 'null'">
         <div class="mt-3">
-          <ksp-form-multi-attachment
+          <ksp-zform-multi-attachment
             [mode]="mode"
             [uniqueTimestamp]="uniqueNo"
             title="กรุณาแนบหลักฐานประกอบการปฏิบัติงาน"
             [groups]="attachFiles"
-          ></ksp-form-multi-attachment></div></ng-container
+          ></ksp-zform-multi-attachment></div></ng-container
     ></ng-container>
   </div>
 </div>
@@ -175,7 +183,7 @@
     [isLastPage]="true"
     [showCenterButtons]="true"
     [showCancelButton]="true"
-    [showSaveButton]="pageType === 1"
+    [showSaveButton]="pageType === 1 || pageType === 2"
     [disableSaveButton]="!form.valid"
     (saveClicked)="confirmDialog()"
     (cancelClicked)="pageType === 1 ? cancel() : back()"

@@ -35,3 +35,5 @@ export * from './lib/form-education-info-manager/form-education-info-manager.com
 export * from './lib/e-self-form-base.component';
 
 export * from './lib/qualification-experience-info/qualification-experience-info.component';
+
+export * from './lib/zform-multi-attachment/zform-multi-attachment.component'

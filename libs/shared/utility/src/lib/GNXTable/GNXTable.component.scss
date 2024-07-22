@@ -1,0 +1,37 @@
+table.gtable
+{
+    width: 100%;
+    border-width: 1px;
+    border-collapse:  collapse;
+    transform:  translate3d(0,0,0);
+}
+
+thead.gtable
+{
+    padding: 0;
+    margin: 0;
+}
+
+tbody.gtable
+{
+    padding: 0;
+    margin: 0;
+}
+
+th.gtable,tr.gtable
+{
+    padding: 0;
+    margin: 0;
+}
+
+td.gtable
+{
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+td.ml-1
+{
+    margin-left: 0.5em;
+}

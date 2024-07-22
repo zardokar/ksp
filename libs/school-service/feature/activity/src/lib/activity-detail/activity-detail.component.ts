@@ -32,6 +32,7 @@ import {
   SchoolInfoService,
   SchoolRequestService,
   SelfDevelopService,
+  UniInfoService,
   StaffService,
 } from '@ksp/shared/service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,6 +47,7 @@ import { Location } from '@angular/common';
   styleUrls: ['./activity-detail.component.scss'],
 })
 export class ActivityDetailComponent implements OnInit {
+  gotdetails = false
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   schoolId = getCookie('schoolId');
   staffId!: number;
@@ -58,8 +60,10 @@ export class ActivityDetailComponent implements OnInit {
   activityTypes: ListData[] = SchoolSelfDevelopActivityTies;
   selectedStaffId = '';
   selectedRequestId = '';
-  mode: 'view' | 'edit' = 'edit';
+  mode: 'add' | 'view' | 'edit' = 'edit';
   pdfTempLicense: any;
+  universities: any[any] = []
+  unidegree: any[any] = []
 
   staffSelfDev: any[] = [];
   tempLicense: any;
@@ -87,7 +91,8 @@ export class ActivityDetailComponent implements OnInit {
     private loaderService: LoaderService,
     private license: SchoolRequestService,
     private location: Location,
-    private schoolInfoService: SchoolInfoService
+    private schoolInfoService: SchoolInfoService,
+    private uniserv : UniInfoService
   ) {}
 
   ngOnInit(): void {
@@ -100,8 +105,13 @@ export class ActivityDetailComponent implements OnInit {
       if (this.pageType === 0) {
         this.form.controls.type.disable();
         this.mode = 'view';
+      }else if(this.pageType === 2){
+        this.mode = 'add';
       }
     });
+
+    this.getUniversities()
+    this.getUniDegree()
   }
 
   checkStaffId() {
@@ -155,19 +165,24 @@ export class ActivityDetailComponent implements OnInit {
   }
 
   patchData(res: any) {
+
+    console.log(res)
     const data = parseJson(res[this.activityId].selfdevelopdetail || '');
     //console.log('data = ', data);
+    //console.log( res[this.activityId].selfdevelopfiles )
 
     this.form.controls.type.patchValue(res[this.activityId].selfdeveloptype);
     if (this.form.controls.type.value) {
       this.form.controls.detail.patchValue(data);
 
-      const fileinfo = parseJson(res.selfdevelopfiles || '');
+      const fileinfo = parseJson(res[this.activityId].selfdevelopfiles || '');
       if (fileinfo) {
         this.attachFiles.forEach(
           (group, index) => (group.files = fileinfo[index])
         );
       }
+
+      this.gotdetails = true
     }
   }
 
@@ -321,6 +336,20 @@ export class ActivityDetailComponent implements OnInit {
         this.router.navigate(['/activity']);
       }
     });
+  }
+
+  getUniversities()
+  {
+    this.uniserv.getUniuniversity().subscribe((res) => {
+      this.universities = res.datareturn
+    })
+  }
+
+  getUniDegree()
+  {
+    this.uniserv.getUniDegreelevel().subscribe((res) => {
+      this.unidegree = res.datareturn
+    })
   }
 }
 

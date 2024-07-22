@@ -3,10 +3,13 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { Component, EventEmitter, Inject, Input, Output, ElementRef, ViewChild } from '@angular/core';
 
 import { FileGroup, KspFile } from '@ksp/shared/interface';
+
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { FileService } from '@ksp/shared/form/file-upload';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
+import { zutils } from '@ksp/shared/utility';
 
 // ---------------------------------------------------------------------
 @Component({
@@ -70,8 +73,11 @@ export class FilesReviewerComponent {
             this.result = data.checkresult
         } 
 
-        this.initThumbnails( data.files )
-        this.selectThumbnail( data.files[ data.selectfile || 0 ].fileid )
+        if(zutils.exist( data, 'files') && data.files.length > 0  ) 
+        {
+            this.initThumbnails( data.files )
+            this.selectThumbnail( data.files[ data.selectfile || 0 ].fileid )
+        }
     }
     // -----------------------------------------------
     initThumbnails(files : any[] )

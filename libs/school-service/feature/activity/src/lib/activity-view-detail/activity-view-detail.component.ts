@@ -38,6 +38,7 @@ import { Subject } from 'rxjs';
   styleUrls: ['./activity-view-detail.component.scss'],
 })
 export class ActivityViewDetailComponent implements OnInit {
+  gotdata = 0
   isLoading: Subject<boolean> = this.loaderService.isLoading;
   schoolId = getCookie('schoolId');
   staffId!: number;
@@ -121,7 +122,10 @@ export class ActivityViewDetailComponent implements OnInit {
 
     this.service.getSelfDevelopInfo(payload).subscribe((res) => {
       if (res) {
+        this.gotdata = 1
         this.staffSelfDev = res;
+      }else{
+        this.gotdata = 2
       }
     });
   }
@@ -193,26 +197,31 @@ export class ActivityViewDetailComponent implements OnInit {
   }
 
   getTempLicense(reqid: any) {
-    this.license.getTempLicense(reqid).subscribe((res) => {
-      if (res) {
-        const licenseno = res.licenseno;
-        const firstname = res.firstnameth;
-        const lastname = res.lastnameth;
-        const startdate = res.licensestartdate;
-        const enddate = res.licenseenddate;
+    // TODO : Need to change endpoint
 
-        const data = {
-          licenseno,
-          firstname,
-          lastname,
-          startdate,
-          enddate,
-        };
+    // this.license.getTempLicense(reqid).subscribe((res:any) => {
 
-        this.tempLicense = data;
-      }
-      this.pdfTempLicense = res;
-    });
+    //   if (res) {
+
+    //     const licenseno = res.licenseno;
+    //     const firstname = res.firstnameth;
+    //     const lastname = res.lastnameth;
+    //     const startdate = res.licensestartdate;
+    //     const enddate = res.licenseenddate;
+
+    //     const data = {
+    //       licenseno,
+    //       firstname,
+    //       lastname,
+    //       startdate,
+    //       enddate,
+    //     };
+
+    //     this.tempLicense = data;
+    //   }
+    //   this.pdfTempLicense = res;
+    // });
+    return
   }
 
   edit(pageType: any, staffId: number, requestid: number, activityid: number) {

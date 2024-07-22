@@ -1,0 +1,118 @@
+<div *ngIf="isLoading | async" class="overlay">
+    <mat-progress-spinner class="spinner" mode="indeterminate">
+    </mat-progress-spinner>
+</div>
+  
+<ksp-top-nav>
+    <span header>ระบบงานจรรยาบรรณ </span><span subHeader>{{this.HEAD_LABEL}}</span>
+</ksp-top-nav>
+
+<div class="bg-secondary bg-opacity-10 px-3 pt-1 pb-3 full-height">
+    <div class="box-header">{{this.HEAD_LABEL}}</div>
+
+    <form [formGroup]="form" class="bg-white px-4 py-2 default-width">
+        <div class="box-header">ค้นหา</div>
+        <hr />
+
+        <div class="row mb-2">
+            <div class="col">
+              <label class="form-label">หมายเลขคดีดำ</label>
+              <input class="form-control" type="text" formControlName="black_no" />
+            </div>
+            <div class="col">
+              <label class="form-label">หมายเลขคดีแดง</label>
+              <input class="form-control" type="text" formControlName="red_no" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+              <label class="form-label">หมายเลขบัตรประชาชน/เลขคุรุสภา/เลขที่หนังสือเดินทาง (ผู้ถูกกล่าวหา/กล่าวโทษ)</label>
+              <input class="form-control" type="text" formControlName="search_id" />
+            </div>
+            <div class="col">
+              <label class="form-label">ใบอนุญาตประกอบวิชาชีพฯ (ผู้ถูกกล่าวหา/กล่าวโทษ)</label>
+              <input class="form-control" type="text" formControlName="license_id" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+
+            <div class="col">
+                <label class="form-label">ชื่อ - นามสกุล (ผู้ถูกกล่าวหา/กล่าวโทษ)</label>
+                <input class="form-control" type="text" formControlName="search_id" />
+            </div>
+
+            <div class="col-3">
+                <label class="form-label">วันเดือนปีที่บันทึก (จาก)</label>
+                <div class="d-flex align-items-center">
+                    <input
+                        matInput
+                        [matDatepicker]="pickerFromDate"
+                        autocomplete="off"
+                        class="form-control form-date"
+                        formControlName="fromDate"
+                        placeholder="วว/ดด/ปปปป"
+                    />
+                    <mat-datepicker-toggle
+                        class="button-date"
+                        matSuffix
+                        [for]="pickerFromDate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFromDate></mat-datepicker>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <label class="form-label">วันเดือนปีที่บันทึก (ถึง)</label>
+                <div class="d-flex align-items-center">
+                    <input
+                        matInput
+                        [matDatepicker]="pickerToDate"
+                        autocomplete="off"
+                        class="form-control form-date"
+                        formControlName="toDate"
+                        placeholder="วว/ดด/ปปปป"
+                    />
+                    <mat-datepicker-toggle
+                        class="button-date"
+                        matSuffix
+                        [for]="pickerToDate"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #pickerToDate></mat-datepicker>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 mb-2">
+            <button
+              (click)="clear()"
+              type="button"
+              class="btn border-primary text-primary" >
+              ล้างข้อมูล
+            </button>
+            <button
+              (click)="onClickSearch()"
+              type="button"
+              class="ms-2 btn btn-primary">
+              ค้นหา
+            </button>
+        </div>
+    </form>
+
+    <div class="bg-white p-3 mt-3 default-width">
+        <div class="d-flex justify-content-between mb-2">
+          <div class="box-header">{{this.HEAD_LABEL}}</div>
+          <hr />
+        </div>
+        <div class="default-width" style="overflow-x: scroll;">
+            <ksp-gnx-table
+                [dataCols]      ="this.REPORT_COLS_DATA"
+                [dataRows]      ="this.reportdata"
+                [TableStyle]    ="this.TABLE_STYLE"
+            >
+            </ksp-gnx-table>
+          </div>
+    </div>
+
+</div>

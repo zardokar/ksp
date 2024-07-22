@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { ListData } from './input-type';
 import { FileGroup } from './ksp-file';
 import { MenuConfig } from './ksp-menu-config';
-export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation';
+export type EthicsMode = 'accusation' | 'investigation' | 'inquiry' | 'publish' | 'confirmation' | 'recording' | 'recordingstat' | 'resultstat' ;
 
 export interface EthicsCustomRouteData {
   menuConfig: MenuConfig[];
@@ -186,6 +186,11 @@ export const defaultMeeting:EhicsMeeting = {
   meetingfile: null,
 }
 
+export const uploadFiles:UPLOAD_FILES ={
+  fileid: null,
+  filename:  null
+};
+
 export interface EhicsMember {
   idcardno: string | null;
   accusertype: string | null;
@@ -231,11 +236,11 @@ export interface EhicsCondemnation {
 }
 
 export interface EhicsAccusationaction {
-  self: Boolean | null;
-  profession: Boolean | null;
-  service: Boolean | null;
-  coworkers: Boolean | null;
-  society: Boolean | null;
+  self: boolean | null;
+  profession: boolean | null;
+  service: boolean | null;
+  coworkers: boolean | null;
+  society: boolean | null;
 }
 
 export interface EhicsMeeting {
@@ -249,6 +254,11 @@ export const ACCUSATION_FILES: FileGroup[] = [
   { name: '1. เอกสารกล่าวหา/กล่าวโทษ', files: [] },
   { name: '2. สำเนาบัตรประชาชน	', files: [] },
 ];
+
+export interface UPLOAD_FILES{
+  fileid: string | null;
+  filename: string | null;
+};
 
 export const columns = [
   'order',

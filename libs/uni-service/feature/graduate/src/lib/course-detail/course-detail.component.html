@@ -119,7 +119,7 @@
                 {{ row.admissioncount1 || 0 }} / {{ row.student1 }}
                 <span
                   role="button"
-                  *ngIf="checkAdmission(row)"
+                  *ngIf="checkAdmission(row, row?.student1)"
                   (click)="goToImportStudent('admissionList', row, 1, row.student1)"
                   class="text-decoration-underline text-primary"
                 >
@@ -133,7 +133,7 @@
                 {{ row.admissioncount2 || 0 }} / {{ row.student2 }}
                 <span
                   role="button"
-                  *ngIf="checkAdmission(row)"
+                  *ngIf="checkAdmission(row, row.student2)"
                   (click)="goToImportStudent('admissionList', row, 2, row.student2)"
                   class="text-decoration-underline text-primary"
                 >
@@ -147,7 +147,7 @@
                 {{ row.admissioncount3 || 0 }} / {{ row.student3 }}
                 <span
                   role="button"
-                  *ngIf="checkAdmission(row)"
+                  *ngIf="checkAdmission(row, row.student3)"
                   (click)="goToImportStudent('admissionList', row, 3, row.student3)"
                   class="text-decoration-underline text-primary"
                 >
@@ -172,7 +172,7 @@
             </td>
             <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
               <div
-                *ngIf="checkGraduate(row)">
+                *ngIf="checkGraduate(row, row.student1, 1)">
                 {{ row.graduatecount || 0 }} / {{ row.student1 }}
                 <span
                   role="button"
@@ -186,7 +186,7 @@
             </td>
             <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
               <div
-                *ngIf="checkGraduate(row)">
+                *ngIf="checkGraduate(row, row.student2, 2)">
                 {{ row.graduatecount || 0 }} / {{ row.student2 }}
                 <span
                   role="button"
@@ -200,7 +200,7 @@
             </td>
             <td class="text-center form-label vertical-middle" *ngIf="degreeType === 'b'">
               <div
-                *ngIf="checkGraduate(row)">
+                *ngIf="checkGraduate(row, row.student3, 3)">
                 {{ row.graduatecount || 0 }} / {{ row.student3 }}
                 <span
                   role="button"

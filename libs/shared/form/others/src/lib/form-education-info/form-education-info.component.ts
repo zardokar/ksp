@@ -28,6 +28,7 @@ export class FormEducationInfoComponent
   @Input() isDarkMode = true;
   @Input() userEducationType: any;
   @Input() universityList: University[] | null = [];
+  @Input() majorfields : any[any] = []
 
   FormTypeEnum = UserInfoFormType;
 

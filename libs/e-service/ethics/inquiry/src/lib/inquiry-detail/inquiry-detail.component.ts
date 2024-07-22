@@ -113,7 +113,7 @@ export class InquiryDetailComponent
     );
   }
   ngOnInit(): void {
-    // this.getListData();
+    this.getListData();
   }
   get meetings() {
     return this.form.controls.inquerymeetinghistory as FormArray;
@@ -153,7 +153,7 @@ export class InquiryDetailComponent
     this.prefixList$ = this.generalInfoService.getPrefix();
   }
   addConsiderRow(data: EhicsMeeting = defaultMeeting) {
-    let getdate = new Date( data?.meetingdate || '')
+    const getdate = new Date( data?.meetingdate || '')
     const rewardForm = this.fb.group({
       meetingtimes: data.meetingtimes,
       meetingdate: thaiDate(new Date(getdate )) ,

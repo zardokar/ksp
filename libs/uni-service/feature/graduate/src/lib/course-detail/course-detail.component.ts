@@ -307,12 +307,31 @@ export class CourseDetailComponent implements OnInit {
     );
   }
 
-  checkGraduate(row: any, studentAmt?: any) {
+  checkGraduate(row: any, studentAmt?: any, studentRow?: any) {
     // const yearnow = new Date().getFullYear() + 543;
-    return (
-      row.graduatecount < (studentAmt ? studentAmt : row.student) &&
-      row.admissioncount > 0
-    );
+    if (studentAmt) {
+      if (studentRow === 1) {
+        return (
+          row.graduatecount < studentAmt &&
+          row.admissioncount1 > 0
+        );
+      } else if (studentRow === 2) {
+        return (
+          row.graduatecount < studentAmt &&
+          row.admissioncount2 > 0
+        );
+      } else {
+        return (
+          row.graduatecount < studentAmt &&
+          row.admissioncount3 > 0
+        );
+      }
+    } else {
+      return (
+        row.graduatecount < (studentAmt ? studentAmt : row.student) &&
+        row.admissioncount > 0
+      );
+    }
   }
 
   viewCourseDetail() {

@@ -76,11 +76,10 @@ export class QualificationApprovePersonComponent extends KspFormBaseComponent im
       this.es_tab5_comment = this.data?.officer_comment?.es_tab5
     }
 
-    if (mode == 'view')
-      setTimeout(() => {
-        this.form.patchValue(this.data.refperson);
-        this.form.disable();
-      }, 0);
+    this.form.patchValue(this.data.refperson);
+
+    if (mode == 'view') this.form.disable();
+
     this.getList();
     this.getSchoolManager();
   }

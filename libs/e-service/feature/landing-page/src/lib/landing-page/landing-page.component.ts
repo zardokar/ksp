@@ -14,7 +14,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   elicense() {
-    this.router.navigate(['request-license', 'approve-list']);
+    this.router.navigate(['foreign-license', 'list']);
   }
 
   standard() {

@@ -124,7 +124,7 @@ export class AccusationSearchComponent
           }  
 
           console.log(item.licenseinfo)
-          for(let accused of item.licenseinfo){
+          for(const accused of item.licenseinfo){
             // console.log(accused)
             if(item.name == undefined){
               item.name             = accused?.nameth + " " + accused?.lastnameth

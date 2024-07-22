@@ -1,0 +1,17 @@
+{
+  "projectType": "library",
+  "sourceRoot": "libs/e-service/ethics/ethicsreport/src",
+  "prefix": "e-service",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/e-service/ethics/ethicsreport/**/*.ts",
+          "libs/e-service/ethics/ethicsreport/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

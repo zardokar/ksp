@@ -14,6 +14,8 @@ export class ActivityAddDegreeComponent
   implements OnDestroy
 {
   @Input() countries: any[] = [];
+  @Input() unidegree : any[any] = []
+  @Input() universities: any[any] = []
   @Input() isForeignForm = false;
 
   //การศึกษาให้มีวุฒิเพิ่มขึ้นในสาขาเกี่ยวข้องกับการประกอบวิชาชีพทางการศึกษา ทั้งในระดับปริญญา และระดับบัณฑิตศึกษา

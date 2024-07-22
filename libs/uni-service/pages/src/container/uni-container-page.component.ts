@@ -100,6 +100,70 @@ export class UniContainerPageComponent implements OnInit {
       label: 'รายงาน',
       path: '',
       permission: '',
+      subMenuName: 'report',
+      isExpanded: false,
+      subMenu: [
+        {
+          label:
+            'รายชื่อสถาบันที่ได้รับการรับรองปริญญาตรีทางการศึกษา (หลักสูตร 4 ปี) และปริญญาตรีทางการศึกษา (หลักสูตร 5 ปี)',
+          path: '/report/uni-degree-report',
+          params: { subtype: 1 }
+        },
+        {
+          label:
+            'รายชื่อสถาบันที่ได้รับการรับรองประกาศนียบัตรบัณฑิตวิชาชีพครู และประกาศนียบัตรบัณฑิตทางการบริหารการศึกษา',
+          path: '/report/uni-degree-report',
+          params: { subtype: 2 }
+        },
+        {
+          label:
+            'รายชื่อสถาบันที่ได้รับการรับรองปริญญาโททางการศึกษา (วิชาชีพครู และวิชาชีพบริหาร) และปริญญาเอกทางการศึกษา (วิชาชีพครู และวิชาชีพบริหาร)',
+            path: '/report/uni-degree-report',
+            params: { subtype: 3 }
+        },
+        {
+          label:
+            'รายงานหลักสูตร/ปริญญา ที่คุรุสภาให้การรับรอง (ขั้นสูง)',
+          path: '/report/uni-degree-report',
+          params: { subtype: 4 }
+        },
+        {
+          label:
+            'รายงานข้อมูลนักศึกษา',
+          path: '/report/uni-report',
+          params: { subtype: 1 }
+        },
+        {
+          label:
+            'รายงานรายชื่อผู้เข้าศึกษา',
+          path: '/report/uni-report',
+          params: { subtype: 2 }
+        },
+        {
+          label:
+            'รายงานรายชื่อผู้สำเร็จศึกษา',
+          path: '/report/uni-report',
+          params: { subtype: 3 }
+        },
+        {
+          label:
+            'รายงานสถิติยอดตามหลักสูตรและมหาวิทยาลัย',
+          path: '/report/uni-report',
+          params: { subtype: 4 }
+        },
+        {
+          label:
+            'รายงานสถิติจำนวนผู้เข้าศึกษา แยกตามระดับปริญญาและเลือกปีการศึกษา',
+          path: '/report/uni-report',
+          params: { subtype: 5 }
+        },
+        {
+          label:
+            'รายงานสถิติจำนวนผู้สำเร็จศึกษา แยกตามระดับปริญญาและเลือกปีการศึกษา',
+          path: '/report/uni-report',
+          params: { subtype: 6 }
+        },
+      ]
     },
     {
       label: 'ออกจากระบบ',
