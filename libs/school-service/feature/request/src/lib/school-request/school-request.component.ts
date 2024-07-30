@@ -324,6 +324,7 @@ export class SchoolRequestComponent implements OnInit {
                             requesttype:"3",
                             careertype : userInfo.careertype,
                             idcardno : payload.idcardno,
+                            kspno : userInfo.kuruspano
     }
     // ----------------------------------------------------------------
     this.requestService.schKSPXSearchRequest(searchpayload).subscribe((searchres) => {
