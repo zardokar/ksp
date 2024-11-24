@@ -18,6 +18,8 @@ import { UniContainerPageComponent } from '../../../../pages/src/container/uni-c
 
 import { UniAdmissionReportComponent } from './uni-admission-report/uni-admission-report.component'
 
+import { UniServiceFormModule } from "../../../../form/src/lib/uni-service-form.module";
+
 const routes: Routes = [
   {
     path: '',
@@ -44,7 +46,8 @@ const routes: Routes = [
     TopNavComponent,
     MatTableModule,
     MatPaginatorModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    UniServiceFormModule
 ],
   declarations: [
     UniReportComponent
