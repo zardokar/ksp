@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import { UntilDestroy} from '@ngneat/until-destroy';
-import {DomSanitizer, SafeResourceUrl}  from '@angular/platform-browser';
+import { Component }            from '@angular/core';
+import { UntilDestroy}          from '@ngneat/until-destroy';
 
-import { ActivatedRoute }               from '@angular/router';
+import { REPORT_TYPE } from '@ksp/shared/constant';
+
 // ---------------------------------------------------------------------------
 @UntilDestroy()
 @Component({
@@ -12,10 +12,13 @@ import { ActivatedRoute }               from '@angular/router';
 })
 
 // ---------------------------------------------------------------------------
-export class UniAdmissionReportComponent {
-    target_url : SafeResourceUrl  = ''
-    target_label                  = ''
-  
-
+export class UniAdmissionReportComponent
+{
+    report_type   = ''
+    
+    constructor()
+    {
+        this.report_type   = REPORT_TYPE.ADMISSION
+    }
 }
 
