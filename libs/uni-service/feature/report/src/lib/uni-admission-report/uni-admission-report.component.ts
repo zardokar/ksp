@@ -18,7 +18,7 @@ export class UniAdmissionReportComponent
     
     constructor()
     {
-        this.report_type   = REPORT_TYPE.ADMISSION
+        this.report_type   = REPORT_TYPE['ADMISSION']
     }
 }
 
