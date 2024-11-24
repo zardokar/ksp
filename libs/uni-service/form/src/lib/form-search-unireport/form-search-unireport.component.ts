@@ -1,8 +1,16 @@
-import { KspFormBaseComponent } from '@ksp/shared/interface'
-import { Component, Input, OnInit } from '@angular/core'
+import { lastValueFrom } from 'rxjs';
 
-import { providerFactory, validatorMessages } from '@ksp/shared/utility';
+import { ListData } from '@ksp/shared/interface'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+// ----------------------------------------------------------------------------------------
+import { REPORT_TYPE } from '@ksp/shared/constant'
+import { UniInfoService } from '@ksp/shared/service'
+import { providerFactory } from '@ksp/shared/utility'
+import { getCookie } from '@ksp/shared/utility';
+// ----------------------------------------------------------------------------------------
 @Component({
   selector: 'uni-form-search-unireport'
   ,templateUrl: './form-search-unireport.component.html'
@@ -10,6 +18,89 @@ import { providerFactory, validatorMessages } from '@ksp/shared/utility';
   ,providers: providerFactory(UniFormSearchUniReportComponent)
 })
 
-export class UniFormSearchUniReportComponent extends KspFormBaseComponent {
+// ----------------------------------------------------------------------------------------
+export class UniFormSearchUniReportComponent implements OnInit {
+
+  @Input() uniUniversityOption: Array<any> = []
+  @Input() reportType                      = ''
+
+  // -------------------------------------------------------
+  current_uniid                             = ''
+  current_unitype                           = ''
+  universityList: ListData[]               = []
+  universityTypeList: ListData[]           = []
+  degreeLevelList: ListData[]              = []
+  uniSearchFormGrp: FormGroup              = this.fb.group({
+                                                             uni_id: ['']
+                                                            ,uni_type: ['']
+                                                            ,approve_code: ['']
+                                                            ,degree_name: ['']
+                                                          })
+
+  // -------------------------------------------------------
+  constructor(
+               private fb: FormBuilder
+              ,private uniInfoService: UniInfoService
+             )
+  {
     
+  }
+  // -------------------------------------------------------
+  ngOnInit(): void {
+    console.log( "UniFormSearchUniReportComponent", this.reportType )
+    this.initFormData()
+    this.getUniOptions()
+  }
+  // -------------------------------------------------------
+  initFormData() {
+    this.current_uniid    = getCookie('uniId')
+    this.current_unitype  = getCookie('uniType')
+  }
+  // -------------------------------------------------------
+  async getUniOptions() {
+
+    const university      = await lastValueFrom(this.uniInfoService.getUniuniversity())
+    const universityTypes = await lastValueFrom(this.uniInfoService.getUniversityType())
+    const degreeLevel     = await lastValueFrom(this.uniInfoService.getUniDegreelevel())
+
+    this.universityList = university.datareturn.map((data: any) => {
+      data.value = data.id
+
+      if (data.campusname) {
+        data.label = data.name + `, ${data.campusname}`;
+      } else {
+        data.label = data.name;
+      }
+      
+      return data;
+    })
+
+    this.universityTypeList = universityTypes.map(( type: any ) => {
+      type.value = type.id
+      type.label = type.name
+
+      return type
+    })
+
+    this.degreeLevelList = degreeLevel?.datareturn.map(({ id, name }: any) => ({
+      value: id,
+      label: name,
+    }))
+
+    this.patchForm()
+  }
+  // -------------------------------------------------------
+  patchForm()
+  {
+    this.uniSearchFormGrp.controls['uni_id'].patchValue(this.current_uniid)
+    this.uniSearchFormGrp.controls['uni_type'].patchValue(this.current_unitype)
+  }
+  // -------------------------------------------------------
+  clear() {
+    console.log( ' Clear Form ')
+  }
+  // -------------------------------------------------------
+  search() {
+    console.log( ' Searching ')
+  }
 }

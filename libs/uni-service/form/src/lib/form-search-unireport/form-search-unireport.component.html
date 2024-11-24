@@ -1,21 +1,84 @@
-<div class="bg-white p-3">
-  <div class="bg-light p-3 default-width">
+<form [formGroup]="uniSearchFormGrp" class="bg-white p-3">
+    <div class="bg-light p-3 default-width">
 
-      <div class="box-header"> กรุณากรอกข้อมูลที่ต้องการค้นหา</div>
-
-      <div class="row mb-2">
+        <div class="box-header"> กรุณากรอกข้อมูลที่ต้องการค้นหา</div>
+        <!-- -------------------------------------------------------------------------------- Row 1 -->
+        <div class="row mb-2">
+    
           <div class="col">
-            <label class="form-label">เลขที่แบบคำขอ</label>
+            <label class="form-label">สถาบัน / มหาวิทยาลัย</label>
+            <select class="form-select" 
+                    formControlName="uni_id" 
+                    [attr.disabled]="true">
+              <option
+                *ngFor="let university of universityList"
+                [value]="university.value"
+              >
+                {{ university.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col">
+            <label class="form-label">กลุ่มสถาบัน</label>
+            <select class="form-select" 
+                    formControlName="uni_type" 
+                    [attr.disabled]="true" 
+              >
+                <option
+                  *ngFor="let utype of universityTypeList"
+                  [value]="utype.value"
+                  [selected]="utype.value === current_unitype"
+                >
+                  {{ utype.name }}
+                </option>
+            </select>
+          </div>
+          
+        </div>
+        <!-- -------------------------------------------------------------------------------- Row 2 -->
+        <div class="row mb-2">
+          <div class="col">
+          </div>
+        </div>
+        <!-- -------------------------------------------------------------------------------- Row 3 -->
+        <div class="row mb-2">
+
+          <div class="col">
+            <label class="form-label">รหัสรับรองปริญญา</label>
             <input
               class="form-control"
               type="text"
-              formControlName="requestno"
+              formControlName="approve_code"
             />
           </div>
-      </div>
 
-  </div>
-</div>
+          <div class="col">
+            <label class="form-label">ชื่อปริญญา และประกาศนียบัตรทางการศึกษา</label>
+            <input
+              class="form-control"
+              type="text"
+              formControlName="degree_name"
+            />
+          </div>
+
+        </div>
+        <!-- -------------------------------------------------------------------------------- Row 4 -->
+
+        <div class="d-flex justify-content-end">
+          <button
+            class="btn border-primary text-primary bg-white"
+            type="button"
+            (click)="clear()"
+          >
+            ล้างข้อมูล
+          </button>
+          <button class="btn btn-primary ms-2" type="button" (click)="search()">
+            ค้นหา
+          </button>
+        </div>
+    </div>
+</form>
 
 <br />
 
