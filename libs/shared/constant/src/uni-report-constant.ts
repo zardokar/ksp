@@ -1,3 +1,34 @@
-export const REPORT_TYPE = {
-                                ADMISSION : 'admission'
+export const REPORT_TYPE : {[index: string]:any} = {
+            ADMISSION : 'admission'
+}
+
+export const REPORT_HEADER_TABLE : {[index: string]:any} = {
+            admission : "รายงานรายชื่อผู้เข้าศึกษา"
+}
+// -----------------------------------------------------------------------------------
+
+export const REPORT_ADMISSION_COLS = [
+    "ลำดับที่"
+    ,"เลขที่ส่งข้อมูลหรือเลขที่คำขอ"
+    ,"รหัสนักศึกษา"
+    ,"เลขที่ประจำตัวบัตรประชาชน/เลข13หลัก"
+    ,"สัญชาติ"
+    ,"คำนำหน้าชื่อ"
+    ,"ชื่อ"
+    ,"สกุล"
+    ,"คำนำหน้าชื่อ(EN)"
+    ,"ชื่อ(EN)"
+    ,"สกุล(EN)"
+    ,"วันที่เข้าศึกษา"
+    ,"สถานะภาพนักศึกษา"
+    ,"ชื่อสถาบัน"
+    ,"หลักสูตร/ปริญญา"
+    ,"สาขาวิชา"
+    ,"วิชาเอก"
+    ,"แขนงวิชา"
+] 
+// -----------------------------------------------------------------------------------
+
+export const REPORT_COLS :  { [index: string] : any[any] } = {
+            admission : REPORT_ADMISSION_COLS
 }
