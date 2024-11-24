@@ -1,15 +1,18 @@
 import { lastValueFrom } from 'rxjs';
 
 import { ListData } from '@ksp/shared/interface'
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, Input, OnInit, ViewChild } from '@angular/core'
 
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms'
 
+import { NFXUniReportService } from '@ksp/shared/service'
 // ----------------------------------------------------------------------------------------
-import { REPORT_TYPE } from '@ksp/shared/constant'
+import { REPORT_HEADER_TABLE, REPORT_COLS } from '@ksp/shared/constant'
 import { UniInfoService } from '@ksp/shared/service'
 import { providerFactory } from '@ksp/shared/utility'
 import { getCookie } from '@ksp/shared/utility';
+import { getAdmissionDataTable } from './form-service-unireport.mapper'
+import { GNXTableComponent } from '@ksp/shared/utility';
 // ----------------------------------------------------------------------------------------
 @Component({
   selector: 'uni-form-search-unireport'
@@ -24,9 +27,17 @@ export class UniFormSearchUniReportComponent implements OnInit {
   @Input() uniUniversityOption: Array<any> = []
   @Input() reportType                      = ''
 
+  @ViewChild('resulttable') resultTable : GNXTableComponent = new GNXTableComponent()
   // -------------------------------------------------------
-  current_uniid                             = ''
-  current_unitype                           = ''
+  HEAD_LABEL                               = ''
+  TABLE_COLS                               = []
+  TABLE_STYLE                              = {
+                                                'width' : 'max-content'
+                                             }
+  // -------------------------------------------------------
+  reportdata     : any[any]                = [{}]
+  current_uniid                            = ''
+  current_unitype                          = ''
   universityList: ListData[]               = []
   universityTypeList: ListData[]           = []
   degreeLevelList: ListData[]              = []
@@ -53,6 +64,9 @@ export class UniFormSearchUniReportComponent implements OnInit {
   }
   // -------------------------------------------------------
   initFormData() {
+    this.HEAD_LABEL       = REPORT_HEADER_TABLE[this.reportType]
+    this.TABLE_COLS       = REPORT_COLS[this.reportType]
+
     this.current_uniid    = getCookie('uniId')
     this.current_unitype  = getCookie('uniType')
   }
@@ -100,7 +114,13 @@ export class UniFormSearchUniReportComponent implements OnInit {
     console.log( ' Clear Form ')
   }
   // -------------------------------------------------------
-  search() {
+  async search(event : any) {
     console.log( ' Searching ')
+    const resp : any[any] = await NFXUniReportService.searchAdmission( {
+                                                                uni_id : this.uniSearchFormGrp.controls['uni_id'].value
+                                                            })
+    this.reportdata = getAdmissionDataTable(resp?.data.data)
+    this.resultTable.updateTable({ data: this.reportdata})
   }
 }
+// ----------------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
-<form [formGroup]="uniSearchFormGrp" class="bg-white p-3">
+<form [formGroup]="uniSearchFormGrp" >
+  <div class="bg-white p-3"> 
     <div class="bg-light p-3 default-width">
 
         <div class="box-header"> กรุณากรอกข้อมูลที่ต้องการค้นหา</div>
@@ -73,18 +74,28 @@
           >
             ล้างข้อมูล
           </button>
-          <button class="btn btn-primary ms-2" type="button" (click)="search()">
+          <button class="btn btn-primary ms-2" type="button" (click)="search($event)">
             ค้นหา
           </button>
         </div>
     </div>
-</form>
-
-<br />
-
-<div class="box-header">ข้อมูลผู้เข้าศึกษา</div>
-
-<div class="bg-white p-3">
-  <div class="table__scroll">
   </div>
-</div>
+    <br />
+
+
+          <div class="bg-white p-3 mt-3 ">
+            <div class="d-flex justify-content-between mb-2">
+              <div class="box-header">{{this.HEAD_LABEL}}</div>
+              <hr />
+            </div>
+            <div style="overflow-x: scroll;">
+                <ksp-gnx-table #resulttable
+                    [dataCols]          ="this.TABLE_COLS"
+                    [dataRows]          ="this.reportdata"
+                    [TableStyle]        ="this.TABLE_STYLE"
+                >
+                </ksp-gnx-table>
+              </div>
+          </div>
+  
+</form>
