@@ -16,6 +16,8 @@ import { UniDegreeReportComponent } from './uni-degree-report/uni-degree-report.
 
 import { UniContainerPageComponent } from '../../../../pages/src/container/uni-container-page.component'
 
+import { UniAdmissionReportComponent } from './uni-admission-report/uni-admission-report.component'
+
 const routes: Routes = [
   {
     path: '',
@@ -25,10 +27,11 @@ const routes: Routes = [
         path: '',
         redirectTo: 'list',
         pathMatch: 'full',
-      },
-      { path: 'test-report', component: TestReportComponent },
-      { path: 'uni-report', component: UniReportComponent },
-      { path: 'uni-degree-report', component: UniDegreeReportComponent }
+      }
+      ,{ path: 'test-report', component: TestReportComponent }
+      ,{ path: 'uni-iframe_report', component: UniReportComponent }
+      ,{ path: 'uni-degree-report', component: UniDegreeReportComponent }
+      ,{ path: 'uni-admission-report', component: UniAdmissionReportComponent }
     ],
   },
 ];
@@ -41,17 +44,19 @@ const routes: Routes = [
     TopNavComponent,
     MatTableModule,
     MatPaginatorModule,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   declarations: [
-    UniReportComponent,
-    TestReportComponent,
-    UniDegreeReportComponent
+    UniReportComponent
+    ,TestReportComponent
+    ,UniDegreeReportComponent
+    ,UniAdmissionReportComponent
   ],
   exports: [
-    UniReportComponent,
-    TestReportComponent,
-    UniDegreeReportComponent
+    UniReportComponent
+    ,TestReportComponent
+    ,UniDegreeReportComponent
+    ,UniAdmissionReportComponent
   ],
 })
 export class UniServiceFeatureReportModule {}

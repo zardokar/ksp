@@ -5,3 +5,5 @@ export * from './lib/test-report/test-report.component'
 export * from './lib/uni-report/uni-report.component'
 
 export * from './lib/uni-degree-report/uni-degree-report.component'
+
+export * from './lib/uni-admission-report/uni-admission-report.component'
