@@ -4,6 +4,7 @@ import { FormRegisterCoordinatorInfoComponent } from './form-register-coordinato
 import { FormRegisterRequesterInfoComponent } from './form-register-requester/form-register-requester.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { FormSearchUniReportComponent } from './form-search-unireport/form-search-unireport.component';
 
 @NgModule({
   imports: [
@@ -13,10 +14,12 @@ import { DropdownModule } from 'primeng/dropdown';
   declarations: [
     FormRegisterCoordinatorInfoComponent,
     FormRegisterRequesterInfoComponent,
+    FormSearchUniReportComponent,
   ],
   exports: [
     FormRegisterCoordinatorInfoComponent,
     FormRegisterRequesterInfoComponent,
+    FormSearchUniReportComponent,
   ],
 })
 export class UniServiceFormModule {}
