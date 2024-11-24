@@ -5,12 +5,15 @@ import { FormRegisterRequesterInfoComponent } from './form-register-requester/fo
 import { ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { UniFormSearchUniReportComponent } from './form-search-unireport/form-search-unireport.component';
+import { GNXTableComponent } from "@ksp/shared/utility";
 
 @NgModule({
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
-    DropdownModule],
+    DropdownModule,
+    GNXTableComponent
+],
   declarations: [
     FormRegisterCoordinatorInfoComponent,
     FormRegisterRequesterInfoComponent,
