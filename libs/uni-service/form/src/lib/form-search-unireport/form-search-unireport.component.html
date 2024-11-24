@@ -1,7 +1,27 @@
-<form [formGroup]="form">
-    <div class="bg-light mt-3 px-4 py-2">
-      <div class="box-header text-primary mb-1">
-        กรุณากรอกข้อมูลที่ต้องการค้นหา
+<div class="bg-white p-3">
+  <div class="bg-light p-3 default-width">
+
+      <div class="box-header"> กรุณากรอกข้อมูลที่ต้องการค้นหา</div>
+
+      <div class="row mb-2">
+          <div class="col">
+            <label class="form-label">เลขที่แบบคำขอ</label>
+            <input
+              class="form-control"
+              type="text"
+              formControlName="requestno"
+            />
+          </div>
       </div>
-    </div>
-</form>
+
+  </div>
+</div>
+
+<br />
+
+<div class="box-header">ข้อมูลผู้เข้าศึกษา</div>
+
+<div class="bg-white p-3">
+  <div class="table__scroll">
+  </div>
+</div>

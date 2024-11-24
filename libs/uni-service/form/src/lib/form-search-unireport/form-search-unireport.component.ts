@@ -7,9 +7,9 @@ import { providerFactory, validatorMessages } from '@ksp/shared/utility';
   selector: 'uni-form-search-unireport'
   ,templateUrl: './form-search-unireport.component.html'
   ,styleUrls: ['./form-search-unireport.component.scss']
-  ,providers: providerFactory(FormSearchUniReportComponent)
+  ,providers: providerFactory(UniFormSearchUniReportComponent)
 })
 
-export class FormSearchUniReportComponent extends KspFormBaseComponent {
+export class UniFormSearchUniReportComponent extends KspFormBaseComponent {
     
 }
