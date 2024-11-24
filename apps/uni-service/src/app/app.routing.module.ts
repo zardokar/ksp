@@ -93,6 +93,14 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'uni-report',
+    loadChildren: () =>
+      import('@ksp/uni-service/feature/report').then(
+        (m) => m.UniServiceFeatureReportModule
+      ),
+    canActivate: [AuthGuard],
+  },
   /* {
     path: 'test-data-result',
     data: {

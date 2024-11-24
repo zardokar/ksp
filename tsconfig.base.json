@@ -351,6 +351,9 @@
       "@ksp/uni-service/feature/retired": [
         "libs/uni-service/feature/retired/src/index.ts"
       ],
+      "@ksp/uni-service/feature/report": [
+        "libs/uni-service/feature/report/src/index.ts"
+      ],
       "@ksp/uni-service/form": ["libs/uni-service/form/src/index.ts"],
       "@ksp/uni-service/pages": ["libs/uni-service/pages/src/index.ts"]
     }
