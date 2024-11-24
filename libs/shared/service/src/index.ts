@@ -23,3 +23,4 @@ export { UniInfoService } from './uni-service/uni-info.service';
 export { LoaderService } from './loader.service';
 
 export { KSPXLicenseService } from './kspx-self-service/license.service';
+export { NFXUniReportService } from './nfx-service/uni-report.service'

@@ -7,7 +7,7 @@ const DOMAIN_PROD_SELF     = 'https://ksp-self.ksp.or.th';
 const DOMAIN_DEV_OCN       = 'https://kspapi.oceanicnetwork.net';
 const DOMAIN_DEV_ZDK       = 'https://ksp-api.zdklabs.io';
 const DOMAIN_DEV_SELF_API  = 'https://ksp-api.zdklabs.io';
-
+const DOMAIN_NFX           = 'https://ksp-nfx.zdklabs.io'
 // -----------------------------------------------------------------------------
 const CURRENT_DOMAIN       = DOMAIN_DEV_OCN
 const CURRENT_SELF_DOMAIN  = DOMAIN_PROD_SELF
@@ -28,5 +28,6 @@ export const environment = {
           apiUrl : CURRENT_DOMAIN + '/ksp',
       selfAPIURL : CURRENT_SELF_API,
          fileUrl : CURRENT_FILE_URL,
-        selfauth : SELF_PUB_AUTH
+        selfauth : SELF_PUB_AUTH,
+          nfxUrl : DOMAIN_NFX
 };
