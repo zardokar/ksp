@@ -8,3 +8,5 @@ export * from './e-service-constant';
 export * from './self-approve-list-constant';
 
 export * from './pdfmap-templicense-constant'
+
+export * from './uni-report-constant'
